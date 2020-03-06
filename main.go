@@ -6,11 +6,21 @@ import (
 	"github.com/miekg/dns"
 )
 
-// Intended usage:
+// Possible usage (not sure of flag names yet):
 //
 // dnsc -servers DNS1,DNS2,DNS3 -query server1.example.com -answer 192.168.1.250
+// dnsc -servers DNS1,DNS2,DNS3 -q server1.example.com -e 192.168.1.250
+// dnsc -servers DNS1,DNS2,DNS3 -ask server1.example.com -answer 192.168.1.250
+// dnsc -servers DNS1,DNS2,DNS3 -ask server1.example.com -expect 192.168.1.250
 //
-// Should back a small table of results with a final pass/fail verdict
+// Thus far, I like these long/short options:
+//
+// dnsc -servers DNS1,DNS2,DNS3 -q server1.example.com -e 192.168.1.250
+// dnsc -servers DNS1,DNS2,DNS3 -query server1.example.com -expect 192.168.1.250
+//
+// The "query" word is hard to avoid when it comes to DNS-related "things"
+//
+// Result: Should print small table of details with a final pass/fail verdict
 
 func main() {
 	var msg dns.Msg
