@@ -1,0 +1,61 @@
+# Copyright 2020 Adam Chalkley
+#
+# https://github.com/atc0005/dnsc
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+# Multi-line array
+# https://github.com/toml-lang/toml#user-content-array
+dns_servers = [
+
+    # https://developers.google.com/speed/public-dns
+    "8.8.8.8",
+    "8.8.4.4",
+
+    # https://www.opendns.com/setupguide/
+    "208.67.222.222",
+    "208.67.220.220",
+
+    # https://blog.cloudflare.com/announcing-1111/
+    "1.1.1.1",
+]
+
+# The DNS query types that will be used when submitting DNS queries. Each type
+# listed here will be requested for each user-provided query, so if four types
+# are listed and there are five DNS server entries, there will be twenty DNS
+# queries submitted total.
+dns_query_types = [
+    "A",
+    "AAAA",
+    "MX",
+    "CNAME",
+]
+
+# Whether DNS-related errors should be ignored. If set, this allows
+# query-related DNS errors with one host to not block queries against
+# remaining DNS servers. This can be useful to work around failures with one
+# server in a pool of many.
+ignore_dns_errors = false
+
+# https://godoc.org/github.com/apex/log#Level
+#
+# `fatal` is used for errors that should definitely be noted.
+# `error` is for errors that should definitely be noted.
+# `warn` is for non-critical entries that deserve eyes.
+# `info` is for general application operational entries.
+# `debug` is for debug-level messages and is usually enabled when debugging.
+log_level = "debug"
+
+#  apex/log Handlers
+# ---------------------------------------------------------
+# cli - human-friendly CLI output
+# discard - discards all logs
+# json - JSON output handler
+# logfmt - logfmt plain-text formatter
+# text - human-friendly colored output
+log_format = "cli"
+
+# Specifying a static/hard-coded query here is not enabled by default, but
+# could prove useful in some situations.
+# query = "www.yahoo.com"
