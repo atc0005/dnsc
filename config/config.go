@@ -33,15 +33,21 @@ const (
 	expectedAnswerFlagHelp = "IP Address expected as the answer from all provided DNS servers."
 )
 
+type DNS struct {
+	Servers []string `toml:"servers"`
+}
+
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags or TOML configuration file
 // provided by the user.
 type Config struct {
-	DNSServers     []string `toml:"dns_servers"`
-	Query          string   `toml:"-"`
-	ExpectedAnswer string   `toml:"-"`
-	ConfigFile     string   `toml:"-"`
-	Version        bool     `toml:"-"`
+	DNS
+
+	//	DNSServers     []string `toml:"servers"`
+	Query          string `toml:"-"`
+	ExpectedAnswer string `toml:"-"`
+	ConfigFile     string `toml:"-"`
+	Version        bool   `toml:"-"`
 }
 
 // Branding is responsible for emitting application name, version and origin
@@ -130,7 +136,7 @@ func NewConfig() (*Config, error) {
 // Validate verifies all struct fields have been provided acceptable values
 func (c Config) Validate() error {
 
-	if c.DNSServers == nil || len(c.DNSServers) == 0 {
+	if c.Servers == nil || len(c.Servers) == 0 {
 		return fmt.Errorf("one or more DNS servers not provided")
 	}
 
