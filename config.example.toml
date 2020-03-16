@@ -1,0 +1,15 @@
+# Copyright 2020 Adam Chalkley
+#
+# https://github.com/atc0005/dnsc
+#
+# Licensed under the MIT License. See LICENSE file in the project root for
+# full license information.
+
+[dns]
+
+# Multi-line array
+# https://github.com/toml-lang/toml#user-content-array
+servers = [
+    "8.8.8.8",
+    "8.8.4.4",
+]
