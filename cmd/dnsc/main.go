@@ -86,7 +86,7 @@ func main() {
 		}
 
 		if len(in.Answer) < 1 {
-			fmt.Printf("DEBUG: No records for %q from %s\n", cfg.Query, server)
+			fmt.Printf("ERROR: No records for %q from %s\n", cfg.Query, server)
 			return
 		}
 
