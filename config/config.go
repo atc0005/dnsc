@@ -93,10 +93,10 @@ func NewConfig() (*Config, error) {
 	flag.BoolVar(&config.Version, "v", false, versionFlagHelp+" (shorthand)")
 
 	flag.StringVar(&config.Query, "query", "", queryFlagHelp)
-	flag.StringVar(&config.Query, "q", "", queryFlagHelp)
+	flag.StringVar(&config.Query, "q", "", queryFlagHelp+" (shorthand)")
 
 	flag.StringVar(&config.ExpectedAnswer, "expect", "", expectedAnswerFlagHelp)
-	flag.StringVar(&config.ExpectedAnswer, "e", "", expectedAnswerFlagHelp)
+	flag.StringVar(&config.ExpectedAnswer, "e", "", expectedAnswerFlagHelp+" (shorthand)")
 
 	flag.Usage = flagsUsage()
 	flag.Parse()
@@ -138,9 +138,14 @@ func (c Config) Validate() error {
 		return fmt.Errorf("query not provided")
 	}
 
-	if c.ExpectedAnswer == "" {
-		return fmt.Errorf("expected query response not provided")
-	}
+	// OPTIONAL
+	//
+	// If set, we'll use this for comparison purposes, otherwise we'll compare
+	// the results of one provided server against the results from the others.
+	//
+	// if c.ExpectedAnswer == "" {
+	// 	return fmt.Errorf("expected query response not provided")
+	// }
 
 	if c.ConfigFile == "" {
 		return fmt.Errorf("missing fully-qualified path to config file to load")
