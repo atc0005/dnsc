@@ -11,9 +11,10 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"sort"
+	"strings"
+	"text/tabwriter"
 
 	"github.com/miekg/dns"
 
@@ -24,9 +25,29 @@ import (
 type DNSQueryResponse struct {
 
 	// Depending on the system, there *could* be multiple A records returned
-	ARecords []net.IP
+	ARecords []*dns.A
 	Server   string
 	Query    string
+}
+
+func (dqr DNSQueryResponse) GetARecords() string {
+
+	var aRecords []string
+	for _, record := range dqr.ARecords {
+		aRecords = append(aRecords, record.A.String())
+	}
+
+	return strings.Join(aRecords, ",")
+}
+
+func (dqr DNSQueryResponse) GetTTLs() string {
+
+	var ttlEntries []string
+	for _, record := range dqr.ARecords {
+		ttlEntries = append(ttlEntries, fmt.Sprint(record.Hdr.Ttl))
+	}
+
+	return strings.Join(ttlEntries, ",")
 }
 
 func main() {
@@ -38,7 +59,7 @@ func main() {
 	}
 
 	// do something useful with the config
-	fmt.Printf("%#v\n", *cfg)
+	//fmt.Printf("%#v\n", *cfg)
 
 	// Process query using configured settings
 
@@ -80,17 +101,19 @@ func main() {
 
 		// We could get back a CNAME entry in addition to an A record, so loop
 		// until we find an A record
-		typeARecordsFound := make([]net.IP, 0, 5)
+		typeARecordsFound := make([]*dns.A, 0, 5)
 		for _, answer := range in.Answer {
 			if a, ok := answer.(*dns.A); ok {
-				typeARecordsFound = append(typeARecordsFound, a.A)
+				// fmt.Println("TTL:", a.Hdr.Ttl)
+				// fmt.Println("A:", a.A)
+				typeARecordsFound = append(typeARecordsFound, a)
 			}
 		}
 
 		// Sort to make comparison easier later
 		// https://stackoverflow.com/a/48389676
 		sort.Slice(typeARecordsFound, func(i, j int) bool {
-			return bytes.Compare(typeARecordsFound[i], typeARecordsFound[j]) < 0
+			return bytes.Compare(typeARecordsFound[i].A, typeARecordsFound[j].A) < 0
 		})
 
 		dnsQueryResponse.ARecords = typeARecordsFound
@@ -100,14 +123,29 @@ func main() {
 
 	// loop over all collected query responses
 
+	w := new(tabwriter.Writer)
+	//w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
+
+	// Format in tab-separated columns
+	//w.Init(os.Stdout, 16, 8, 8, '\t', 0)
+	w.Init(os.Stdout, 8, 8, 8, '\t', 0)
+
+	// Header row in output
+	fmt.Fprintln(w,
+		"Server\tQuery\tAnswers\tExpected\tTTL\t")
+
 	for _, item := range results {
-		//fmt.Printf("%#v\n", item)
-		fmt.Printf(
-			"Server: %s, Query: %s, Answer: %v\n",
+		fmt.Fprintf(w,
+			"%s\t%s\t%s\t%s\t%s\n",
 			item.Server,
 			item.Query,
-			item.ARecords,
+			item.GetARecords(),
+			cfg.ExpectedAnswer,
+			item.GetTTLs(),
 		)
 	}
+
+	fmt.Fprintln(w)
+	w.Flush()
 
 }
