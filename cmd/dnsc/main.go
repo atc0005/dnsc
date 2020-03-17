@@ -133,15 +133,14 @@ func main() {
 
 	// Header row in output
 	fmt.Fprintln(w,
-		"Server\tQuery\tAnswers\tExpected\tTTL\t")
+		"Server\tQuery\tAnswers\tTTL\t")
 
 	for _, item := range results {
 		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\t%s\n",
+			"%s\t%s\t%s\t%s\n",
 			item.Server,
 			item.Query,
 			item.GetARecords(),
-			cfg.ExpectedAnswer,
 			item.GetTTLs(),
 		)
 	}
