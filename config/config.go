@@ -33,21 +33,15 @@ const (
 	expectedAnswerFlagHelp = "IP Address expected as the answer from all provided DNS servers."
 )
 
-type DNS struct {
-	Servers []string `toml:"servers"`
-}
-
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags or TOML configuration file
 // provided by the user.
 type Config struct {
-	DNS
-
-	//	DNSServers     []string `toml:"servers"`
-	Query          string `toml:"-"`
-	ExpectedAnswer string `toml:"-"`
-	ConfigFile     string `toml:"-"`
-	Version        bool   `toml:"-"`
+	Servers        []string `toml:"servers"`
+	Query          string   `toml:"-"`
+	ExpectedAnswer string   `toml:"-"`
+	ConfigFile     string   `toml:"-"`
+	Version        bool     `toml:"-"`
 }
 
 // Branding is responsible for emitting application name, version and origin
@@ -110,7 +104,7 @@ func NewConfig() (*Config, error) {
 	// Display version info and immediately exit if requested
 	if config.Version {
 		Branding()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	// load config file
