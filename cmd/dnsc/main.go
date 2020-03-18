@@ -10,6 +10,7 @@ package main
 import (
 	"log"
 	"os"
+	"sync"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
@@ -23,26 +24,35 @@ func main() {
 		os.Exit(1)
 	}
 
-	//	var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
 	// Declare that we'll have the same number of goroutines as we do the
 	// number of DNS servers
-	//	wg.Add(len(cfg.Servers))
+	wg.Add(len(cfg.Servers))
 
 	results := make(dqrs.DNSQueryResponses, 0, 10)
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
 
-		dnsQueryResponse, err := dqrs.PerformQuery(cfg.Query, server)
-		if err != nil {
-			// Check whether the user has opted to ignore errors and proceed
-			// FIXME: Assuming 'Yes' for now
-			log.Println(err)
-		}
+		go func(server string, query string, wg *sync.WaitGroup) {
 
-		results = append(results, dnsQueryResponse)
+			defer wg.Done()
+
+			dnsQueryResponse, err := dqrs.PerformQuery(query, server)
+			if err != nil {
+				// Check whether the user has opted to ignore errors and proceed
+				// FIXME: Assuming 'Yes' for now
+				log.Println(err)
+			}
+
+			results = append(results, dnsQueryResponse)
+
+		}(server, cfg.Query, &wg)
+
 	}
+
+	wg.Wait()
 
 	// Generate summary of all collected query responses
 	results.PrintSummary()
