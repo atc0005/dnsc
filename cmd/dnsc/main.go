@@ -42,7 +42,6 @@ func (dqr DNSQueryResponse) GetARecords() string {
 
 func (dqr DNSQueryResponse) GetTTLs() string {
 
-	// https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string
 	var ttlEntries []string
 	for _, record := range dqr.ARecords {
 		ttlEntries = append(ttlEntries, fmt.Sprint(record.Hdr.Ttl))

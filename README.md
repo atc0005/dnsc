@@ -57,6 +57,10 @@ dnsc -config-file $HOME/.config/dnsc/config.toml -query server1.example.com -exp
 ## References
 
 - <https://github.com/toml-lang/toml#user-content-array>
+
 - <https://golang.org/pkg/flag/#example_>
+
 - <https://nostarch.com/blackhatgo>
   - <https://github.com/blackhat-go/bhg/blob/master/ch-5/get_all_a/main.go>
+
+- <https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string>
