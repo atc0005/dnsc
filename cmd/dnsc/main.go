@@ -15,6 +15,7 @@ import (
 	"github.com/miekg/dns"
 
 	"github.com/atc0005/dnsc/config"
+	"github.com/atc0005/dnsc/dqrs"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 
 	fqdn := dns.Fqdn(cfg.Query)
 
-	results := make(DNSQueryResponses, 0, 10)
+	results := make(dqrs.DNSQueryResponses, 0, 10)
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
@@ -53,7 +54,7 @@ func main() {
 			return
 		}
 
-		dnsQueryResponse := DNSQueryResponse{
+		dnsQueryResponse := dqrs.DNSQueryResponse{
 			// use zero value initially for Answer field
 			Answer: in.Answer,
 			Server: server,

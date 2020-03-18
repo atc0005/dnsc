@@ -5,7 +5,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for
 // full license information.
 
-package main
+// Package dqrs provides types and functions used by this application to
+// collect and process DNS queries and responses.
+package dqrs
 
 import (
 	"fmt"
