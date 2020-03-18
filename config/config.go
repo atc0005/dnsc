@@ -127,16 +127,16 @@ func NewConfig() (*Config, error) {
 // Validate verifies all struct fields have been provided acceptable values
 func (c Config) Validate() error {
 
+	if c.ConfigFile == "" {
+		return fmt.Errorf("missing fully-qualified path to config file to load")
+	}
+
 	if c.Servers == nil || len(c.Servers) == 0 {
 		return fmt.Errorf("one or more DNS servers not provided")
 	}
 
 	if c.Query == "" {
 		return fmt.Errorf("query not provided")
-	}
-
-	if c.ConfigFile == "" {
-		return fmt.Errorf("missing fully-qualified path to config file to load")
 	}
 
 	// Optimist
