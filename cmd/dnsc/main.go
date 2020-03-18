@@ -44,7 +44,7 @@ type DNSQueryResponses []DNSQueryResponse
 // earlier query. The output is formatted for display in a Tabwriter table.
 func (dqr DNSQueryResponse) Records() string {
 
-	var records []string
+	records := make([]string, 0, 5)
 
 	for _, record := range dqr.Answer {
 
@@ -68,7 +68,8 @@ func (dqr DNSQueryResponse) Records() string {
 // TTLs returns a comma-separated list of record TTLs from an earlier query
 func (dqr DNSQueryResponse) TTLs() string {
 
-	var ttlEntries []string
+	ttlEntries := make([]string, 0, 5)
+
 	for _, record := range dqr.Answer {
 		ttlEntries = append(ttlEntries, fmt.Sprint(record.Header().Ttl))
 	}
@@ -118,7 +119,7 @@ func main() {
 
 	fqdn := dns.Fqdn(cfg.Query)
 
-	var results DNSQueryResponses
+	results := make(DNSQueryResponses, 0, 10)
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
