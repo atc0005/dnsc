@@ -28,9 +28,8 @@ const myAppName string = "dnsc"
 const myAppURL string = "https://github.com/atc0005/dnsc"
 
 const (
-	versionFlagHelp        = "Whether to display application version and then immediately exit application."
-	queryFlagHelp          = "Fully-qualified system to lookup from all provided DNS servers."
-	expectedAnswerFlagHelp = "IP Address expected as the answer from all provided DNS servers."
+	versionFlagHelp = "Whether to display application version and then immediately exit application."
+	queryFlagHelp   = "Fully-qualified system to lookup from all provided DNS servers."
 )
 
 // Config is a unified set of configuration values for this application. This
