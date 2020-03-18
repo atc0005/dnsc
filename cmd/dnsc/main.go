@@ -8,11 +8,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
-
-	"github.com/miekg/dns"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
@@ -26,39 +23,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	fqdn := dns.Fqdn(cfg.Query)
+	//	var wg sync.WaitGroup
+
+	// Declare that we'll have the same number of goroutines as we do the
+	// number of DNS servers
+	//	wg.Add(len(cfg.Servers))
 
 	results := make(dqrs.DNSQueryResponses, 0, 10)
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
 
-		var msg dns.Msg
-
-		// NOTE: Recursion is used by default, which resolves CNAME entries
-		// back to the actual A record
-		msg.SetQuestion(fqdn, dns.TypeA)
-
-		// TODO: Use concurrency to query all DNS servers in bulk instead of
-		// waiting for each to complete before querying the next one
-
-		// Perform UDP-based query using default settings
-		in, err := dns.Exchange(&msg, server+":53")
+		dnsQueryResponse, err := dqrs.PerformQuery(cfg.Query, server)
 		if err != nil {
-			panic(err)
-		}
-
-		// Early exit if one of the DNS servers returns an unexpected result
-		if len(in.Answer) < 1 {
-			fmt.Printf("ERROR: No records for %q from %s\n", cfg.Query, server)
-			return
-		}
-
-		dnsQueryResponse := dqrs.DNSQueryResponse{
-			// use zero value initially for Answer field
-			Answer: in.Answer,
-			Server: server,
-			Query:  cfg.Query,
+			// Check whether the user has opted to ignore errors and proceed
+			// FIXME: Assuming 'Yes' for now
+			log.Println(err)
 		}
 
 		results = append(results, dnsQueryResponse)
