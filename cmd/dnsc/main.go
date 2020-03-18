@@ -33,17 +33,6 @@ type DNSQueryResponse struct {
 // earlier query. The output is formatted for display in a Tabwriter table.
 func (dqr DNSQueryResponse) Records() string {
 
-	// We could get back a CNAME entry in addition to an A record, so loop
-	// until we find an A record
-	// typeARecordsFound := make([]*dns.A, 0, 5)
-	// for _, answer := range in.Answer {
-	// 	if a, ok := answer.(*dns.A); ok {
-	// 		// fmt.Println("TTL:", a.Hdr.Ttl)
-	// 		// fmt.Println("A:", a.A)
-	// 		typeARecordsFound = append(typeARecordsFound, a)
-	// 	}
-	// }
-
 	var records []string
 
 	for _, record := range dqr.Answer {
@@ -84,20 +73,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	// do something useful with the config
-	//fmt.Printf("%#v\n", *cfg)
-
-	// Process query using configured settings
-
-	// fqdn := dns.Fqdn("stacktitan.com")
 	fqdn := dns.Fqdn(cfg.Query)
-
-	// loop over each of our DNS servers, build up a results set
 
 	var results []DNSQueryResponse
 
+	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
-		//fmt.Println("Server:", server)
 
 		var msg dns.Msg
 
@@ -105,18 +86,17 @@ func main() {
 		// back to the actual A record
 		msg.SetQuestion(fqdn, dns.TypeA)
 
+		// Perform UDP-based query using default settings
 		in, err := dns.Exchange(&msg, server+":53")
 		if err != nil {
 			panic(err)
 		}
 
+		// Early exit if one of the DNS servers returns an unexpected result
 		if len(in.Answer) < 1 {
 			fmt.Printf("ERROR: No records for %q from %s\n", cfg.Query, server)
 			return
 		}
-
-		//fmt.Println("length of in.Answer:", len(in.Answer))
-		//fmt.Printf("%#v\n", in.Answer)
 
 		dnsQueryResponse := DNSQueryResponse{
 			// use zero value initially for Answer field
@@ -124,14 +104,6 @@ func main() {
 			Server: server,
 			Query:  cfg.Query,
 		}
-
-		// // Sort to make comparison easier later
-		// // https://stackoverflow.com/a/48389676
-		// sort.Slice(typeARecordsFound, func(i, j int) bool {
-		// 	return bytes.Compare(typeARecordsFound[i].A, typeARecordsFound[j].A) < 0
-		// })
-
-		// dnsQueryResponse.ARecords = typeARecordsFound
 
 		results = append(results, dnsQueryResponse)
 	}
