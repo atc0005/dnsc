@@ -19,15 +19,26 @@ import (
 	"github.com/atc0005/dnsc/config"
 )
 
-// DNSQueryResponse represents a query and response from a DNS server
+// DNSQueryResponse represents a query and response from a DNS server.
+// Multiple records may be returned for a single query (e.g., CNAME and A
+// records).
 type DNSQueryResponse struct {
 
-	// Depending on the system, there *could* be multiple A records returned
-	// ARecords []*dns.A
+	// Answer may potentially be composed of multiple Resource Record types
+	// such as CNAME and A records. We later separate out the types when
+	// needed.
 	Answer []dns.RR
+
+	// Server is the DNS server used for this query and response.
 	Server string
-	Query  string
+
+	// Query is the FQDN that we requested a record for.
+	Query string
 }
+
+// DNSQueryResponses is a collection of DNS query responses. Intended for
+// aggregation before bulk processing of some kind.
+type DNSQueryResponses []DNSQueryResponse
 
 // Records returns a comma-separated string of all DNS records retrieved by an
 // earlier query. The output is formatted for display in a Tabwriter table.
@@ -65,6 +76,38 @@ func (dqr DNSQueryResponse) TTLs() string {
 	return strings.Join(ttlEntries, ", ")
 }
 
+// PrintSummary generates a table of all collected DNS query results
+func (dqrs DNSQueryResponses) PrintSummary() {
+	w := new(tabwriter.Writer)
+	//w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
+
+	// Format in tab-separated columns
+	//w.Init(os.Stdout, 16, 8, 8, '\t', 0)
+	w.Init(os.Stdout, 8, 8, 8, '\t', 0)
+
+	// Header row in output
+	fmt.Fprintln(w,
+		"Server\tQuery\tAnswers\tTTL\t")
+
+	// Separator row
+	// TODO: I'm sure this can be handled better
+	fmt.Fprintln(w,
+		"---\t---\t---\t---\t")
+
+	for _, item := range dqrs {
+		fmt.Fprintf(w,
+			"%s\t%s\t%s\t%s\n",
+			item.Server,
+			item.Query,
+			item.Records(),
+			item.TTLs(),
+		)
+	}
+
+	fmt.Fprintln(w)
+	w.Flush()
+}
+
 func main() {
 
 	cfg, err := config.NewConfig()
@@ -75,7 +118,7 @@ func main() {
 
 	fqdn := dns.Fqdn(cfg.Query)
 
-	var results []DNSQueryResponse
+	var results DNSQueryResponses
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
@@ -85,6 +128,9 @@ func main() {
 		// NOTE: Recursion is used by default, which resolves CNAME entries
 		// back to the actual A record
 		msg.SetQuestion(fqdn, dns.TypeA)
+
+		// TODO: Use concurrency to query all DNS servers in bulk instead of
+		// waiting for each to complete before querying the next one
 
 		// Perform UDP-based query using default settings
 		in, err := dns.Exchange(&msg, server+":53")
@@ -108,33 +154,7 @@ func main() {
 		results = append(results, dnsQueryResponse)
 	}
 
-	// loop over all collected query responses
-
-	w := new(tabwriter.Writer)
-	//w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
-
-	// Format in tab-separated columns
-	//w.Init(os.Stdout, 16, 8, 8, '\t', 0)
-	w.Init(os.Stdout, 8, 8, 8, '\t', 0)
-
-	// Header row in output
-	fmt.Fprintln(w,
-		"Server\tQuery\tAnswers\tTTL\t")
-
-	fmt.Fprintln(w,
-		"---\t---\t---\t---\t")
-
-	for _, item := range results {
-		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\n",
-			item.Server,
-			item.Query,
-			item.Records(),
-			item.TTLs(),
-		)
-	}
-
-	fmt.Fprintln(w)
-	w.Flush()
+	// Generate summary of all collected query responses
+	results.PrintSummary()
 
 }
