@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -102,7 +103,13 @@ func NewConfig() (*Config, error) {
 		os.Exit(0)
 	}
 
+	if err := config.Validate(); err != nil {
+		flag.Usage()
+		return nil, err
+	}
+
 	// load config file
+	log.Printf("Attempting to open %q\n", config.ConfigFile)
 	fh, err := os.Open(config.ConfigFile)
 	if err != nil {
 		return nil, err
@@ -110,11 +117,6 @@ func NewConfig() (*Config, error) {
 	defer fh.Close()
 
 	if err := config.LoadConfigFile(fh); err != nil {
-		return nil, err
-	}
-
-	if err := config.Validate(); err != nil {
-		flag.Usage()
 		return nil, err
 	}
 
