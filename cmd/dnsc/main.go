@@ -33,11 +33,11 @@ func main() {
 
 		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
 
-			dnsQueryResponse, err := dqrs.PerformQuery(query, server)
-			if err != nil {
+			dnsQueryResponse := dqrs.PerformQuery(query, server)
+			if dnsQueryResponse.QueryError != nil {
 				// Check whether the user has opted to ignore errors and proceed
 				// FIXME: Assuming 'Yes' for now
-				log.Println(err)
+				log.Println(dnsQueryResponse.QueryError)
 			}
 
 			//results = append(results, dnsQueryResponse)
@@ -49,10 +49,16 @@ func main() {
 
 	}
 
-	// loop over results channel and collect all responses
-	for response := range resultsChan {
-		results = append(results, response)
+	// collect all responses using the total number of DNS servers as our
+	// limiter (for now, until I learn more about channels)
+	remainingResponses := len(cfg.Servers)
+	for remainingResponses > 0 {
+		results = append(results, <-resultsChan)
+		remainingResponses--
 	}
+	// for response := range resultsChan {
+	// 	results = append(results, response)
+	// }
 
 	// Generate summary of all collected query responses
 	results.PrintSummary()

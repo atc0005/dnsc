@@ -33,11 +33,21 @@ type DNSQueryResponse struct {
 
 	// Query is the FQDN that we requested a record for.
 	Query string
+
+	// Error records whether an error occurred during any part of performing a
+	// query
+	QueryError error
 }
 
 // DNSQueryResponses is a collection of DNS query responses. Intended for
 // aggregation before bulk processing of some kind.
 type DNSQueryResponses []DNSQueryResponse
+
+// Error satisfies the Error interface
+// TODO: This doesn't look right
+func (dqr DNSQueryResponse) Error() string {
+	return fmt.Sprintf("%v", dqr.QueryError)
+}
 
 // Records returns a comma-separated string of all DNS records retrieved by an
 // earlier query. The output is formatted for display in a Tabwriter table.
@@ -110,7 +120,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 // PerformQuery wraps the bulk of the query/record logic performed by this
 // application
-func PerformQuery(query string, server string) (DNSQueryResponse, error) {
+func PerformQuery(query string, server string) DNSQueryResponse {
 
 	var msg dns.Msg
 
@@ -126,14 +136,19 @@ func PerformQuery(query string, server string) (DNSQueryResponse, error) {
 	// Perform UDP-based query using default settings
 	in, err := dns.Exchange(&msg, server+":53")
 	if err != nil {
-		panic(err)
+		// panic(err)
+		return DNSQueryResponse{
+			QueryError: err,
+		}
 	}
 
 	// Early exit if one of the DNS servers returns an unexpected result
 	if len(in.Answer) < 1 {
 
-		return DNSQueryResponse{},
-			fmt.Errorf("no records for %q from %s", query, server)
+		return DNSQueryResponse{
+			QueryError: fmt.Errorf("no records for %q from %s", query, server),
+		}
+
 	}
 
 	dnsQueryResponse := DNSQueryResponse{
@@ -143,5 +158,5 @@ func PerformQuery(query string, server string) (DNSQueryResponse, error) {
 		Query:  query,
 	}
 
-	return dnsQueryResponse, nil
+	return dnsQueryResponse
 }
