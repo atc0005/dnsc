@@ -10,7 +10,6 @@ package main
 import (
 	"log"
 	"os"
-	"sync"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
@@ -24,20 +23,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	var wg sync.WaitGroup
-
-	// Declare that we'll have the same number of goroutines as we do the
-	// number of DNS servers
-	wg.Add(len(cfg.Servers))
-
 	results := make(dqrs.DNSQueryResponses, 0, 10)
+
+	// receive query results on this channel
+	resultsChan := make(chan dqrs.DNSQueryResponse)
 
 	// loop over each of our DNS servers, build up a results set
 	for _, server := range cfg.Servers {
 
-		go func(server string, query string, wg *sync.WaitGroup) {
-
-			defer wg.Done()
+		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
 
 			dnsQueryResponse, err := dqrs.PerformQuery(query, server)
 			if err != nil {
@@ -46,13 +40,19 @@ func main() {
 				log.Println(err)
 			}
 
-			results = append(results, dnsQueryResponse)
+			//results = append(results, dnsQueryResponse)
+			resultsChan <- dnsQueryResponse
 
-		}(server, cfg.Query, &wg)
+		}(server, cfg.Query, resultsChan)
+
+		// TODO: Signal that we're done spinning off goroutines?
 
 	}
 
-	wg.Wait()
+	// loop over results channel and collect all responses
+	for response := range resultsChan {
+		results = append(results, response)
+	}
 
 	// Generate summary of all collected query responses
 	results.PrintSummary()
