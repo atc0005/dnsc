@@ -8,11 +8,9 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strings"
 	"text/tabwriter"
 
@@ -25,29 +23,57 @@ import (
 type DNSQueryResponse struct {
 
 	// Depending on the system, there *could* be multiple A records returned
-	ARecords []*dns.A
-	Server   string
-	Query    string
+	// ARecords []*dns.A
+	Answer []dns.RR
+	Server string
+	Query  string
 }
 
-func (dqr DNSQueryResponse) GetARecords() string {
+// Records returns a comma-separated string of all DNS records retrieved by an
+// earlier query. The output is formatted for display in a Tabwriter table.
+func (dqr DNSQueryResponse) Records() string {
 
-	var aRecords []string
-	for _, record := range dqr.ARecords {
-		aRecords = append(aRecords, record.A.String())
+	// We could get back a CNAME entry in addition to an A record, so loop
+	// until we find an A record
+	// typeARecordsFound := make([]*dns.A, 0, 5)
+	// for _, answer := range in.Answer {
+	// 	if a, ok := answer.(*dns.A); ok {
+	// 		// fmt.Println("TTL:", a.Hdr.Ttl)
+	// 		// fmt.Println("A:", a.A)
+	// 		typeARecordsFound = append(typeARecordsFound, a)
+	// 	}
+	// }
+
+	var records []string
+
+	for _, record := range dqr.Answer {
+
+		var answer string
+
+		switch v := record.(type) {
+		case *dns.A:
+			answer = v.A.String() + " (A)"
+		case *dns.CNAME:
+			answer = v.Target + " (CNAME)"
+		default:
+			answer = "type unknown"
+		}
+
+		records = append(records, answer)
 	}
 
-	return strings.Join(aRecords, ",")
+	return strings.Join(records, ", ")
 }
 
-func (dqr DNSQueryResponse) GetTTLs() string {
+// TTLs returns a comma-separated list of record TTLs from an earlier query
+func (dqr DNSQueryResponse) TTLs() string {
 
 	var ttlEntries []string
-	for _, record := range dqr.ARecords {
-		ttlEntries = append(ttlEntries, fmt.Sprint(record.Hdr.Ttl))
+	for _, record := range dqr.Answer {
+		ttlEntries = append(ttlEntries, fmt.Sprint(record.Header().Ttl))
 	}
 
-	return strings.Join(ttlEntries, ",")
+	return strings.Join(ttlEntries, ", ")
 }
 
 func main() {
@@ -89,34 +115,23 @@ func main() {
 			return
 		}
 
+		//fmt.Println("length of in.Answer:", len(in.Answer))
+		//fmt.Printf("%#v\n", in.Answer)
+
 		dnsQueryResponse := DNSQueryResponse{
 			// use zero value initially for Answer field
-			//Answer:,
+			Answer: in.Answer,
 			Server: server,
 			Query:  cfg.Query,
 		}
 
-		//fmt.Println("length of in.Answer:", len(in.Answer))
-		//fmt.Printf("%#v\n", in.Answer)
+		// // Sort to make comparison easier later
+		// // https://stackoverflow.com/a/48389676
+		// sort.Slice(typeARecordsFound, func(i, j int) bool {
+		// 	return bytes.Compare(typeARecordsFound[i].A, typeARecordsFound[j].A) < 0
+		// })
 
-		// We could get back a CNAME entry in addition to an A record, so loop
-		// until we find an A record
-		typeARecordsFound := make([]*dns.A, 0, 5)
-		for _, answer := range in.Answer {
-			if a, ok := answer.(*dns.A); ok {
-				// fmt.Println("TTL:", a.Hdr.Ttl)
-				// fmt.Println("A:", a.A)
-				typeARecordsFound = append(typeARecordsFound, a)
-			}
-		}
-
-		// Sort to make comparison easier later
-		// https://stackoverflow.com/a/48389676
-		sort.Slice(typeARecordsFound, func(i, j int) bool {
-			return bytes.Compare(typeARecordsFound[i].A, typeARecordsFound[j].A) < 0
-		})
-
-		dnsQueryResponse.ARecords = typeARecordsFound
+		// dnsQueryResponse.ARecords = typeARecordsFound
 
 		results = append(results, dnsQueryResponse)
 	}
@@ -134,13 +149,16 @@ func main() {
 	fmt.Fprintln(w,
 		"Server\tQuery\tAnswers\tTTL\t")
 
+	fmt.Fprintln(w,
+		"---\t---\t---\t---\t")
+
 	for _, item := range results {
 		fmt.Fprintf(w,
 			"%s\t%s\t%s\t%s\n",
 			item.Server,
 			item.Query,
-			item.GetARecords(),
-			item.GetTTLs(),
+			item.Records(),
+			item.TTLs(),
 		)
 	}
 
