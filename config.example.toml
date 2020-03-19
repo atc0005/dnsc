@@ -7,7 +7,16 @@
 
 # Multi-line array
 # https://github.com/toml-lang/toml#user-content-array
-servers = [
+dns_servers = [
     "8.8.8.8",
     "8.8.4.4",
 ]
+
+# https://godoc.org/github.com/apex/log#Level
+#
+# `fatal` is used for errors that should definitely be noted.
+# `error` is for errors that should definitely be noted.
+# `warn` is for non-critical entries that deserve eyes.
+# `info` is for general application operational entries.
+# `debug` is for debug-level messages and is usually enabled when debugging.
+log_level = "info"
