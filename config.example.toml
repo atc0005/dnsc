@@ -18,6 +18,12 @@ dns_servers = [
     "208.67.220.220",
 ]
 
+# Whether DNS-related errors should be ignored. If set, this allows
+# query-related DNS errors with one host to not block queries against
+# remaining DNS servers. This can be useful to work around failures with one
+# server in a pool of many.
+ignore_dns_errors = false
+
 # https://godoc.org/github.com/apex/log#Level
 #
 # `fatal` is used for errors that should definitely be noted.

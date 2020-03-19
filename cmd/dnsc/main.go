@@ -59,9 +59,10 @@ func main() {
 			dnsQueryResponse := dqrs.PerformQuery(query, server)
 			if dnsQueryResponse.QueryError != nil {
 				// Check whether the user has opted to ignore errors and proceed
-				// FIXME: Assuming 'No' for now
-				log.Error(dnsQueryResponse.QueryError.Error())
-				os.Exit(1)
+				if !cfg.IgnoreDNSErrors() {
+					log.Error(dnsQueryResponse.QueryError.Error())
+					os.Exit(1)
+				}
 			}
 
 			//results = append(results, dnsQueryResponse)

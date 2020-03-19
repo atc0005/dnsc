@@ -34,10 +34,11 @@ const myAppName string = "dnsc"
 const myAppURL string = "https://github.com/atc0005/" + myAppName
 
 const (
-	versionFlagHelp   = "Whether to display application version and then immediately exit application."
-	queryFlagHelp     = "Fully-qualified system to lookup from all provided DNS servers."
-	logLevelFlagHelp  = "Log message priority filter. Log messages with a lower level are ignored."
-	logFormatFlagHelp = "Log messages are written in this format"
+	versionFlagHelp         = "Whether to display application version and then immediately exit application."
+	queryFlagHelp           = "Fully-qualified system to lookup from all provided DNS servers."
+	logLevelFlagHelp        = "Log message priority filter. Log messages with a lower level are ignored."
+	logFormatFlagHelp       = "Log messages are written in this format"
+	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
 )
 
 // Default flag settings if not overridden by user input
@@ -45,6 +46,7 @@ const (
 	defaultLogLevel              string = "info"
 	defaultLogFormat             string = "text"
 	defaultDisplayVersionAndExit bool   = false
+	defaultIgnoreDNSErrors       bool   = false
 )
 
 // Log levels
@@ -124,6 +126,13 @@ type Config struct {
 // specified by various configuration sources
 type configTemplate struct {
 
+	// IgnoreDNSErrors is a boolean *pointer* flag indicating whether
+	// individual DNS errors should be ignored. If enabled, this setting
+	// allows query-related DNS errors with one host to not block queries
+	// against remaining DNS servers. This can be useful to work around
+	// failures with one server in a pool of many.
+	IgnoreDNSErrors *bool `toml:"ignore_dns_errors"`
+
 	// Servers is a list of the DNS servers used by this application. Most
 	// commonly set in a configuration file due to the number of servers used
 	// for testing queries.
@@ -202,24 +211,39 @@ func (c Config) LogFormat() string {
 // ShowVersion returns the user-provided choice of displaying the application
 // version and exiting or the default value for this choice.
 func (c Config) ShowVersion() bool {
-
 	return c.showVersion
+}
 
+// IgnoreDNSErrors returns the user-provided choice of ignoring DNS-related
+// errors or the default value for this choice.
+func (c Config) IgnoreDNSErrors() bool {
+	switch {
+
+	// if not nil, a choice was made; use set choice, otherwise return default
+	case c.cliConfig.IgnoreDNSErrors != nil:
+		return *c.cliConfig.IgnoreDNSErrors
+	case c.fileConfig.IgnoreDNSErrors != nil:
+		return *c.fileConfig.IgnoreDNSErrors
+	default:
+		return defaultIgnoreDNSErrors
+	}
 }
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s }, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
 		c.cliConfig.LogLevel,
 		c.cliConfig.LogFormat,
+		c.cliConfig.IgnoreDNSErrors,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
+		c.fileConfig.IgnoreDNSErrors,
 		c.configFile,
 		c.showVersion,
 	)
@@ -296,32 +320,58 @@ func (c Config) configureLogging() {
 
 }
 
+// NewBaseConfig returns a bare-minimum initialized config object for further
+// customization before returning to a caller
+func NewBaseConfig() Config {
+
+	// we have to explicitly initialize our IgnoreDNSErrors pointer field
+	// to prevent "invalid memory address or nil pointer deference" panics
+	return Config{
+		cliConfig: configTemplate{
+			IgnoreDNSErrors: new(bool),
+		},
+		fileConfig: configTemplate{
+			IgnoreDNSErrors: new(bool),
+		},
+	}
+}
+
+// handleFlagsConfig wraps flag setup code into a bundle for potential ease of
+// use and future testability
+func (c *Config) handleFlagsConfig() {
+
+	log.Debugf("Before parsing flags: %v", c.String())
+
+	flag.StringVar(&c.configFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
+
+	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
+	flag.BoolVar(&c.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
+
+	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ignore-dns-errors", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp)
+	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ide", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp+" (shorthand)")
+
+	flag.StringVar(&c.cliConfig.Query, "query", "", queryFlagHelp)
+	flag.StringVar(&c.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
+
+	// create shorter and longer logging level flag options
+	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
+	flag.StringVar(&c.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
+
+	// create shorter and longer logging format flag options
+	flag.StringVar(&c.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
+	flag.StringVar(&c.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
+
+	flag.Usage = flagsUsage()
+	flag.Parse()
+}
+
 // NewConfig is a factory function that produces a new Config object based
 // on user provided flag and config file values.
 func NewConfig() (*Config, error) {
 
-	config := Config{}
+	config := NewBaseConfig()
 
-	log.Debugf("Before parsing flags: %v", config.String())
-
-	flag.StringVar(&config.configFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
-
-	flag.BoolVar(&config.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
-	flag.BoolVar(&config.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
-
-	flag.StringVar(&config.cliConfig.Query, "query", "", queryFlagHelp)
-	flag.StringVar(&config.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
-
-	// create shorter and longer logging level flag options
-	flag.StringVar(&config.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
-	flag.StringVar(&config.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
-
-	// create shorter and longer logging format flag options
-	flag.StringVar(&config.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
-	flag.StringVar(&config.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
-
-	flag.Usage = flagsUsage()
-	flag.Parse()
+	config.handleFlagsConfig()
 
 	// Apply initial logging settings based on any provided CLI flags
 	config.configureLogging()
@@ -381,6 +431,16 @@ func (c Config) Validate() error {
 		return fmt.Errorf("one or more DNS servers not provided")
 	}
 	log.Debugf("c.Servers() validates: (%d entries) %#v", len(c.Servers()), c.Servers())
+
+	if c.cliConfig.IgnoreDNSErrors == nil {
+		return fmt.Errorf("c.cliConfig.IgnoreDNSErrors not initialized")
+	}
+	log.Debug("c.cliConfig.IgnoreDNSErrors initialized")
+
+	if c.fileConfig.IgnoreDNSErrors == nil {
+		return fmt.Errorf("c.fileConfig.IgnoreDNSErrors not initialized")
+	}
+	log.Debug("c.fileConfig.IgnoreDNSErrors initialized")
 
 	if c.Query() == "" {
 		return fmt.Errorf("query not provided")
