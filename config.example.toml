@@ -40,4 +40,8 @@ log_level = "debug"
 # json - JSON output handler
 # logfmt - logfmt plain-text formatter
 # text - human-friendly colored output
-log_format = "json"
+log_format = "cli"
+
+# Specifying a static/hard-coded query here is not enabled by default, but
+# could prove useful in some situations.
+# query = "www.yahoo.com"

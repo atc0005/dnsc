@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
@@ -40,6 +41,7 @@ const (
 	logFormatFlagHelp       = "Log messages are written in this format"
 	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
 	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
+	dnsServerFlagHelp       = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
 )
 
 // Default flag settings if not overridden by user input
@@ -104,6 +106,30 @@ const (
 	LogFormatDiscard string = "discard"
 )
 
+// multiValueFlag is a custom type that satisfies the flag.Value interface in
+// order to accept multiple values for some of our flags
+type multiValueFlag []string
+
+// String returns a comma separated string consisting of all slice elements
+func (i *multiValueFlag) String() string {
+
+	// From the `flag` package docs:
+	// "The flag package may call the String method with a zero-valued
+	// receiver, such as a nil pointer."
+	if i == nil {
+		return ""
+	}
+
+	return strings.Join(*i, ",")
+}
+
+// Set is called once by the flag package, in command line order, for each
+// flag present
+func (i *multiValueFlag) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
+
 // Config is a unified set of configuration values for this application. This
 // struct is configured via command-line flags or TOML configuration file
 // provided by the user. The majority of values held by this object are
@@ -137,7 +163,7 @@ type configTemplate struct {
 	// Servers is a list of the DNS servers used by this application. Most
 	// commonly set in a configuration file due to the number of servers used
 	// for testing queries.
-	Servers []string `toml:"dns_servers"`
+	Servers multiValueFlag `toml:"dns_servers"`
 
 	// Query represents the FQDN query strings submitted to each DNS server
 	Query string `toml:"query"`
@@ -343,6 +369,9 @@ func (c *Config) handleFlagsConfig() {
 
 	log.Debugf("Before parsing flags: %v", c.String())
 
+	flag.Var(&c.cliConfig.Servers, "ds", dnsServerFlagHelp+" (shorthand)")
+	flag.Var(&c.cliConfig.Servers, "dns-server", dnsServerFlagHelp)
+
 	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
 	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
 
@@ -385,30 +414,40 @@ func NewConfig() (*Config, error) {
 		return &config, nil
 	}
 
-	// load config file
-	log.WithFields(log.Fields{
-		"config_file": config.configFile,
-	}).Debug("Attempting to open config file")
+	// TODO: Add hooks here to try and auto-load config file from known
+	// locations:
+	//
+	// $HOME/.config/dnsc/config.toml
+	// $PWD/config.toml
+	// BINARY_LOCATION/config.toml
 
-	fh, err := os.Open(config.configFile)
-	if err != nil {
-		return nil, err
+	if config.configFile != "" {
+		// load config file
+		log.WithFields(log.Fields{
+			"config_file": config.configFile,
+		}).Debug("Attempting to open config file")
+
+		fh, err := os.Open(config.configFile)
+		if err != nil {
+			return nil, err
+		}
+		log.Debug("Config file opened")
+		defer fh.Close()
+
+		log.Debug("Attempting to parse config file ...")
+		if err := config.LoadConfigFile(fh); err != nil {
+			return nil, err
+		}
+
+		// Apply logging settings based on any provided config file settings
+		config.configureLogging()
+
+		log.Debug("Config file successfully parsed")
+
+		log.Debugf("After loading config file: %v", config.String())
 	}
-	log.Debug("Config file opened")
-	defer fh.Close()
 
-	if err := config.LoadConfigFile(fh); err != nil {
-		return nil, err
-	}
-
-	// Apply logging settings based on any provided config file settings
-	config.configureLogging()
-
-	log.Debug("Config file successfully parsed")
-
-	log.Debugf("After loading config file: %v", config.String())
-
-	log.Debug("Validating configuration after importing config file")
+	log.Debug("Validating configuration ...")
 	if err := config.Validate(); err != nil {
 		flag.Usage()
 		return nil, err
@@ -424,10 +463,11 @@ func NewConfig() (*Config, error) {
 // Validate verifies all struct fields have been provided acceptable values
 func (c Config) Validate() error {
 
-	if c.configFile == "" {
-		return fmt.Errorf("missing fully-qualified path to config file to load")
-	}
-	log.Debugf("c.configFile validates: %#v", c.configFile)
+	// TODO: Ensure this is completely optional
+	// if c.configFile == "" {
+	// 	return fmt.Errorf("missing fully-qualified path to config file to load")
+	// }
+	// log.Debugf("c.configFile validates: %#v", c.configFile)
 
 	if c.Servers() == nil || len(c.Servers()) == 0 {
 		return fmt.Errorf("one or more DNS servers not provided")
