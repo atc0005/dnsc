@@ -11,9 +11,7 @@ package dqrs
 
 import (
 	"fmt"
-	"os"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/miekg/dns"
 )
@@ -84,38 +82,6 @@ func (dqr DNSQueryResponse) TTLs() string {
 	}
 
 	return strings.Join(ttlEntries, ", ")
-}
-
-// PrintSummary generates a table of all collected DNS query results
-func (dqrs DNSQueryResponses) PrintSummary() {
-	w := new(tabwriter.Writer)
-	//w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
-
-	// Format in tab-separated columns
-	//w.Init(os.Stdout, 16, 8, 8, '\t', 0)
-	w.Init(os.Stdout, 8, 8, 8, '\t', 0)
-
-	// Header row in output
-	fmt.Fprintln(w,
-		"Server\tQuery\tAnswers\tTTL\t")
-
-	// Separator row
-	// TODO: I'm sure this can be handled better
-	fmt.Fprintln(w,
-		"---\t---\t---\t---\t")
-
-	for _, item := range dqrs {
-		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\n",
-			item.Server,
-			item.Query,
-			item.Records(),
-			item.TTLs(),
-		)
-	}
-
-	fmt.Fprintln(w)
-	w.Flush()
 }
 
 // PerformQuery wraps the bulk of the query/record logic performed by this

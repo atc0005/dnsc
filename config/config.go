@@ -19,6 +19,8 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
+	"github.com/apex/log/handlers/logfmt"
+	"github.com/apex/log/handlers/text"
 	"github.com/pelletier/go-toml"
 )
 
@@ -30,8 +32,9 @@ const myAppName string = "dnsc"
 const myAppURL string = "https://github.com/atc0005/" + myAppName
 
 const (
-	versionFlagHelp = "Whether to display application version and then immediately exit application."
-	queryFlagHelp   = "Fully-qualified system to lookup from all provided DNS servers."
+	versionFlagHelp  = "Whether to display application version and then immediately exit application."
+	queryFlagHelp    = "Fully-qualified system to lookup from all provided DNS servers."
+	loglevelFlagHelp = "Log message priority filter. Log messages with a lower level are ignored."
 )
 
 // Default flag settings if not overridden by user input
@@ -124,6 +127,10 @@ func (c *Config) LoadConfigFile(fh io.Reader) error {
 // configureLogging is a wrapper function to enable setting requested logging
 // settings.
 func (c Config) configureLogging() {
+
+	// TODO: Expose this as a user-level choice
+	handler := "cli"
+
 	switch c.LogLevel {
 	case LogLevelFatal:
 		log.SetLevel(log.FatalLevel)
@@ -137,7 +144,15 @@ func (c Config) configureLogging() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	log.SetHandler(cli.New(os.Stdout))
+	switch handler {
+	case "text":
+		log.SetHandler(text.New(os.Stdout))
+	case "cli":
+		log.SetHandler(cli.New(os.Stdout))
+	case "logfmt":
+		log.SetHandler(logfmt.New(os.Stdout))
+	}
+
 }
 
 // NewConfig is a factory function that produces a new Config object based
@@ -154,12 +169,9 @@ func NewConfig() (*Config, error) {
 	flag.StringVar(&config.Query, "query", "", queryFlagHelp)
 	flag.StringVar(&config.Query, "q", "", queryFlagHelp+" (shorthand)")
 
-	flag.StringVar(
-		&config.LogLevel,
-		"log-lvl",
-		defaultLogLevel,
-		"Log message priority filter. Log messages with a lower level are ignored.",
-	)
+	// create shorter and longer logging level flag options
+	flag.StringVar(&config.LogLevel, "ll", defaultLogLevel, loglevelFlagHelp)
+	flag.StringVar(&config.LogLevel, "log-level", defaultLogLevel, loglevelFlagHelp)
 
 	flag.Usage = flagsUsage()
 	flag.Parse()
@@ -169,27 +181,31 @@ func NewConfig() (*Config, error) {
 		return &config, nil
 	}
 
-	if err := config.Validate(); err != nil {
-		flag.Usage()
-		return nil, err
-	}
-
 	config.configureLogging()
 
 	// load config file
 	log.WithFields(log.Fields{
 		"config_file": config.ConfigFile,
-	}).Info("attempting to open config file")
+	}).Debug("Attempting to open config file")
 
 	fh, err := os.Open(config.ConfigFile)
 	if err != nil {
 		return nil, err
 	}
+	log.Debug("Config file opened")
 	defer fh.Close()
 
 	if err := config.LoadConfigFile(fh); err != nil {
 		return nil, err
 	}
+	log.Debug("Config file successfully parsed")
+
+	log.Debug("Validating configuration after importing config file")
+	if err := config.Validate(); err != nil {
+		flag.Usage()
+		return nil, err
+	}
+	log.Debug("Configuration validated")
 
 	return &config, nil
 
