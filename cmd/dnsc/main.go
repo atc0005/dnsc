@@ -43,8 +43,12 @@ func main() {
 
 	results := make(dqrs.DNSQueryResponses, 0, 10)
 
-	// receive query results on this channel
-	resultsChan := make(chan dqrs.DNSQueryResponse)
+	capacity := len(cfg.Servers())
+	log.WithFields(log.Fields{
+		"results_channel_capacity": capacity,
+	}).Debug("Creating results channel with capacity to match defined DNS servers")
+	// resultsChan := make(chan dqrs.DNSQueryResponse)
+	resultsChan := make(chan dqrs.DNSQueryResponse, capacity)
 
 	// spin off a separate goroutine for each of our DNS servers, send back
 	// results on a channel
@@ -72,7 +76,7 @@ func main() {
 		}
 
 		// note that we've received another response from a DNS server in our
-		// list; wait for the next response, otherwise break out of loop
+		// list; get the next response, break out of loop once done
 		remainingResponses--
 	}
 
