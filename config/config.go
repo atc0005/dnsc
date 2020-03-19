@@ -39,6 +39,7 @@ const (
 	logLevelFlagHelp        = "Log message priority filter. Log messages with a lower level are ignored."
 	logFormatFlagHelp       = "Log messages are written in this format"
 	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
+	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 )
 
 // Default flag settings if not overridden by user input
@@ -342,7 +343,7 @@ func (c *Config) handleFlagsConfig() {
 
 	log.Debugf("Before parsing flags: %v", c.String())
 
-	flag.StringVar(&c.configFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
+	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
 
 	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
 	flag.BoolVar(&c.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
