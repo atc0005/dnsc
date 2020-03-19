@@ -42,8 +42,9 @@ const (
 
 // Default flag settings if not overridden by user input
 const (
-	defaultLogLevel  string = "info"
-	defaultLogFormat string = "text"
+	defaultLogLevel              string = "info"
+	defaultLogFormat             string = "text"
+	defaultDisplayVersionAndExit bool   = false
 )
 
 // Log levels
@@ -129,7 +130,7 @@ type configTemplate struct {
 	Servers []string `toml:"dns_servers"`
 
 	// Query represents the FQDN query strings submitted to each DNS server
-	Query string `toml:"-"`
+	Query string `toml:"query"`
 
 	// LogLevel is the chosen logging level
 	LogLevel string `toml:"log_level"`
@@ -156,15 +157,71 @@ func (c Config) Servers() []string {
 	}
 }
 
+// Query returns the user-provided DNS server query or empty string if DNS
+// server query was not provided. CLI flag values take precedence if provided.
+func (c Config) Query() string {
+
+	switch {
+	case c.cliConfig.Query != "":
+		return c.cliConfig.Query
+	case c.fileConfig.Query != "":
+		return c.fileConfig.Query
+	default:
+		return ""
+	}
+}
+
+// LogLevel returns the user-provided logging level or empty string if not
+// provided. CLI flag values take precedence if provided.
+func (c Config) LogLevel() string {
+
+	switch {
+	case c.cliConfig.LogLevel != "":
+		return c.cliConfig.LogLevel
+	case c.fileConfig.LogLevel != "":
+		return c.fileConfig.LogLevel
+	default:
+		return ""
+	}
+}
+
+// LogFormat returns the user-provided logging format or empty string if not
+// provided. CLI flag values take precedence if provided.
+func (c Config) LogFormat() string {
+
+	switch {
+	case c.cliConfig.LogFormat != "":
+		return c.cliConfig.LogFormat
+	case c.fileConfig.LogFormat != "":
+		return c.fileConfig.LogFormat
+	default:
+		return ""
+	}
+}
+
+// ShowVersion returns the user-provided choice of displaying the application
+// version and exiting or the default value for this choice.
+func (c Config) ShowVersion() bool {
+
+	return c.showVersion
+
+}
+
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"Servers: %v, Query: %q, ConfigFile: %q, ShowVersion: %t, LogLevel: %s, LogFormat: %s",
-		c.Servers(),
-		c.Query(),
-		c.ConfigFile(),
-		c.ShowVersion(),
-		c.LogLevel(),
-		c.LogFormat(),
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s }, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s}, "+
+			"ConfigFile: %q, ShowVersion: %t,",
+		c.cliConfig.Servers,
+		c.cliConfig.Query,
+		c.cliConfig.LogLevel,
+		c.cliConfig.LogFormat,
+		c.fileConfig.Servers,
+		c.fileConfig.Query,
+		c.fileConfig.LogLevel,
+		c.fileConfig.LogFormat,
+		c.configFile,
+		c.showVersion,
 	)
 }
 
@@ -199,7 +256,8 @@ func (c *Config) LoadConfigFile(fh io.Reader) error {
 		return err
 	}
 
-	if err := toml.Unmarshal(configFile, c); err != nil {
+	// target nested config struct dedicated to TOML config file settings
+	if err := toml.Unmarshal(configFile, c.fileConfig); err != nil {
 		return err
 	}
 
@@ -210,10 +268,7 @@ func (c *Config) LoadConfigFile(fh io.Reader) error {
 // settings.
 func (c Config) configureLogging() {
 
-	// TODO: Expose this as a user-level choice
-	//handler := "cli"
-
-	switch c.LogLevel {
+	switch c.LogLevel() {
 	case LogLevelFatal:
 		log.SetLevel(log.FatalLevel)
 	case LogLevelError:
@@ -226,7 +281,7 @@ func (c Config) configureLogging() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	switch c.LogFormat {
+	switch c.LogFormat() {
 	case LogFormatText:
 		log.SetHandler(text.New(os.Stdout))
 	case LogFormatCLI:
@@ -245,23 +300,33 @@ func (c Config) configureLogging() {
 // on user provided flag and config file values.
 func NewConfig() (*Config, error) {
 
-	// construct config object from CLI flags
-	cliConfig := NewCLIConfig()
+	config := Config{}
 
-	fileConfig, err := NewFileConfig()
-	if err != nil {
-		return nil, err
-	}
+	fmt.Printf("Before parsing flags: %#v\n", config)
 
-	return
+	flag.StringVar(&config.configFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
 
-}
+	flag.BoolVar(&config.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
+	flag.BoolVar(&config.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
 
-func NewFileConfig() (Config, error) {
+	flag.StringVar(&config.cliConfig.Query, "query", "", queryFlagHelp)
+	flag.StringVar(&config.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
+
+	// create shorter and longer logging level flag options
+	flag.StringVar(&config.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
+	flag.StringVar(&config.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
+
+	// create shorter and longer logging format flag options
+	flag.StringVar(&config.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
+	flag.StringVar(&config.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
+
+	flag.Usage = flagsUsage()
+	flag.Parse()
+
 	fmt.Printf("After parsing flags: %#v\n", config)
 
 	// Return immediately if user just wants version details
-	if config.ShowVersion {
+	if config.ShowVersion() {
 		return &config, nil
 	}
 
@@ -270,10 +335,10 @@ func NewFileConfig() (Config, error) {
 
 	// load config file
 	log.WithFields(log.Fields{
-		"config_file": config.ConfigFile,
+		"config_file": config.configFile,
 	}).Debug("Attempting to open config file")
 
-	fh, err := os.Open(config.ConfigFile)
+	fh, err := os.Open(config.configFile)
 	if err != nil {
 		return nil, err
 	}
@@ -302,51 +367,22 @@ func NewFileConfig() (Config, error) {
 
 }
 
-func NewCLIConfig() Config {
-
-	config := Config{}
-
-	fmt.Printf("Before parsing flags: %#v\n", config)
-
-	flag.StringVar(&config.ConfigFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
-
-	flag.BoolVar(&config.ShowVersion, "version", false, versionFlagHelp)
-	flag.BoolVar(&config.ShowVersion, "v", false, versionFlagHelp+" (shorthand)")
-
-	flag.StringVar(&config.Query, "query", "", queryFlagHelp)
-	flag.StringVar(&config.Query, "q", "", queryFlagHelp+" (shorthand)")
-
-	// create shorter and longer logging level flag options
-	flag.StringVar(&config.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
-	flag.StringVar(&config.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
-
-	// create shorter and longer logging format flag options
-	flag.StringVar(&config.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
-	flag.StringVar(&config.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
-
-	flag.Usage = flagsUsage()
-	flag.Parse()
-
-	return config
-
-}
-
 // Validate verifies all struct fields have been provided acceptable values
 func (c Config) Validate() error {
 
-	if c.ConfigFile == "" {
+	if c.configFile == "" {
 		return fmt.Errorf("missing fully-qualified path to config file to load")
 	}
 
-	if c.Servers == nil || len(c.Servers) == 0 {
+	if c.Servers() == nil || len(c.Servers()) == 0 {
 		return fmt.Errorf("one or more DNS servers not provided")
 	}
 
-	if c.Query == "" {
+	if c.Query() == "" {
 		return fmt.Errorf("query not provided")
 	}
 
-	switch c.LogLevel {
+	switch c.LogLevel() {
 	case LogLevelFatal:
 	case LogLevelError:
 	case LogLevelWarn:
@@ -354,10 +390,10 @@ func (c Config) Validate() error {
 	case LogLevelDebug:
 	default:
 		return fmt.Errorf("invalid option %q provided for log level",
-			c.LogLevel)
+			c.LogLevel())
 	}
 
-	switch c.LogFormat {
+	switch c.LogFormat() {
 	case LogFormatCLI:
 	case LogFormatJSON:
 	case LogFormatLogFmt:
@@ -365,7 +401,7 @@ func (c Config) Validate() error {
 	case LogFormatDiscard:
 	default:
 		return fmt.Errorf("invalid option %q provided for log format",
-			c.LogFormat)
+			c.LogFormat())
 	}
 
 	// Optimist
