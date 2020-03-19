@@ -339,6 +339,27 @@ func (c Config) loadRelativeConfigFile() error {
 	return nil
 }
 
+func (c Config) loadUserConfigFile() error {
+	// Ubuntu environment:
+	// os.UserHomeDir: /home/username
+	// os.UserConfigDir: /home/username/.config
+	//
+	// Windows environment:
+	// os.UserHomeDir: C:\Users\username
+	// os.UserConfigDir: C:\Users\username\AppData\Roaming
+	//
+	// Look for:
+	// filepath.Join(os.UserConfigDir, "dnsc/config.toml")
+	userConfigDir, err := os.UserConfigDir()
+	if err != nil {
+		return fmt.Errorf("unable to get user config dir to find user config file: %w", err)
+	}
+	userConfigFile := filepath.Join(userConfigDir, "dnsc/config.toml")
+	log.Infof("user config file path (untested): %q", userConfigFile)
+
+	return nil
+}
+
 // ImportConfigFile reads from an io.Reader and unmarshals a configuration file
 // in TOML format into the associated Config struct.
 func (c *Config) ImportConfigFile(fh io.Reader) error {
@@ -483,27 +504,17 @@ func NewConfig() (*Config, error) {
 	// $HOME/.config/dnsc/config.toml
 	// BINARY_LOCATION/config.toml
 
+	// TODO: Finish the functions; they're not actually loading anything yet
+
 	if err := config.loadRelativeConfigFile(); err != nil {
 		// TODO: failed to load the config file
 		// TODO: Now what? Attempt to parse the next one?
 	}
 
-	// Ubuntu environment:
-	// os.UserHomeDir: /home/username
-	// os.UserConfigDir: /home/username/.config
-	//
-	// Windows environment:
-	// os.UserHomeDir: C:\Users\username
-	// os.UserConfigDir: C:\Users\username\AppData\Roaming
-	//
-	// Look for:
-	// filepath.Join(os.UserConfigDir, "dnsc/config.toml")
-	userConfigDir, err := os.UserConfigDir()
-	if err != nil {
-		return nil, fmt.Errorf("unable to get user config dir to find user config file: %w", err)
+	if err := config.loadUserConfigFile(); err != nil {
+		// TODO: failed to load the config file
+		// TODO: Now what? Attempt to parse the next one?
 	}
-	userConfigFile := filepath.Join(userConfigDir, "dnsc/config.toml")
-	log.Infof("user config file path (untested): %q", userConfigFile)
 
 	// If user provided a path to a configuration file, use that
 	if config.configFile != "" {
