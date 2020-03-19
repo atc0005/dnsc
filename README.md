@@ -10,6 +10,10 @@ Submit query against a list of DNS servers and display summary of results
     - [Command-line arguments](#command-line-arguments)
     - [Configuration file](#configuration-file)
   - [Examples](#examples)
+    - [Setup config file](#setup-config-file)
+    - [Use config file for DNS servers list](#use-config-file-for-dns-servers-list)
+    - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
+    - [Ignore errors, query all servers](#ignore-errors-query-all-servers)
   - [References](#references)
 
 ## Project home
@@ -84,6 +88,8 @@ how to use these settings.
 
 ## Examples
 
+### Setup config file
+
 These examples assume that the referenced `config.toml` file has the following
 contents:
 
@@ -102,6 +108,8 @@ dns_servers = [
 
 See the [`config.example.toml`](config.example.toml) file for a starting point.
 
+### Use config file for DNS servers list
+
 ```ShellSession
 $ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.yahoo.com
 
@@ -112,6 +120,8 @@ $ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.yahoo.com
     8.8.4.4           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            515, 44, 44
     8.8.8.8           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            872, 17, 17
 ```
+
+### Specify DNS servers list via flags
 
 You can also specify the DNS servers via CLI flags, though it is a bit more verbose:
 
@@ -124,6 +134,27 @@ $ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yaho
     208.67.222.222    www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    464, 49, 49, 49, 49
     8.8.4.4           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.10 (A), 72.30.35.9 (A), 98.138.219.232 (A), 98.138.219.231 (A)    348, 54, 54, 54, 54
     8.8.8.8           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.10 (A), 72.30.35.9 (A), 98.138.219.232 (A), 98.138.219.231 (A)    347, 53, 53, 53, 53
+```
+
+### Ignore errors, query all servers
+
+By default, one failure causes the application to immediately fail and query
+results against other servers to be discarded. You can override this behavior
+to allow the results to be processed from other servers. This can be useful if
+you have one DNS server from the group unreachable or providing invalid
+results.
+
+Here we use the short-hand `-ide` flag:
+
+```ShellSession
+$ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q tacos -ide
+
+    Server            Query    Answers                       TTL
+    ---               ---      ---                           ---
+    208.67.220.220    tacos    no records found for query
+    208.67.222.222    tacos    no records found for query
+    8.8.4.4           tacos    no records found for query
+    8.8.8.8           tacos    no records found for query
 ```
 
 ## References
