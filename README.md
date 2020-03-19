@@ -1,6 +1,6 @@
 # dnsc
 
-Submit query against a list of DNs servers and display summary of results
+Submit query against a list of DNS servers and display summary of results
 
 - [dnsc](#dnsc)
   - [Project home](#project-home)
@@ -22,7 +22,9 @@ inclusion into the project.
 
 Run a DNS query concurrently against all servers in a list and provide summary
 of results. This is most useful after moving servers between subnets when an
-IP Address change is expected.
+IP Address change is expected, but where the change may not have propagated
+between all DNS servers. The summary output is useful for spotting systems
+lagging behind the others.
 
 Command-line flags are supported for all options, though for some settings
 (e.g., DNS servers), specifying values via configuration file is easier for
@@ -39,22 +41,24 @@ The priority order is:
 1. Default settings (lowest priority)
 
 The intent of this behavior is to provide a *feathered* layering of
-configuration settings; if a configuration file provides all settings that you
-want other than one, you can use the configuration file for the other settings
-and specify the settings that you wish to override via command-line flag.
+configuration settings; if a configuration file provides nearly all settings
+that you want, specify just the settings that you wish to override via
+command-line flags and use the configuration file for the other settings.
 
 ### Command-line arguments
 
-Flags marked as **`required`** *are* required to be set via CLI flag *or*
-within a TOML-formatted configuration file.
+- Flags marked as **`required`** *are* required to be set via CLI flag *or*
+  within a TOML-formatted configuration file.
+- Flags *not* marked as required are for settings where a useful default is
+  already defined.
 
 | Flag                       | Required | Default        | Repeat  | Possible                                   | Description                                                                                                              |
 | -------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | `h`, `help`                | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                   |
 | `ds`, `dns-server`         | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                   |
 | `cf`, `config-file`        | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template. |
-| `v`, `version`             | No       | `false`        | No      | `true`, `false`                            | Whether to display application version and then immediately exit application.                                            |
-| `ide`, `ignore-dns-errors` | No       | `false`        | No      | `true`, `false`                            | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.              |
+| `v`, `version`             | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                            |
+| `ide`, `ignore-dns-errors` | No       | `false`        | No      | `ide`, `ignore-dns-errors`                 | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.              |
 | `q`, `query`               | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                          |
 | `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                |
 | `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                          |
