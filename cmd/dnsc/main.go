@@ -33,7 +33,8 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	switch {
-	case cfg.ShowVersion:
+	// TODO: How else to guard against nil cfg object?
+	case cfg != nil && cfg.ShowVersion:
 		config.Branding()
 		os.Exit(0)
 	case err == nil:
@@ -41,7 +42,7 @@ func main() {
 	case errors.Is(err, flag.ErrHelp):
 		os.Exit(0)
 	default:
-		log.Fatalf("Failed to initialize application: %s", err)
+		log.Fatalf("failed to initialize application: %s", err)
 	}
 
 	results := make(dqrs.DNSQueryResponses, 0, 10)
