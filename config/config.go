@@ -343,6 +343,7 @@ func (c *Config) handleFlagsConfig() {
 
 	log.Debugf("Before parsing flags: %v", c.String())
 
+	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
 	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
 
 	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
