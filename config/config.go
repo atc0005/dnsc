@@ -302,7 +302,7 @@ func NewConfig() (*Config, error) {
 
 	config := Config{}
 
-	fmt.Printf("Before parsing flags: %#v\n", config)
+	log.Debugf("Before parsing flags: %v", config.String())
 
 	flag.StringVar(&config.configFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
 
@@ -323,7 +323,7 @@ func NewConfig() (*Config, error) {
 	flag.Usage = flagsUsage()
 	flag.Parse()
 
-	fmt.Printf("After parsing flags: %#v\n", config)
+	log.Debugf("After parsing flags: %v", config.String())
 
 	// Return immediately if user just wants version details
 	if config.ShowVersion() {
@@ -354,7 +354,7 @@ func NewConfig() (*Config, error) {
 
 	log.Debug("Config file successfully parsed")
 
-	fmt.Printf("After loading config file: %#v\n", config)
+	log.Debugf("After loading config file: %v", config.String())
 
 	log.Debug("Validating configuration after importing config file")
 	if err := config.Validate(); err != nil {
@@ -362,6 +362,8 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 	log.Debug("Configuration validated")
+
+	//log.Debugf("Config object: %v", config.String())
 
 	return &config, nil
 
@@ -374,13 +376,19 @@ func (c Config) Validate() error {
 		return fmt.Errorf("missing fully-qualified path to config file to load")
 	}
 
+	log.Debugf("c.configFile validates: %#v", c.configFile)
+
 	if c.Servers() == nil || len(c.Servers()) == 0 {
 		return fmt.Errorf("one or more DNS servers not provided")
 	}
 
+	log.Debugf("c.Servers() validates: (%d entries) %#v", len(c.Servers()), c.Servers())
+
 	if c.Query() == "" {
 		return fmt.Errorf("query not provided")
 	}
+
+	log.Debugf("c.Query() validates: %#v", c.Query())
 
 	switch c.LogLevel() {
 	case LogLevelFatal:
@@ -393,6 +401,8 @@ func (c Config) Validate() error {
 			c.LogLevel())
 	}
 
+	log.Debugf("c.LogLevel() validates: %#v", c.LogLevel())
+
 	switch c.LogFormat() {
 	case LogFormatCLI:
 	case LogFormatJSON:
@@ -404,7 +414,10 @@ func (c Config) Validate() error {
 			c.LogFormat())
 	}
 
+	log.Debugf("c.LogFormat() validates: %#v", c.LogFormat())
+
 	// Optimist
+	log.Debug("All validation checks pass")
 	return nil
 
 }
