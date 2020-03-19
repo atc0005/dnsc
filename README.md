@@ -56,15 +56,21 @@ dnsc -config-file $HOME/.config/dnsc/config.toml -query server1.example.com -exp
 
 ## References
 
-- <https://github.com/toml-lang/toml#user-content-array>
+- Golang basics
+  - <https://golang.org/pkg/sort/#Slice>
+  - <https://golang.org/pkg/flag/#example_>
+  - <https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string>
 
-- <https://golang.org/pkg/flag/#example_>
+- TOML config file-related
+  - <https://github.com/toml-lang/toml#user-content-array>
+  - <https://github.com/pelletier/go-toml>
 
-- <https://nostarch.com/blackhatgo>
-  - <https://github.com/blackhat-go/bhg/blob/master/ch-5/get_all_a/main.go>
+- DNS library
+  - <https://github.com/miekg/dns>
+  - <https://miek.nl/2014/august/16/go-dns-package/>
+  - <https://nostarch.com/blackhatgo>
+    - <https://github.com/blackhat-go/bhg/blob/master/ch-5/get_all_a/main.go>
 
-- <https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string>
-
-- Free DNS servers for testing purposes (thanks!)
+- Free DNS servers for testing purposes
   - <https://developers.google.com/speed/public-dns>
   - <https://www.opendns.com/setupguide/>
