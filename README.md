@@ -60,6 +60,7 @@ dnsc -config-file $HOME/.config/dnsc/config.toml -query server1.example.com -exp
   - <https://golang.org/pkg/sort/#Slice>
   - <https://golang.org/pkg/flag/#example_>
   - <https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string>
+  - <https://www.geeksforgeeks.org/nested-structure-in-golang/>
 
 - TOML config file-related
   - <https://github.com/toml-lang/toml#user-content-array>
