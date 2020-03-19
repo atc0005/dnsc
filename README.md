@@ -21,7 +21,47 @@ TODO:
 
 ## Configuration
 
+### Precedence
+
+**Note: This behavior is subject to change based on feedback.**
+
+The priority order is (mostly):
+
+1. Command line flags (highest priority)
+1. Configuration file
+1. Default settings (lowest priority)
+
+The intent of this behavior is to provide a *feathered* layering of
+configuration settings; if a configuration file provides all settings that you
+want other than one, you can use the configuration file for the other settings
+and specify the settings that you wish to override via command-line flag.
+
+### Command-line arguments
+
+Notes:
+
+- As of this writing, a config-file *is* required to specify DNS servers. The
+  plan is to add support for specifying this via flag, but it hasn't been
+  added yet.
+
+- Flags marked as required *are* required to be set via CLI flag *or* within a
+  TOML-formatted configuration file.
+
+| Flag                       | Required | Default        | Repeat | Possible                                   | Description                                                                                                              |
+| -------------------------- | -------- | -------------- | ------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `h`, `help`                | No       | `false`        | No     | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                   |
+| `cf`, `config-file`        | **Yes**  | *empty string* | No     | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template. |
+| `v`, `version`             | No       | `false`        | No     | `true`, `false`                            | Whether to display application version and then immediately exit application.                                            |
+| `ide`, `ignore-dns-errors` | No       | `false`        | No     | `true`, `false`                            | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.              |
+| `q`, `query`               | **Yes**  | *empty string* | No     | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                          |
+| `ll`, `log-level`          | No       | `info`         | No     | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                |
+| `lf`, `log-format`         | No       | `text`         | No     | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                          |
+
+
 ## Examples
+
+
+
 
 These examples assume that the referenced `config.toml` file has the following
 contents:
