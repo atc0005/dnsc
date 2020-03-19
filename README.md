@@ -47,8 +47,8 @@ command-line flags and use the configuration file for the other settings.
 
 ### Command-line arguments
 
-- Flags marked as **`required`** *are* required to be set via CLI flag *or*
-  within a TOML-formatted configuration file.
+- Flags marked as **`required`** must be set via CLI flag *or* within a
+  TOML-formatted configuration file.
 - Flags *not* marked as required are for settings where a useful default is
   already defined.
 
