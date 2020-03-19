@@ -64,3 +64,7 @@ dnsc -config-file $HOME/.config/dnsc/config.toml -query server1.example.com -exp
   - <https://github.com/blackhat-go/bhg/blob/master/ch-5/get_all_a/main.go>
 
 - <https://stackoverflow.com/questions/24886015/how-to-convert-uint32-to-string>
+
+- Free DNS servers for testing purposes (thanks!)
+  - <https://developers.google.com/speed/public-dns>
+  - <https://www.opendns.com/setupguide/>

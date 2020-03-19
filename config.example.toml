@@ -8,8 +8,14 @@
 # Multi-line array
 # https://github.com/toml-lang/toml#user-content-array
 dns_servers = [
+
+    # https://developers.google.com/speed/public-dns
     "8.8.8.8",
     "8.8.4.4",
+
+    # https://www.opendns.com/setupguide/
+    "208.67.222.222",
+    "208.67.220.220",
 ]
 
 # https://godoc.org/github.com/apex/log#Level
