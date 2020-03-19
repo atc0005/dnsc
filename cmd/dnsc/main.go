@@ -51,26 +51,14 @@ func main() {
 	// receive query results on this channel
 	resultsChan := make(chan dqrs.DNSQueryResponse)
 
-	// loop over each of our DNS servers, build up a results set
+	// spin off a separate goroutine for each of our DNS servers send back
+	// results on a channel
 	for _, server := range cfg.Servers() {
 
 		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
-
 			dnsQueryResponse := dqrs.PerformQuery(query, server)
-			if dnsQueryResponse.QueryError != nil {
-				// Check whether the user has opted to ignore errors and proceed
-				if !cfg.IgnoreDNSErrors() {
-					log.Error(dnsQueryResponse.QueryError.Error())
-					os.Exit(1)
-				}
-			}
-
-			//results = append(results, dnsQueryResponse)
 			resultsChan <- dnsQueryResponse
-
 		}(server, cfg.Query(), resultsChan)
-
-		// TODO: Signal that we're done spinning off goroutines?
 
 	}
 
@@ -78,7 +66,16 @@ func main() {
 	// limiter (for now, until I learn more about channels)
 	remainingResponses := len(cfg.Servers())
 	for remainingResponses > 0 {
-		results = append(results, <-resultsChan)
+		result := <-resultsChan
+		results = append(results, result)
+		if result.QueryError != nil {
+			// Check whether the user has opted to ignore errors and proceed
+			// if not, display current summary results and exit
+			if !cfg.IgnoreDNSErrors() {
+				results.PrintSummary()
+				os.Exit(1)
+			}
+		}
 		remainingResponses--
 	}
 

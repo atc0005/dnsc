@@ -36,6 +36,20 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		"\t---\t---\t---\t---")
 
 	for _, item := range dqrs {
+
+		// if any errors were recorded when querying DNS server show those
+		// instead of attempting to show real results
+		if item.QueryError != nil {
+			fmt.Fprintf(w,
+				"\t%s\t%s\t%s\t%s\n",
+				item.Server,
+				item.Query,
+				item.QueryError.Error(),
+				"",
+			)
+			continue
+		}
+
 		fmt.Fprintf(w,
 			"\t%s\t%s\t%s\t%s\n",
 			item.Server,
