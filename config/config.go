@@ -207,6 +207,10 @@ func NewConfig() (*Config, error) {
 
 	config := Config{}
 
+	config.Query = "www.yahoo.com"
+
+	fmt.Printf("Before parsing flags: %#v\n", config)
+
 	flag.StringVar(&config.ConfigFile, "config-file", "", "Full path to optional TOML-formatted configuration file. See config.example.toml for a starter template.")
 
 	flag.BoolVar(&config.ShowVersion, "version", false, versionFlagHelp)
@@ -226,11 +230,14 @@ func NewConfig() (*Config, error) {
 	flag.Usage = flagsUsage()
 	flag.Parse()
 
+	fmt.Printf("After parsing flags: %#v\n", config)
+
 	// Return immediately if user just wants version details
 	if config.ShowVersion {
 		return &config, nil
 	}
 
+	// Apply initial logging settings based on any provided CLI flags
 	config.configureLogging()
 
 	// load config file
@@ -248,7 +255,13 @@ func NewConfig() (*Config, error) {
 	if err := config.LoadConfigFile(fh); err != nil {
 		return nil, err
 	}
+
+	// Apply logging settings based on any provided config file settings
+	config.configureLogging()
+
 	log.Debug("Config file successfully parsed")
+
+	fmt.Printf("After loading config file: %#v\n", config)
 
 	log.Debug("Validating configuration after importing config file")
 	if err := config.Validate(); err != nil {

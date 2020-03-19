@@ -25,7 +25,7 @@ dns_servers = [
 # `warn` is for non-critical entries that deserve eyes.
 # `info` is for general application operational entries.
 # `debug` is for debug-level messages and is usually enabled when debugging.
-log_level = "info"
+log_level = "debug"
 
 #  apex/log Handlers
 # ---------------------------------------------------------
@@ -34,4 +34,4 @@ log_level = "info"
 # json - JSON output handler
 # logfmt - logfmt plain-text formatter
 # text - human-friendly colored output
-log_format = "cli"
+log_format = "json"
