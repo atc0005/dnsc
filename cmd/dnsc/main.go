@@ -12,6 +12,7 @@ import (
 	"errors"
 	"flag"
 	"os"
+	"sort"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
@@ -79,9 +80,12 @@ func main() {
 		results = append(results, <-resultsChan)
 		remainingResponses--
 	}
-	// for response := range resultsChan {
-	// 	results = append(results, response)
-	// }
+
+	// Sort by DNS server used for query
+	// https://golang.org/pkg/sort/#Slice
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Server < results[j].Server
+	})
 
 	// Generate summary of all collected query responses
 	results.PrintSummary()
