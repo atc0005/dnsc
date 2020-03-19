@@ -34,7 +34,7 @@ func main() {
 	cfg, err := config.NewConfig()
 	switch {
 	// TODO: How else to guard against nil cfg object?
-	case cfg != nil && cfg.ShowVersion:
+	case cfg != nil && cfg.ShowVersion():
 		config.Branding()
 		os.Exit(0)
 	case err == nil:
@@ -51,7 +51,7 @@ func main() {
 	resultsChan := make(chan dqrs.DNSQueryResponse)
 
 	// loop over each of our DNS servers, build up a results set
-	for _, server := range cfg.Servers {
+	for _, server := range cfg.Servers() {
 
 		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
 
@@ -66,7 +66,7 @@ func main() {
 			//results = append(results, dnsQueryResponse)
 			resultsChan <- dnsQueryResponse
 
-		}(server, cfg.Query, resultsChan)
+		}(server, cfg.Query(), resultsChan)
 
 		// TODO: Signal that we're done spinning off goroutines?
 
@@ -74,7 +74,7 @@ func main() {
 
 	// collect all responses using the total number of DNS servers as our
 	// limiter (for now, until I learn more about channels)
-	remainingResponses := len(cfg.Servers)
+	remainingResponses := len(cfg.Servers())
 	for remainingResponses > 0 {
 		results = append(results, <-resultsChan)
 		remainingResponses--

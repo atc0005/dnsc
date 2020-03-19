@@ -257,7 +257,7 @@ func (c *Config) LoadConfigFile(fh io.Reader) error {
 	}
 
 	// target nested config struct dedicated to TOML config file settings
-	if err := toml.Unmarshal(configFile, c.fileConfig); err != nil {
+	if err := toml.Unmarshal(configFile, &c.fileConfig); err != nil {
 		return err
 	}
 
