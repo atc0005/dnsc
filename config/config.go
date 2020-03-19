@@ -323,15 +323,15 @@ func NewConfig() (*Config, error) {
 	flag.Usage = flagsUsage()
 	flag.Parse()
 
+	// Apply initial logging settings based on any provided CLI flags
+	config.configureLogging()
+
 	log.Debugf("After parsing flags: %v", config.String())
 
 	// Return immediately if user just wants version details
 	if config.ShowVersion() {
 		return &config, nil
 	}
-
-	// Apply initial logging settings based on any provided CLI flags
-	config.configureLogging()
 
 	// load config file
 	log.WithFields(log.Fields{
