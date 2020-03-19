@@ -18,11 +18,6 @@ import (
 	"github.com/atc0005/dnsc/dqrs"
 
 	"github.com/apex/log"
-	// "github.com/apex/log/handlers/cli"
-	// "github.com/apex/log/handlers/discard"
-	// "github.com/apex/log/handlers/json"
-	// "github.com/apex/log/handlers/logfmt"
-	// "github.com/apex/log/handlers/text"
 )
 
 func main() {
@@ -51,7 +46,7 @@ func main() {
 	// receive query results on this channel
 	resultsChan := make(chan dqrs.DNSQueryResponse)
 
-	// spin off a separate goroutine for each of our DNS servers send back
+	// spin off a separate goroutine for each of our DNS servers, send back
 	// results on a channel
 	for _, server := range cfg.Servers() {
 
@@ -62,25 +57,28 @@ func main() {
 
 	}
 
-	// collect all responses using the total number of DNS servers as our
-	// limiter (for now, until I learn more about channels)
+	// Collect all responses using the total number of DNS servers as limiter
 	remainingResponses := len(cfg.Servers())
 	for remainingResponses > 0 {
 		result := <-resultsChan
 		results = append(results, result)
 		if result.QueryError != nil {
-			// Check whether the user has opted to ignore errors and proceed
-			// if not, display current summary results and exit
+			// Check whether the user has opted to ignore errors. If not,
+			// display current summary results and exit
 			if !cfg.IgnoreDNSErrors() {
 				results.PrintSummary()
 				os.Exit(1)
 			}
 		}
+
+		// note that we've received another response from a DNS server in our
+		// list; wait for the next response, otherwise break out of loop
 		remainingResponses--
 	}
 
-	// Sort by DNS server used for query
-	// https://golang.org/pkg/sort/#Slice
+	// Sort DNS query results results by server used for query. This is done
+	// in an effort to arrange responses based on the group of DNS servers
+	// (assuming that they're group together using a consecutive IP block)
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Server < results[j].Server
 	})
