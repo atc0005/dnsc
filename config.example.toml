@@ -26,3 +26,12 @@ dns_servers = [
 # `info` is for general application operational entries.
 # `debug` is for debug-level messages and is usually enabled when debugging.
 log_level = "info"
+
+#  apex/log Handlers
+# ---------------------------------------------------------
+# cli - human-friendly CLI output
+# discard - discards all logs
+# json - JSON output handler
+# logfmt - logfmt plain-text formatter
+# text - human-friendly colored output
+log_format = "cli"
