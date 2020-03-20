@@ -50,32 +50,51 @@ func (dqr DNSQueryResponse) Error() string {
 	return fmt.Sprintf("%v", dqr.QueryError)
 }
 
-// SortRecords sorts DNS query responses by the response value so that like
-// answers from multiple servers are more likely to be aligned visually
-func (dqr *DNSQueryResponse) SortRecords() {
+// Less compares records and indicates whether the first argument is less than
+// the second argument. Preference is given to CNAME records.
+func (dqr *DNSQueryResponse) Less(i, j int) bool {
+
+	var indexI net.IP
+
+	switch v := dqr.Answer[i].(type) {
+	case *dns.A:
+		indexI = v.A
+	case *dns.AAAA:
+		indexI = v.AAAA
+	case *dns.CNAME:
+		indexI = nil
+	}
+
+	var indexJ net.IP
+	switch v := dqr.Answer[j].(type) {
+	case *dns.A:
+		indexJ = v.A
+	case *dns.AAAA:
+		indexI = v.AAAA
+	case *dns.CNAME:
+		indexJ = nil
+	}
+
+	return bytes.Compare(indexI, indexJ) < 0
+
+}
+
+// SortRecordsAsc sorts DNS query responses by the response value in ascending
+// order with CNAME records listed first.
+func (dqr *DNSQueryResponse) SortRecordsAsc() {
+
+	// Place CNAME entries first, sort IP Addresses after
+	sort.Slice(dqr.Answer, dqr.Less)
+
+}
+
+// SortRecordsDesc sorts DNS query responses by the response value in
+// descending order with CNAME records listed last.
+func (dqr *DNSQueryResponse) SortRecordsDesc() {
 
 	// Place CNAME entries first, sort IP Addresses after
 	sort.Slice(dqr.Answer, func(i, j int) bool {
-
-		var indexI net.IP
-
-		switch v := dqr.Answer[i].(type) {
-		case *dns.A:
-			indexI = v.A
-		case *dns.CNAME:
-			indexI = nil
-		}
-
-		var indexJ net.IP
-		switch v := dqr.Answer[j].(type) {
-		case *dns.A:
-			indexJ = v.A
-		case *dns.CNAME:
-			indexJ = nil
-		}
-
-		return bytes.Compare(indexI, indexJ) < 0
-
+		return !dqr.Less(i, j)
 	})
 
 }
@@ -93,6 +112,8 @@ func (dqr DNSQueryResponse) Records() string {
 		switch v := record.(type) {
 		case *dns.A:
 			answer = v.A.String() + " (A)"
+		case *dns.AAAA:
+			answer = v.AAAA.String() + " (AAAA)"
 		case *dns.CNAME:
 			answer = v.Target + " (CNAME)"
 		default:
@@ -126,8 +147,9 @@ func PerformQuery(query string, server string) DNSQueryResponse {
 	fqdn := dns.Fqdn(query)
 
 	// NOTE: Recursion is used by default, which resolves CNAME entries
-	// back to the actual A record
+	// back to the actual A or AAAA records
 	msg.SetQuestion(fqdn, dns.TypeA)
+	msg.SetQuestion(fqdn, dns.TypeAAAA)
 
 	// Record the reliable DNS-related details we have thus far. Use zero
 	// value initially for Answer field. We'll set a value for QueryError if

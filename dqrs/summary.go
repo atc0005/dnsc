@@ -51,7 +51,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		}
 
 		// Sort records before printing them
-		item.SortRecords()
+		item.SortRecordsAsc()
 
 		fmt.Fprintf(w,
 			"\t%s\t%s\t%s\t%s\n",
