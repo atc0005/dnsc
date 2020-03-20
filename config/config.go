@@ -301,11 +301,11 @@ func flagsUsage() func() {
 
 // loadConfigFile is a helper function to handle opening a specified config
 // file and importing the settings for use
-func (c Config) loadConfigFile(configFile string) error {
+func (c *Config) loadConfigFile(configFile string) error {
 	// load config file
 	log.WithFields(log.Fields{
 		"config_file": configFile,
-	}).Debug("Attempting to open config file ...")
+	}).Debug("Attempting to open config file")
 
 	fh, err := os.Open(configFile)
 	if err != nil {
@@ -314,7 +314,7 @@ func (c Config) loadConfigFile(configFile string) error {
 	log.Debug("Config file opened")
 	defer fh.Close()
 
-	log.Debug("Attempting to import config file ...")
+	log.Debug("Attempting to import config file")
 	if err := c.ImportConfigFile(fh); err != nil {
 		return err
 	}
@@ -331,20 +331,20 @@ func (c Config) localConfigFile() (string, error) {
 		return "", fmt.Errorf("unable to get running executable path to load local config file: %w", err)
 	}
 	exeDirPath, _ := filepath.Split(exePath)
-	relativeConfigFile := filepath.Join(exeDirPath, defaultConfigFileName)
+	localCfgFile := filepath.Join(exeDirPath, defaultConfigFileName)
 
-	log.Infof("local config file path: %q", relativeConfigFile)
+	log.Infof("local config file path: %q", localCfgFile)
 
-	// if PathExists(relativeConfigFile) {
+	// if PathExists(localConfigFile) {
 	// 	log.WithFields(log.Fields{
-	// 		"local_config_file": relativeConfigFile,
+	// 		"local_config_file": localConfigFile,
 	// 	}).Info("local config file found")
 	// }
 	// log.WithFields(log.Fields{
-	// 	"local_config_file": relativeConfigFile,
+	// 	"local_config_file": localConfigFile,
 	// }).Info("local config file not found")
 
-	return relativeConfigFile, nil
+	return localCfgFile, nil
 }
 
 // userConfigFile returns the potential path to a  local config file or an
@@ -362,7 +362,7 @@ func (c Config) userConfigFile() (string, error) {
 	// filepath.Join(os.UserConfigDir, "dnsc/config.toml")
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
-		return "", fmt.Errorf("unable to get user config dir to find user config file: %w", err)
+		return "", fmt.Errorf("unable to get user config dir: %w", err)
 	}
 
 	userConfigAppDir := filepath.Join(userConfigDir, myAppName)
