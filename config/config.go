@@ -50,6 +50,7 @@ const (
 	defaultLogFormat             string = "text"
 	defaultDisplayVersionAndExit bool   = false
 	defaultIgnoreDNSErrors       bool   = false
+	defaultConfigFileName        string = "config.toml"
 )
 
 // Log levels
@@ -298,11 +299,13 @@ func flagsUsage() func() {
 	}
 }
 
-func (c Config) LoadConfigFile(configFile string) error {
+// loadConfigFile is a helper function to handle opening a specified config
+// file and importing the settings for use
+func (c Config) loadConfigFile(configFile string) error {
 	// load config file
 	log.WithFields(log.Fields{
 		"config_file": configFile,
-	}).Debug("Attempting to open config file")
+	}).Debug("Attempting to open config file ...")
 
 	fh, err := os.Open(configFile)
 	if err != nil {
@@ -311,7 +314,7 @@ func (c Config) LoadConfigFile(configFile string) error {
 	log.Debug("Config file opened")
 	defer fh.Close()
 
-	log.Debug("Attempting to parse config file ...")
+	log.Debug("Attempting to import config file ...")
 	if err := c.ImportConfigFile(fh); err != nil {
 		return err
 	}
@@ -319,14 +322,16 @@ func (c Config) LoadConfigFile(configFile string) error {
 	return nil
 }
 
-func (c Config) loadRelativeConfigFile() error {
+// localConfigFile returns the potential path to a  local config file or an
+// error if one is encountered constructing the path
+func (c Config) localConfigFile() (string, error) {
 
 	exePath, err := os.Executable()
 	if err != nil {
-		return fmt.Errorf("unable to get running executable path to load local config file: %w", err)
+		return "", fmt.Errorf("unable to get running executable path to load local config file: %w", err)
 	}
 	exeDirPath, _ := filepath.Split(exePath)
-	relativeConfigFile := filepath.Join(exeDirPath, "config.toml")
+	relativeConfigFile := filepath.Join(exeDirPath, defaultConfigFileName)
 	if PathExists(relativeConfigFile) {
 		log.WithFields(log.Fields{
 			"local_config_file": "relativeConfigFile",
@@ -336,10 +341,12 @@ func (c Config) loadRelativeConfigFile() error {
 		"local_config_file": "relativeConfigFile",
 	}).Info("local config file not found")
 
-	return nil
+	return relativeConfigFile, nil
 }
 
-func (c Config) loadUserConfigFile() error {
+// userConfigFile returns the potential path to a  local config file or an
+// error if one is encountered constructing the path
+func (c Config) userConfigFile() (string, error) {
 	// Ubuntu environment:
 	// os.UserHomeDir: /home/username
 	// os.UserConfigDir: /home/username/.config
@@ -352,27 +359,33 @@ func (c Config) loadUserConfigFile() error {
 	// filepath.Join(os.UserConfigDir, "dnsc/config.toml")
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
-		return fmt.Errorf("unable to get user config dir to find user config file: %w", err)
+		return "", fmt.Errorf("unable to get user config dir to find user config file: %w", err)
 	}
-	userConfigFile := filepath.Join(userConfigDir, "dnsc/config.toml")
-	log.Infof("user config file path (untested): %q", userConfigFile)
 
-	return nil
+	userConfigAppDir := filepath.Join(userConfigDir, myAppName)
+	userConfigFileFullPath := filepath.Join(userConfigAppDir, defaultConfigFileName)
+	log.Infof("user config file path (untested): %q", userConfigFileFullPath)
+
+	return userConfigFileFullPath, nil
 }
 
 // ImportConfigFile reads from an io.Reader and unmarshals a configuration file
 // in TOML format into the associated Config struct.
 func (c *Config) ImportConfigFile(fh io.Reader) error {
 
+	log.Debug("Attempting to read contents of file handle ...")
 	configFile, err := ioutil.ReadAll(fh)
 	if err != nil {
 		return err
 	}
+	log.Debug("Contents of file loaded successfully")
 
+	log.Debug("Attempting to parse TOML file contents")
 	// target nested config struct dedicated to TOML config file settings
 	if err := toml.Unmarshal(configFile, &c.fileConfig); err != nil {
 		return err
 	}
+	log.Debug("Successfully parsed TOML file contents")
 
 	return nil
 }
@@ -498,33 +511,43 @@ func NewConfig() (*Config, error) {
 		return &config, nil
 	}
 
-	// TODO: Add hooks here to try and auto-load config file from known
-	// locations:
 	//
-	// $HOME/.config/dnsc/config.toml
-	// BINARY_LOCATION/config.toml
+	// Attempt to load requested config file, fallback to known alternates
+	// if user did not specify a config file
+	//
 
-	// TODO: Finish the functions; they're not actually loading anything yet
+	configFiles := make([]string, 0, 3)
 
-	if err := config.loadRelativeConfigFile(); err != nil {
-		// TODO: failed to load the config file
-		// TODO: Now what? Attempt to parse the next one?
-	}
-
-	if err := config.loadUserConfigFile(); err != nil {
-		// TODO: failed to load the config file
-		// TODO: Now what? Attempt to parse the next one?
-	}
-
-	// If user provided a path to a configuration file, use that
 	if config.configFile != "" {
-		if err := config.LoadConfigFile(config.configFile); err != nil {
-			return nil, err
+		configFiles = append(configFiles, config.configFile)
+	}
+
+	if localFile, err := config.localConfigFile(); err != nil {
+		configFiles = append(configFiles, localFile)
+	}
+
+	if userConfigFile, err := config.userConfigFile(); err != nil {
+		configFiles = append(configFiles, userConfigFile)
+	}
+
+	for _, file := range configFiles {
+		if err := config.loadConfigFile(file); err == nil {
+			// if there were no errors, we're done loading config files
+			log.WithFields(log.Fields{
+				"config_file": file,
+			}).Info("Config file successfully loaded")
+			break
 		}
 
-		log.Debug("Config file successfully parsed")
-		log.Debugf("After loading config file: %v", config.String())
+		log.WithFields(log.Fields{
+			"config_file": file,
+		}).Error("Config file failed to load, trying next one")
 	}
+
+	log.Info("Completed attempt to load config files")
+
+	log.Debug("Config file successfully parsed")
+	log.Debugf("After loading config file: %v", config.String())
 
 	// Apply logging settings based on any provided config file settings
 	config.configureLogging()
