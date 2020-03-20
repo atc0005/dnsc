@@ -1,5 +1,10 @@
+
+# Ignore local copy of config file
 /config.toml
 
 /release_assets
 
 *.exe
+
+# Ignore local scratch directory contents
+/scratch
