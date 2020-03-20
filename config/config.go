@@ -332,14 +332,17 @@ func (c Config) localConfigFile() (string, error) {
 	}
 	exeDirPath, _ := filepath.Split(exePath)
 	relativeConfigFile := filepath.Join(exeDirPath, defaultConfigFileName)
-	if PathExists(relativeConfigFile) {
-		log.WithFields(log.Fields{
-			"local_config_file": relativeConfigFile,
-		}).Info("local config file found")
-	}
-	log.WithFields(log.Fields{
-		"local_config_file": relativeConfigFile,
-	}).Info("local config file not found")
+
+	log.Infof("local config file path: %q", relativeConfigFile)
+
+	// if PathExists(relativeConfigFile) {
+	// 	log.WithFields(log.Fields{
+	// 		"local_config_file": relativeConfigFile,
+	// 	}).Info("local config file found")
+	// }
+	// log.WithFields(log.Fields{
+	// 	"local_config_file": relativeConfigFile,
+	// }).Info("local config file not found")
 
 	return relativeConfigFile, nil
 }
@@ -364,7 +367,7 @@ func (c Config) userConfigFile() (string, error) {
 
 	userConfigAppDir := filepath.Join(userConfigDir, myAppName)
 	userConfigFileFullPath := filepath.Join(userConfigAppDir, defaultConfigFileName)
-	log.Infof("user config file path (untested): %q", userConfigFileFullPath)
+	log.Infof("user config file path: %q", userConfigFileFullPath)
 
 	return userConfigFileFullPath, nil
 }
@@ -518,17 +521,22 @@ func NewConfig() (*Config, error) {
 
 	configFiles := make([]string, 0, 3)
 
-	if config.configFile != "" {
-		configFiles = append(configFiles, config.configFile)
+	if config.configFile == "" {
+		log.Info("User-specified config file not provided")
 	}
+	configFiles = append(configFiles, config.configFile)
 
-	if localFile, err := config.localConfigFile(); err != nil {
-		configFiles = append(configFiles, localFile)
+	localFile, err := config.localConfigFile()
+	if err != nil {
+		log.Error("Failed to determine path to local file")
 	}
+	configFiles = append(configFiles, localFile)
 
-	if userConfigFile, err := config.userConfigFile(); err != nil {
-		configFiles = append(configFiles, userConfigFile)
+	userConfigFile, err := config.userConfigFile()
+	if err == nil {
+		log.Error("Failed to determine path to user config file")
 	}
+	configFiles = append(configFiles, userConfigFile)
 
 	for _, file := range configFiles {
 		if err := config.loadConfigFile(file); err == nil {
