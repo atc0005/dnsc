@@ -54,7 +54,7 @@ func (dqr DNSQueryResponse) Error() string {
 // answers from multiple servers are more likely to be aligned visually
 func (dqr *DNSQueryResponse) SortRecords() {
 
-	// sort once to place CNAME entries first
+	// Place CNAME entries first, sort IP Addresses after
 	sort.Slice(dqr.Answer, func(i, j int) bool {
 
 		var indexI net.IP
