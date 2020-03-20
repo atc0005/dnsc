@@ -15,7 +15,6 @@ import (
 	"net"
 	"sort"
 	"strings"
-	"unicode"
 
 	"github.com/miekg/dns"
 )
@@ -79,25 +78,27 @@ func (dqr *DNSQueryResponse) SortRecords() {
 			indexJ = "type unknown"
 		}
 
-		// force CNAME types to the front of the line
-		fmt.Printf("Is indexI (%s) less than indexJ (%s)? %t\n", indexI, indexJ, indexI < indexJ)
-		switch {
-		case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
-			fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
-			return indexI < indexJ
+		return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexJ)) < 0
 
-		case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
-			fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
-			return true
+		// // force CNAME types to the front of the line
+		// fmt.Printf("Is indexI (%s) less than indexJ (%s)? %t\n", indexI, indexJ, indexI < indexJ)
+		// switch {
+		// case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
+		// 	fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
+		// 	return indexI < indexJ
 
-		case !unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
-			fmt.Printf("Only indexJ starts with a letter: %v, %v\n", indexI, indexJ)
-			return false
+		// case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
+		// 	fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
+		// 	return true
 
-		default:
-			fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
-			return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexI)) < 0
-		}
+		// case !unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
+		// 	fmt.Printf("Only indexJ starts with a letter: %v, %v\n", indexI, indexJ)
+		// 	return false
+
+		// default:
+		// 	fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
+		// 	return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexJ)) < 0
+		// }
 
 	})
 
