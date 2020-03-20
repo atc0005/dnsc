@@ -145,24 +145,23 @@ func PerformQuery(query string, server string) DNSQueryResponse {
 	fqdn := dns.Fqdn(query)
 
 	// Create custom message so that we can request multiple types together
-	var msg dns.Msg
+	//var msg dns.Msg
+	msg := new(dns.Msg)
 	msg.Id = dns.Id()
 	msg.RecursionDesired = true
-	msg.Question = append(
-		msg.Question,
-		dns.Question{
-			Name:   fqdn,
-			Qtype:  dns.TypeA,
-			Qclass: dns.ClassINET,
-		},
-		dns.Question{
-			Name:   fqdn,
-			Qtype:  dns.TypeAAAA,
-			Qclass: dns.ClassINET,
-		},
-	)
+	msg.Question = make([]dns.Question, 2)
+	msg.Question[0] = dns.Question{
+		Name:   fqdn,
+		Qtype:  dns.TypeA,
+		Qclass: dns.ClassINET,
+	}
+	msg.Question[1] = dns.Question{
+		Name:   fqdn,
+		Qtype:  dns.TypeAAAA,
+		Qclass: dns.ClassINET,
+	}
 
-	fmt.Printf("%#v\n", msg)
+	fmt.Printf("question: %#v\n", msg)
 
 	// Record the reliable DNS-related details we have thus far. Use zero
 	// value initially for Answer field. We'll set a value for QueryError if
@@ -173,11 +172,13 @@ func PerformQuery(query string, server string) DNSQueryResponse {
 	}
 
 	// Perform UDP-based query using default settings
-	in, err := dns.Exchange(&msg, server+":53")
+	in, err := dns.Exchange(msg, server+":53")
 	if err != nil {
 		dnsQueryResponse.QueryError = err
 		return dnsQueryResponse
 	}
+
+	fmt.Printf("response: %#v\n", in)
 
 	// Early exit if the DNS server returns an unexpected result
 	if len(in.Answer) < 1 {
