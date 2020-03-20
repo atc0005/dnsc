@@ -11,6 +11,7 @@ package dqrs
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/miekg/dns"
@@ -45,6 +46,39 @@ type DNSQueryResponses []DNSQueryResponse
 // TODO: This doesn't look right
 func (dqr DNSQueryResponse) Error() string {
 	return fmt.Sprintf("%v", dqr.QueryError)
+}
+
+// SortRecords sorts DNS query responses by the response value so that like
+// answers from multiple servers are more likely to be aligned visually
+func (dqr *DNSQueryResponse) SortRecords() {
+
+	sort.Slice(dqr.Answer, func(i, j int) bool {
+
+		var indexI string
+
+		switch v := dqr.Answer[i].(type) {
+		case *dns.A:
+			indexI = v.A.String()
+		case *dns.CNAME:
+			indexI = v.Target
+		default:
+			indexI = "type unknown"
+		}
+
+		var indexJ string
+		switch v := dqr.Answer[j].(type) {
+		case *dns.A:
+			indexJ = v.A.String()
+		case *dns.CNAME:
+			indexJ = v.Target
+		default:
+			indexJ = "type unknown"
+		}
+
+		return indexI < indexJ
+
+	})
+
 }
 
 // Records returns a comma-separated string of all DNS records retrieved by an
