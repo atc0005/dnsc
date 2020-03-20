@@ -301,7 +301,7 @@ func flagsUsage() func() {
 
 // loadConfigFile is a helper function to handle opening a specified config
 // file and importing the settings for use
-func (c *Config) loadConfigFile(configFile string) error {
+func (c *Config) loadConfigFile(configFile string) (bool, error) {
 	// load config file
 	log.WithFields(log.Fields{
 		"config_file": configFile,
@@ -309,17 +309,18 @@ func (c *Config) loadConfigFile(configFile string) error {
 
 	fh, err := os.Open(configFile)
 	if err != nil {
-		return err
+		return false, err
 	}
 	log.Debug("Config file opened")
 	defer fh.Close()
 
 	log.Debug("Attempting to import config file")
-	if err := c.ImportConfigFile(fh); err != nil {
-		return err
+	result, err := c.ImportConfigFile(fh)
+	if err != nil {
+		return false, err
 	}
 
-	return nil
+	return result, err
 }
 
 // localConfigFile returns the potential path to a  local config file or an
@@ -333,7 +334,7 @@ func (c Config) localConfigFile() (string, error) {
 	exeDirPath, _ := filepath.Split(exePath)
 	localCfgFile := filepath.Join(exeDirPath, defaultConfigFileName)
 
-	log.Infof("local config file path: %q", localCfgFile)
+	log.Debugf("local config file path: %q", localCfgFile)
 
 	// if PathExists(localConfigFile) {
 	// 	log.WithFields(log.Fields{
@@ -367,30 +368,30 @@ func (c Config) userConfigFile() (string, error) {
 
 	userConfigAppDir := filepath.Join(userConfigDir, myAppName)
 	userConfigFileFullPath := filepath.Join(userConfigAppDir, defaultConfigFileName)
-	log.Infof("user config file path: %q", userConfigFileFullPath)
+	log.Debugf("user config file path: %q", userConfigFileFullPath)
 
 	return userConfigFileFullPath, nil
 }
 
 // ImportConfigFile reads from an io.Reader and unmarshals a configuration file
 // in TOML format into the associated Config struct.
-func (c *Config) ImportConfigFile(fh io.Reader) error {
+func (c *Config) ImportConfigFile(fh io.Reader) (bool, error) {
 
 	log.Debug("Attempting to read contents of file handle ...")
 	configFile, err := ioutil.ReadAll(fh)
 	if err != nil {
-		return err
+		return false, err
 	}
 	log.Debug("Contents of file loaded successfully")
 
 	log.Debug("Attempting to parse TOML file contents")
 	// target nested config struct dedicated to TOML config file settings
 	if err := toml.Unmarshal(configFile, &c.fileConfig); err != nil {
-		return err
+		return false, err
 	}
 	log.Debug("Successfully parsed TOML file contents")
 
-	return nil
+	return true, nil
 }
 
 // configureLogging is a wrapper function to enable setting requested logging
@@ -523,8 +524,10 @@ func NewConfig() (*Config, error) {
 
 	if config.configFile == "" {
 		log.Info("User-specified config file not provided")
+	} else {
+		log.Info("User-specified config file provided, will attempt to load it")
+		configFiles = append(configFiles, config.configFile)
 	}
-	configFiles = append(configFiles, config.configFile)
 
 	localFile, err := config.localConfigFile()
 	if err != nil {
@@ -538,24 +541,29 @@ func NewConfig() (*Config, error) {
 	}
 	configFiles = append(configFiles, userConfigFile)
 
+	var loadCfgFileSuccess bool
+	//var err error
 	for _, file := range configFiles {
-		if err := config.loadConfigFile(file); err == nil {
+		loadCfgFileSuccess, err = config.loadConfigFile(file)
+		if loadCfgFileSuccess {
 			// if there were no errors, we're done loading config files
 			log.WithFields(log.Fields{
 				"config_file": file,
 			}).Info("Config file successfully loaded")
+			log.Debug("Config file successfully parsed")
+			log.Debugf("After loading config file: %v", config.String())
 			break
 		}
 
+		log.Warnf("Config file %q not found or unable to load, trying next one", file)
 		log.WithFields(log.Fields{
-			"config_file": file,
-		}).Error("Config file failed to load, trying next one")
+			"error": err,
+		}).Debug("")
 	}
 
-	log.Info("Completed attempt to load config files")
-
-	log.Debug("Config file successfully parsed")
-	log.Debugf("After loading config file: %v", config.String())
+	if !loadCfgFileSuccess {
+		log.Warn("Failed to load config files, relying only on provided flag settings")
+	}
 
 	// Apply logging settings based on any provided config file settings
 	config.configureLogging()
