@@ -10,7 +10,9 @@
 package dqrs
 
 import (
+	"bytes"
 	"fmt"
+	"net"
 	"sort"
 	"strings"
 	"unicode"
@@ -53,6 +55,7 @@ func (dqr DNSQueryResponse) Error() string {
 // answers from multiple servers are more likely to be aligned visually
 func (dqr *DNSQueryResponse) SortRecords() {
 
+	// sort once to place CNAME entries first
 	sort.Slice(dqr.Answer, func(i, j int) bool {
 
 		var indexI string
@@ -81,7 +84,7 @@ func (dqr *DNSQueryResponse) SortRecords() {
 		switch {
 		case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
 			fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
-			return indexI > indexJ
+			return indexI < indexJ
 
 		case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
 			fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
@@ -93,19 +96,8 @@ func (dqr *DNSQueryResponse) SortRecords() {
 
 		default:
 			fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
-			return indexI > indexJ
+			return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexI)) < 0
 		}
-
-		// if unicode.IsLetter(rune(indexI[0])) {
-		// 	// testRune := rune('a')
-		// 	// if unicode.IsLetter(testRune) {
-		// 	fmt.Printf("First character is a letter: %v\n", rune(indexI[0]))
-		// 	// fmt.Printf("First character is a letter: %v\n", testRune)
-		// 	return true
-		// }
-		// return indexI < indexJ
-
-		return indexI < indexJ
 
 	})
 
