@@ -142,14 +142,27 @@ func (dqr DNSQueryResponse) TTLs() string {
 // application
 func PerformQuery(query string, server string) DNSQueryResponse {
 
-	var msg dns.Msg
-
 	fqdn := dns.Fqdn(query)
 
-	// NOTE: Recursion is used by default, which resolves CNAME entries
-	// back to the actual A or AAAA records
-	msg.SetQuestion(fqdn, dns.TypeA)
-	msg.SetQuestion(fqdn, dns.TypeAAAA)
+	// Create custom message so that we can request multiple types together
+	var msg dns.Msg
+	msg.Id = dns.Id()
+	msg.RecursionDesired = true
+	msg.Question = append(
+		msg.Question,
+		dns.Question{
+			Name:   fqdn,
+			Qtype:  dns.TypeA,
+			Qclass: dns.ClassINET,
+		},
+		dns.Question{
+			Name:   fqdn,
+			Qtype:  dns.TypeAAAA,
+			Qclass: dns.ClassINET,
+		},
+	)
+
+	fmt.Printf("%#v\n", msg)
 
 	// Record the reliable DNS-related details we have thus far. Use zero
 	// value initially for Answer field. We'll set a value for QueryError if
