@@ -81,19 +81,19 @@ func (dqr *DNSQueryResponse) SortRecords() {
 		switch {
 		case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
 			fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
-			return indexI < indexJ
+			return indexI > indexJ
 
 		case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
 			fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
-			return false
+			return true
 
 		case !unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
 			fmt.Printf("Only indexJ starts with a letter: %v, %v\n", indexI, indexJ)
-			return true
+			return false
 
 		default:
 			fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
-			return indexI < indexJ
+			return indexI > indexJ
 		}
 
 		// if unicode.IsLetter(rune(indexI[0])) {
