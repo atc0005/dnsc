@@ -542,11 +542,11 @@ func NewConfig() (*Config, error) {
 	configFiles = append(configFiles, userConfigFile)
 
 	var loadCfgFileSuccess bool
-	//var err error
 	for _, file := range configFiles {
 		log.Infof("Trying to load config file %q", file)
-		loadCfgFileSuccess, err = config.loadConfigFile(file)
-		if loadCfgFileSuccess {
+		ok, err := config.loadConfigFile(file)
+		if ok {
+			loadCfgFileSuccess = true
 			// if there were no errors, we're done loading config files
 			log.WithFields(log.Fields{
 				"config_file": file,
