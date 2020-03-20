@@ -533,7 +533,7 @@ func NewConfig() (*Config, error) {
 	configFiles = append(configFiles, localFile)
 
 	userConfigFile, err := config.userConfigFile()
-	if err == nil {
+	if err != nil {
 		log.Error("Failed to determine path to user config file")
 	}
 	configFiles = append(configFiles, userConfigFile)
