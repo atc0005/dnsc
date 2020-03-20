@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"unicode"
 
 	"github.com/miekg/dns"
 )
@@ -74,6 +75,35 @@ func (dqr *DNSQueryResponse) SortRecords() {
 		default:
 			indexJ = "type unknown"
 		}
+
+		// force CNAME types to the front of the line
+		fmt.Printf("Is indexI (%s) less than indexJ (%s)? %t\n", indexI, indexJ, indexI < indexJ)
+		switch {
+		case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
+			fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
+			return indexI < indexJ
+
+		case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
+			fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
+			return false
+
+		case !unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
+			fmt.Printf("Only indexJ starts with a letter: %v, %v\n", indexI, indexJ)
+			return true
+
+		default:
+			fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
+			return indexI < indexJ
+		}
+
+		// if unicode.IsLetter(rune(indexI[0])) {
+		// 	// testRune := rune('a')
+		// 	// if unicode.IsLetter(testRune) {
+		// 	fmt.Printf("First character is a letter: %v\n", rune(indexI[0]))
+		// 	// fmt.Printf("First character is a letter: %v\n", testRune)
+		// 	return true
+		// }
+		// return indexI < indexJ
 
 		return indexI < indexJ
 
