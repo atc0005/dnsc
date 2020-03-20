@@ -16,6 +16,7 @@ import (
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
+	"github.com/miekg/dns"
 
 	"github.com/apex/log"
 )
@@ -55,14 +56,16 @@ func main() {
 	for _, server := range cfg.Servers() {
 
 		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
-			dnsQueryResponse := dqrs.PerformQuery(query, server)
-			resultsChan <- dnsQueryResponse
+			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
+			resultsChan <- dqrs.PerformQuery(query, server, dns.TypeA)
+			resultsChan <- dqrs.PerformQuery(query, server, dns.TypeAAAA)
 		}(server, cfg.Query(), resultsChan)
 
 	}
 
 	// Collect all responses using the total number of DNS servers as limiter
-	remainingResponses := len(cfg.Servers())
+	// multiplied by the number of questions we have for each DNS server
+	remainingResponses := len(cfg.Servers()) * 2
 	for remainingResponses > 0 {
 		result := <-resultsChan
 		results = append(results, result)

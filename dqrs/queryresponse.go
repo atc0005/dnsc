@@ -140,7 +140,7 @@ func (dqr DNSQueryResponse) TTLs() string {
 
 // PerformQuery wraps the bulk of the query/record logic performed by this
 // application
-func PerformQuery(query string, server string) DNSQueryResponse {
+func PerformQuery(query string, server string, qType uint16) DNSQueryResponse {
 
 	var msg dns.Msg
 
@@ -148,8 +148,7 @@ func PerformQuery(query string, server string) DNSQueryResponse {
 
 	// NOTE: Recursion is used by default, which resolves CNAME entries
 	// back to the actual A or AAAA records
-	msg.SetQuestion(fqdn, dns.TypeA)
-	msg.SetQuestion(fqdn, dns.TypeAAAA)
+	msg.SetQuestion(fqdn, qType)
 
 	// Record the reliable DNS-related details we have thus far. Use zero
 	// value initially for Answer field. We'll set a value for QueryError if
