@@ -334,11 +334,11 @@ func (c Config) localConfigFile() (string, error) {
 	relativeConfigFile := filepath.Join(exeDirPath, defaultConfigFileName)
 	if PathExists(relativeConfigFile) {
 		log.WithFields(log.Fields{
-			"local_config_file": "relativeConfigFile",
+			"local_config_file": relativeConfigFile,
 		}).Info("local config file found")
 	}
 	log.WithFields(log.Fields{
-		"local_config_file": "relativeConfigFile",
+		"local_config_file": relativeConfigFile,
 	}).Info("local config file not found")
 
 	return relativeConfigFile, nil
