@@ -57,48 +57,24 @@ func (dqr *DNSQueryResponse) SortRecords() {
 	// sort once to place CNAME entries first
 	sort.Slice(dqr.Answer, func(i, j int) bool {
 
-		var indexI string
+		var indexI net.IP
 
 		switch v := dqr.Answer[i].(type) {
 		case *dns.A:
-			indexI = v.A.String()
+			indexI = v.A
 		case *dns.CNAME:
-			indexI = v.Target
-		default:
-			indexI = "type unknown"
+			indexI = nil
 		}
 
-		var indexJ string
+		var indexJ net.IP
 		switch v := dqr.Answer[j].(type) {
 		case *dns.A:
-			indexJ = v.A.String()
+			indexJ = v.A
 		case *dns.CNAME:
-			indexJ = v.Target
-		default:
-			indexJ = "type unknown"
+			indexJ = nil
 		}
 
-		return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexJ)) < 0
-
-		// // force CNAME types to the front of the line
-		// fmt.Printf("Is indexI (%s) less than indexJ (%s)? %t\n", indexI, indexJ, indexI < indexJ)
-		// switch {
-		// case unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
-		// 	fmt.Printf("Both start with letters: %v, %v\n", indexI, indexJ)
-		// 	return indexI < indexJ
-
-		// case unicode.IsLetter(rune(indexI[0])) && !unicode.IsLetter(rune(indexJ[0])):
-		// 	fmt.Printf("Only indexI starts with a letter: %v, %v\n", indexI, indexJ)
-		// 	return true
-
-		// case !unicode.IsLetter(rune(indexI[0])) && unicode.IsLetter(rune(indexJ[0])):
-		// 	fmt.Printf("Only indexJ starts with a letter: %v, %v\n", indexI, indexJ)
-		// 	return false
-
-		// default:
-		// 	fmt.Printf("Both do not start with letters: %v, %v\n", indexI, indexJ)
-		// 	return bytes.Compare(net.ParseIP(indexI), net.ParseIP(indexJ)) < 0
-		// }
+		return bytes.Compare(indexI, indexJ) < 0
 
 	})
 
