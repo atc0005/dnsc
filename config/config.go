@@ -544,6 +544,7 @@ func NewConfig() (*Config, error) {
 	var loadCfgFileSuccess bool
 	//var err error
 	for _, file := range configFiles {
+		log.Infof("Trying to load config file %q", file)
 		loadCfgFileSuccess, err = config.loadConfigFile(file)
 		if loadCfgFileSuccess {
 			// if there were no errors, we're done loading config files
@@ -555,7 +556,7 @@ func NewConfig() (*Config, error) {
 			break
 		}
 
-		log.Warnf("Config file %q not found or unable to load, trying next one", file)
+		log.Warnf("Config file %q not found or unable to load", file)
 		log.WithFields(log.Fields{
 			"error": err,
 		}).Debug("")
