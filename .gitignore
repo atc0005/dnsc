@@ -8,3 +8,6 @@
 
 # Ignore local scratch directory contents
 /scratch
+
+# Ignore non-Windows executable
+/dnsc
