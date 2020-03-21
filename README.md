@@ -5,6 +5,7 @@ Submit query against a list of DNS servers and display summary of results
 - [dnsc](#dnsc)
   - [Project home](#project-home)
   - [Overview](#overview)
+  - [Features](#features)
   - [Configuration](#configuration)
     - [Precedence](#precedence)
     - [Command-line arguments](#command-line-arguments)
@@ -34,6 +35,10 @@ Command-line flags are supported for all options, though for some settings
 (e.g., DNS servers), specifying values via configuration file is easier for
 repeat use.
 
+## Features
+
+TODO: Flesh this out
+
 ## Configuration
 
 ### Precedence
@@ -56,16 +61,17 @@ command-line flags and use the configuration file for the other settings.
 - Flags *not* marked as required are for settings where a useful default is
   already defined.
 
-| Flag                       | Required | Default        | Repeat  | Possible                                   | Description                                                                                                              |
-| -------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `h`, `help`                | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                   |
-| `ds`, `dns-server`         | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                   |
-| `cf`, `config-file`        | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template. |
-| `v`, `version`             | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                            |
-| `ide`, `ignore-dns-errors` | No       | `false`        | No      | `ide`, `ignore-dns-errors`                 | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.              |
-| `q`, `query`               | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                          |
-| `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                |
-| `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                          |
+| Flag                       | Required | Default        | Repeat  | Possible                                   | Description                                                                                                                              |
+| -------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`                | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                                   |
+| `ds`, `dns-server`         | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                                   |
+| `cf`, `config-file`        | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template.                 |
+| `v`, `version`             | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                                            |
+| `ide`, `ignore-dns-errors` | No       | `false`        | No      | `ide`, `ignore-dns-errors`                 | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.                              |
+| `q`, `query`               | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                          |
+| `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                |
+| `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                          |
+| `t`, `type`                | **Yes**  | *empty string* | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS record type to request when submitting DNS query. This flag may be repeated for each additional DNS record type you wish to request. |
 
 ### Configuration file
 
@@ -82,6 +88,7 @@ settings.
 | `ignore-dns-errors` | `ignore_dns_errors`      | Opt-in setting. Useful to have enabled for most use cases.                         |
 | `log-level`         | `log_level`              |                                                                                    |
 | `log-format`        | `log_format`             |                                                                                    |
+| `type`              | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
 
 See the [`config.example.toml`](config.example.toml) file for an example of
 how to use these settings.
