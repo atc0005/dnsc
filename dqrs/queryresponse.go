@@ -122,6 +122,8 @@ func (dqr DNSQueryResponse) Records() string {
 			answer = v.Target + " (CNAME)"
 			//fmt.Println("Check *dns.CNAME type switch case stmt")
 			// answer = v.String() + " (CNAME)"
+		case *dns.MX:
+			answer = v.Mx + " (MX)"
 		default:
 			answer = "type unknown"
 		}

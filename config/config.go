@@ -78,6 +78,14 @@ const (
 	LogLevelDebug string = "debug"
 )
 
+// Supported Request types
+const (
+	RequestTypeA     string = "A"
+	RequestTypeAAAA  string = "AAAA"
+	RequestTypeCNAME string = "CNAME"
+	RequestTypeMX    string = "MX"
+)
+
 // 	apex/log Handlers
 // ---------------------------------------------------------
 // cli - human-friendly CLI output
@@ -173,7 +181,7 @@ type configTemplate struct {
 	// submitting queries. This is a a collection of plaintext types provided
 	// by the user. See also RecordTypes which is a set of dns.RR types
 	// converted from this collection.
-	RequestTypes multiValueFlag `toml:"dns_requested_types"`
+	RequestTypes multiValueFlag `toml:"dns_request_types"`
 
 	// Query represents the FQDN query strings submitted to each DNS server
 	Query string `toml:"query"`
@@ -261,7 +269,7 @@ func (c Config) RequestTypes() []string {
 	case c.fileConfig.RequestTypes != nil:
 		return c.fileConfig.RequestTypes
 	default:
-		return []string{defaultRecordType}
+		return nil
 	}
 }
 

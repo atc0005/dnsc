@@ -41,7 +41,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 		recordString, ok := dns.TypeToString[item.RequestedRecordType]
 		if !ok {
-			recordString = "unknown record type"
+			recordString = "LookupError"
 		}
 
 		// if any errors were recorded when querying DNS server show those

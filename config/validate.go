@@ -9,6 +9,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/apex/log"
 )
@@ -41,6 +42,27 @@ func (c Config) Validate() error {
 		return fmt.Errorf("query not provided")
 	}
 	log.Debugf("c.Query() validates: %#v", c.Query())
+
+	if c.RequestTypes() == nil {
+		return fmt.Errorf("record type not provided")
+	}
+
+	// if not nil, assume that we're dealing with one or more requested record
+	// types
+	for _, requestType := range c.RequestTypes() {
+		switch strings.ToUpper(requestType) {
+		case RequestTypeA:
+		case RequestTypeAAAA:
+		case RequestTypeCNAME:
+		case RequestTypeMX:
+		default:
+			return fmt.Errorf(
+				"invalid option %q provided for request type",
+				requestType,
+			)
+		}
+	}
+	log.Debugf("c.RequestTypes() validates: %#v", c.RequestTypes())
 
 	switch c.LogLevel() {
 	case LogLevelFatal:

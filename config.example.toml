@@ -18,6 +18,14 @@ dns_servers = [
     "208.67.220.220",
 ]
 
+# What DNS record types will be requested when submitting DNS queries
+dns_request_types = [
+    "A",
+    "AAAA",
+    "MX",
+    "CNAME",
+]
+
 # Whether DNS-related errors should be ignored. If set, this allows
 # query-related DNS errors with one host to not block queries against
 # remaining DNS servers. This can be useful to work around failures with one

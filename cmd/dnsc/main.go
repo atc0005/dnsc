@@ -16,6 +16,7 @@ import (
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
+	"github.com/miekg/dns"
 
 	"github.com/apex/log"
 )
@@ -66,7 +67,12 @@ func main() {
 			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
 			log.Debugf("Length of requested types: %d", len(requestTypes))
 			for _, requestType := range requestTypes {
-				log.Debugf("Submitting query for %v to %v", query, server)
+				requestTypeString, ok := dns.TypeToString[requestType]
+				if !ok {
+					requestTypeString = "LookupError"
+				}
+				log.Debugf("Submitting query for %q of type %q to %q",
+					query, requestTypeString, server)
 				resultsChan <- dqrs.PerformQuery(query, server, requestType)
 			}
 		}(server, cfg.Query(), requestTypes, resultsChan)
