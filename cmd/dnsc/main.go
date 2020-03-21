@@ -16,7 +16,6 @@ import (
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
-	"github.com/miekg/dns"
 
 	"github.com/apex/log"
 )
@@ -42,17 +41,17 @@ func main() {
 		log.Fatalf("failed to initialize application: %s", err)
 	}
 
-	// TODO: Move this elsewhere, add support for flag and TOML setting
-	requestTypes := []unint16{
-		dns.TypeA,
-		dns.TypeAAAA,
-	}
+	// Get a list of all record types that we should request when submitting
+	// DNS queries
+	requestTypes := cfg.RecordTypes()
 
 	expectedResponses := len(requestTypes) * len(cfg.Servers())
 
-	results := make(dqrs.DNSQueryResponses, 0, 10)
+	results := make(dqrs.DNSQueryResponses, 0, expectedResponses)
 
-	capacity := len(cfg.Servers())
+	// one buffered "slot" per expected response? seems overkill?
+	// capacity := len(cfg.Servers())
+	capacity := expectedResponses
 	log.WithFields(log.Fields{
 		"results_channel_capacity": capacity,
 	}).Debug("Creating results channel with capacity to match defined DNS servers")
@@ -63,17 +62,20 @@ func main() {
 	// results on a channel
 	for _, server := range cfg.Servers() {
 
-		go func(server string, query string, results chan dqrs.DNSQueryResponse) {
+		go func(server string, query string, requestTypes []uint16, results chan dqrs.DNSQueryResponse) {
 			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
-			resultsChan <- dqrs.PerformQuery(query, server, dns.TypeA)
-			resultsChan <- dqrs.PerformQuery(query, server, dns.TypeAAAA)
-		}(server, cfg.Query(), resultsChan)
+			log.Debugf("Length of requested types: %d", len(requestTypes))
+			for _, requestType := range requestTypes {
+				log.Debugf("Submitting query for %v to %v", query, server)
+				resultsChan <- dqrs.PerformQuery(query, server, requestType)
+			}
+		}(server, cfg.Query(), requestTypes, resultsChan)
 
 	}
 
-	// Collect all responses using the total number of DNS servers as limiter
-	// multiplied by the number of questions we have for each DNS server
-	remainingResponses := len(cfg.Servers()) * 2
+	// Collect all responses, continue until we exhaust the number of expected
+	// responses calculated earlier as our signal to stop collecting responses
+	remainingResponses := expectedResponses
 	for remainingResponses > 0 {
 		result := <-resultsChan
 		results = append(results, result)

@@ -24,6 +24,7 @@ import (
 	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/logfmt"
 	"github.com/apex/log/handlers/text"
+	"github.com/miekg/dns"
 	"github.com/pelletier/go-toml"
 )
 
@@ -42,6 +43,7 @@ const (
 	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
 	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 	dnsServerFlagHelp       = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
+	dnsRequestTypeFlagHelp  = "DNS record type to request when submitting DNS query. This flag may be repeated for each additional DNS record type you wish to request."
 )
 
 // Default flag settings if not overridden by user input
@@ -51,6 +53,7 @@ const (
 	defaultDisplayVersionAndExit bool   = false
 	defaultIgnoreDNSErrors       bool   = false
 	defaultConfigFileName        string = "config.toml"
+	defaultRecordType            string = "a"
 )
 
 // Log levels
@@ -166,6 +169,12 @@ type configTemplate struct {
 	// for testing queries.
 	Servers multiValueFlag `toml:"dns_servers"`
 
+	// RecordTypes is a list of the DNS records that should be requested when
+	// submitting queries. This is a a collection of plaintext types provided
+	// by the user. See also RecordTypes which is a set of dns.RR types
+	// converted from this collection.
+	RequestTypes multiValueFlag `toml:"dns_requested_types"`
+
 	// Query represents the FQDN query strings submitted to each DNS server
 	Query string `toml:"query"`
 
@@ -242,6 +251,46 @@ func (c Config) ShowVersion() bool {
 	return c.showVersion
 }
 
+// RequestTypes returns the user-provided choice of which DNS record types to
+// request when submitting queries. If not set, defaults to A record type.
+func (c Config) RequestTypes() []string {
+
+	switch {
+	case c.cliConfig.RequestTypes != nil:
+		return c.cliConfig.RequestTypes
+	case c.fileConfig.RequestTypes != nil:
+		return c.fileConfig.RequestTypes
+	default:
+		return []string{defaultRecordType}
+	}
+}
+
+// RecordTypes converts the requested string keys which represent
+// user-requested DNS record types into the native dns package types needed to
+// submit queries for those record types.
+func (c Config) RecordTypes() []uint16 {
+
+	requestedTypes := c.RequestTypes()
+	if requestedTypes == nil || len(requestedTypes) < 1 {
+		return nil
+	}
+
+	// we have at least one record type to convert
+	recordTypes := make([]uint16, 0, len(requestedTypes))
+
+	// at this point we can be confident that we are only working with strings
+	// that fit within our supported collection *and* which properly map to
+	// dns.RR types
+	for _, requestedType := range requestedTypes {
+		if recordType, ok := dns.StringToType[strings.ToUpper(requestedType)]; ok {
+			recordTypes = append(recordTypes, recordType)
+		}
+	}
+
+	return recordTypes
+
+}
+
 // IgnoreDNSErrors returns the user-provided choice of ignoring DNS-related
 // errors or the default value for this choice.
 func (c Config) IgnoreDNSErrors() bool {
@@ -259,19 +308,21 @@ func (c Config) IgnoreDNSErrors() bool {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, RequestTypes: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, RequestTypes: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
 		c.cliConfig.LogLevel,
 		c.cliConfig.LogFormat,
 		c.cliConfig.IgnoreDNSErrors,
+		c.cliConfig.RequestTypes,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
 		c.fileConfig.IgnoreDNSErrors,
+		c.fileConfig.RequestTypes,
 		c.configFile,
 		c.showVersion,
 	)
@@ -472,6 +523,9 @@ func (c *Config) handleFlagsConfig() {
 
 	flag.Var(&c.cliConfig.Servers, "ds", dnsServerFlagHelp+" (shorthand)")
 	flag.Var(&c.cliConfig.Servers, "dns-server", dnsServerFlagHelp)
+
+	flag.Var(&c.cliConfig.RequestTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
+	flag.Var(&c.cliConfig.RequestTypes, "type", dnsRequestTypeFlagHelp)
 
 	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
 	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)

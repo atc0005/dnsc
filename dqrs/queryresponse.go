@@ -35,6 +35,10 @@ type DNSQueryResponse struct {
 	// Query is the FQDN that we requested a record for.
 	Query string
 
+	// RequestedRecordType represents the type of record requested as part of
+	// the query
+	RequestedRecordType uint16
+
 	// Error records whether an error occurred during any part of performing a
 	// query
 	QueryError error
@@ -116,6 +120,8 @@ func (dqr DNSQueryResponse) Records() string {
 			answer = v.AAAA.String() + " (AAAA)"
 		case *dns.CNAME:
 			answer = v.Target + " (CNAME)"
+			//fmt.Println("Check *dns.CNAME type switch case stmt")
+			// answer = v.String() + " (CNAME)"
 		default:
 			answer = "type unknown"
 		}
@@ -154,8 +160,9 @@ func PerformQuery(query string, server string, qType uint16) DNSQueryResponse {
 	// value initially for Answer field. We'll set a value for QueryError if
 	// needed later.
 	dnsQueryResponse := DNSQueryResponse{
-		Server: server,
-		Query:  query,
+		Server:              server,
+		Query:               query,
+		RequestedRecordType: qType,
 	}
 
 	// Perform UDP-based query using default settings

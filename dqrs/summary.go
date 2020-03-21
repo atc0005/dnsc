@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"os"
 	"text/tabwriter"
+
+	"github.com/miekg/dns"
 )
 
 // PrintSummary generates a table of all collected DNS query results
@@ -28,22 +30,28 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 	// Header row in output
 	fmt.Fprintf(w,
-		"\tServer\tQuery\tAnswers\tTTL\n")
+		"Server\tQuery\tType\tAnswers\tTTL\n")
 
 	// Separator row
 	// TODO: I'm sure this can be handled better
 	fmt.Fprintln(w,
-		"\t---\t---\t---\t---")
+		"---\t---\t---\t---\t---")
 
 	for _, item := range dqrs {
+
+		recordString, ok := dns.TypeToString[item.RequestedRecordType]
+		if !ok {
+			recordString = "unknown record type"
+		}
 
 		// if any errors were recorded when querying DNS server show those
 		// instead of attempting to show real results
 		if item.QueryError != nil {
 			fmt.Fprintf(w,
-				"\t%s\t%s\t%s\t%s\n",
+				"%s\t%s\t%s\t%s\t%s\n",
 				item.Server,
 				item.Query,
+				recordString,
 				item.QueryError.Error(),
 				"",
 			)
@@ -54,9 +62,10 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		item.SortRecordsAsc()
 
 		fmt.Fprintf(w,
-			"\t%s\t%s\t%s\t%s\n",
+			"%s\t%s\t%s\t%s\t%s\n",
 			item.Server,
 			item.Query,
+			recordString,
 			item.Records(),
 			item.TTLs(),
 		)
