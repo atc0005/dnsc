@@ -71,7 +71,7 @@ command-line flags and use the configuration file for the other settings.
 | `q`, `query`               | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                          |
 | `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                |
 | `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                          |
-| `t`, `type`                | **Yes**  | *empty string* | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS record type to request when submitting DNS query. This flag may be repeated for each additional DNS record type you wish to request. |
+| `t`, `type`                | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS record type to request when submitting DNS query. This flag may be repeated for each additional DNS record type you wish to request. |
 
 ### Configuration file
 
