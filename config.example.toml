@@ -16,6 +16,9 @@ dns_servers = [
     # https://www.opendns.com/setupguide/
     "208.67.222.222",
     "208.67.220.220",
+
+    # https://blog.cloudflare.com/announcing-1111/
+    "1.1.1.1",
 ]
 
 # What DNS record types will be requested when submitting DNS queries
