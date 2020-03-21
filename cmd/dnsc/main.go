@@ -42,6 +42,14 @@ func main() {
 		log.Fatalf("failed to initialize application: %s", err)
 	}
 
+	// TODO: Move this elsewhere, add support for flag and TOML setting
+	requestTypes := []unint16{
+		dns.TypeA,
+		dns.TypeAAAA,
+	}
+
+	expectedResponses := len(requestTypes) * len(cfg.Servers())
+
 	results := make(dqrs.DNSQueryResponses, 0, 10)
 
 	capacity := len(cfg.Servers())
