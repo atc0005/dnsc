@@ -12,8 +12,6 @@ package config
 import (
 	"flag"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,8 +22,6 @@ import (
 	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/logfmt"
 	"github.com/apex/log/handlers/text"
-	"github.com/miekg/dns"
-	"github.com/pelletier/go-toml"
 )
 
 // Overridden via Makefile for release builds
@@ -196,126 +192,6 @@ type configTemplate struct {
 	LogFormat string `toml:"log_format"`
 }
 
-// Servers returns a slice of configured DNS server entries or nil if DNS
-// server entries were not provided. CLI flag values take precedence if
-// provided.
-func (c Config) Servers() []string {
-
-	switch {
-	case c.cliConfig.Servers != nil:
-		return c.cliConfig.Servers
-	case c.fileConfig.Servers != nil:
-		return c.fileConfig.Servers
-	default:
-		return nil
-	}
-}
-
-// Query returns the user-provided DNS server query or empty string if DNS
-// server query was not provided. CLI flag values take precedence if provided.
-func (c Config) Query() string {
-
-	switch {
-	case c.cliConfig.Query != "":
-		return c.cliConfig.Query
-	case c.fileConfig.Query != "":
-		return c.fileConfig.Query
-	default:
-		return ""
-	}
-}
-
-// LogLevel returns the user-provided logging level or empty string if not
-// provided. CLI flag values take precedence if provided.
-func (c Config) LogLevel() string {
-
-	switch {
-	case c.cliConfig.LogLevel != "":
-		return c.cliConfig.LogLevel
-	case c.fileConfig.LogLevel != "":
-		return c.fileConfig.LogLevel
-	default:
-		return ""
-	}
-}
-
-// LogFormat returns the user-provided logging format or empty string if not
-// provided. CLI flag values take precedence if provided.
-func (c Config) LogFormat() string {
-
-	switch {
-	case c.cliConfig.LogFormat != "":
-		return c.cliConfig.LogFormat
-	case c.fileConfig.LogFormat != "":
-		return c.fileConfig.LogFormat
-	default:
-		return ""
-	}
-}
-
-// ShowVersion returns the user-provided choice of displaying the application
-// version and exiting or the default value for this choice.
-func (c Config) ShowVersion() bool {
-	return c.showVersion
-}
-
-// RequestTypes returns the user-provided choice of which DNS record types to
-// request when submitting queries. If not set, defaults to A record type.
-func (c Config) RequestTypes() []string {
-
-	switch {
-	case c.cliConfig.RequestTypes != nil:
-		return c.cliConfig.RequestTypes
-	case c.fileConfig.RequestTypes != nil:
-		return c.fileConfig.RequestTypes
-	default:
-		log.Debugf("Requested record types not specified, using default: %q",
-			defaultRecordType)
-		return []string{defaultRecordType}
-	}
-}
-
-// RecordTypes converts the requested string keys which represent
-// user-requested DNS record types into the native dns package types needed to
-// submit queries for those record types.
-func (c Config) RecordTypes() []uint16 {
-
-	requestedTypes := c.RequestTypes()
-	if requestedTypes == nil || len(requestedTypes) < 1 {
-		return nil
-	}
-
-	// we have at least one record type to convert
-	recordTypes := make([]uint16, 0, len(requestedTypes))
-
-	// at this point we can be confident that we are only working with strings
-	// that fit within our supported collection *and* which properly map to
-	// dns.RR types
-	for _, requestedType := range requestedTypes {
-		if recordType, ok := dns.StringToType[strings.ToUpper(requestedType)]; ok {
-			recordTypes = append(recordTypes, recordType)
-		}
-	}
-
-	return recordTypes
-
-}
-
-// IgnoreDNSErrors returns the user-provided choice of ignoring DNS-related
-// errors or the default value for this choice.
-func (c Config) IgnoreDNSErrors() bool {
-	switch {
-
-	// if not nil, a choice was made; use set choice, otherwise return default
-	case c.cliConfig.IgnoreDNSErrors != nil:
-		return *c.cliConfig.IgnoreDNSErrors
-	case c.fileConfig.IgnoreDNSErrors != nil:
-		return *c.fileConfig.IgnoreDNSErrors
-	default:
-		return defaultIgnoreDNSErrors
-	}
-}
-
 func (c Config) String() string {
 	return fmt.Sprintf(
 		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, RequestTypes: %v}, "+
@@ -358,101 +234,6 @@ func flagsUsage() func() {
 		flag.PrintDefaults()
 
 	}
-}
-
-// loadConfigFile is a helper function to handle opening a specified config
-// file and importing the settings for use
-func (c *Config) loadConfigFile(configFile string) (bool, error) {
-	// load config file
-	log.WithFields(log.Fields{
-		"config_file": configFile,
-	}).Debug("Attempting to open config file")
-
-	fh, err := os.Open(configFile)
-	if err != nil {
-		return false, err
-	}
-	log.Debug("Config file opened")
-	defer fh.Close()
-
-	log.Debug("Attempting to import config file")
-	result, err := c.ImportConfigFile(fh)
-	if err != nil {
-		return false, err
-	}
-
-	return result, err
-}
-
-// localConfigFile returns the potential path to a  local config file or an
-// error if one is encountered constructing the path
-func (c Config) localConfigFile() (string, error) {
-
-	exePath, err := os.Executable()
-	if err != nil {
-		return "", fmt.Errorf("unable to get running executable path to load local config file: %w", err)
-	}
-	exeDirPath, _ := filepath.Split(exePath)
-	localCfgFile := filepath.Join(exeDirPath, defaultConfigFileName)
-
-	log.Debugf("local config file path: %q", localCfgFile)
-
-	// if PathExists(localConfigFile) {
-	// 	log.WithFields(log.Fields{
-	// 		"local_config_file": localConfigFile,
-	// 	}).Info("local config file found")
-	// }
-	// log.WithFields(log.Fields{
-	// 	"local_config_file": localConfigFile,
-	// }).Info("local config file not found")
-
-	return localCfgFile, nil
-}
-
-// userConfigFile returns the potential path to a  local config file or an
-// error if one is encountered constructing the path
-func (c Config) userConfigFile() (string, error) {
-	// Ubuntu environment:
-	// os.UserHomeDir: /home/username
-	// os.UserConfigDir: /home/username/.config
-	//
-	// Windows environment:
-	// os.UserHomeDir: C:\Users\username
-	// os.UserConfigDir: C:\Users\username\AppData\Roaming
-	//
-	// Look for:
-	// filepath.Join(os.UserConfigDir, "dnsc/config.toml")
-	userConfigDir, err := os.UserConfigDir()
-	if err != nil {
-		return "", fmt.Errorf("unable to get user config dir: %w", err)
-	}
-
-	userConfigAppDir := filepath.Join(userConfigDir, myAppName)
-	userConfigFileFullPath := filepath.Join(userConfigAppDir, defaultConfigFileName)
-	log.Debugf("user config file path: %q", userConfigFileFullPath)
-
-	return userConfigFileFullPath, nil
-}
-
-// ImportConfigFile reads from an io.Reader and unmarshals a configuration file
-// in TOML format into the associated Config struct.
-func (c *Config) ImportConfigFile(fh io.Reader) (bool, error) {
-
-	log.Debug("Attempting to read contents of file handle ...")
-	configFile, err := ioutil.ReadAll(fh)
-	if err != nil {
-		return false, err
-	}
-	log.Debug("Contents of file loaded successfully")
-
-	log.Debug("Attempting to parse TOML file contents")
-	// target nested config struct dedicated to TOML config file settings
-	if err := toml.Unmarshal(configFile, &c.fileConfig); err != nil {
-		return false, err
-	}
-	log.Debug("Successfully parsed TOML file contents")
-
-	return true, nil
 }
 
 // configureLogging is a wrapper function to enable setting requested logging
@@ -523,42 +304,6 @@ func PathExists(path string) bool {
 
 	return false
 
-}
-
-// handleFlagsConfig wraps flag setup code into a bundle for potential ease of
-// use and future testability
-func (c *Config) handleFlagsConfig() {
-
-	log.Debugf("Before parsing flags: %v", c.String())
-
-	flag.Var(&c.cliConfig.Servers, "ds", dnsServerFlagHelp+" (shorthand)")
-	flag.Var(&c.cliConfig.Servers, "dns-server", dnsServerFlagHelp)
-
-	flag.Var(&c.cliConfig.RequestTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
-	flag.Var(&c.cliConfig.RequestTypes, "type", dnsRequestTypeFlagHelp)
-
-	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
-	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
-
-	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
-	flag.BoolVar(&c.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
-
-	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ignore-dns-errors", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp)
-	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ide", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp+" (shorthand)")
-
-	flag.StringVar(&c.cliConfig.Query, "query", "", queryFlagHelp)
-	flag.StringVar(&c.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
-
-	// create shorter and longer logging level flag options
-	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
-	flag.StringVar(&c.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
-
-	// create shorter and longer logging format flag options
-	flag.StringVar(&c.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
-	flag.StringVar(&c.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
-
-	flag.Usage = flagsUsage()
-	flag.Parse()
 }
 
 // NewConfig is a factory function that produces a new Config object based
