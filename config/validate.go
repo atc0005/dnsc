@@ -43,9 +43,11 @@ func (c Config) Validate() error {
 	}
 	log.Debugf("c.Query() validates: %#v", c.Query())
 
-	if c.RequestTypes() == nil {
-		return fmt.Errorf("record type not provided")
-	}
+	// We'll go ahead and provide a default
+	//
+	// if c.RequestTypes() == nil {
+	// 	return fmt.Errorf("record type not provided")
+	// }
 
 	// if not nil, assume that we're dealing with one or more requested record
 	// types

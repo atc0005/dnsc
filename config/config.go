@@ -53,7 +53,7 @@ const (
 	defaultDisplayVersionAndExit bool   = false
 	defaultIgnoreDNSErrors       bool   = false
 	defaultConfigFileName        string = "config.toml"
-	defaultRecordType            string = "a"
+	defaultRecordType            string = "A"
 )
 
 // Log levels
@@ -269,7 +269,9 @@ func (c Config) RequestTypes() []string {
 	case c.fileConfig.RequestTypes != nil:
 		return c.fileConfig.RequestTypes
 	default:
-		return nil
+		log.Debugf("Requested record types not specified, using default: %q",
+			defaultRecordType)
+		return []string{defaultRecordType}
 	}
 }
 
