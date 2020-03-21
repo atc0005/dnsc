@@ -113,6 +113,13 @@ func (dqr DNSQueryResponse) Records() string {
 
 		var answer string
 
+		// FIXME: How to dynamically get a "short" string value for each
+		// record type so that we don't have to hard-code in a switch
+		// statement and then use a type-specific field or method to retrieve
+		// a text copy of the value? For example, *dns.CNAME type requires
+		// use of v.Target (field value) to get a usable string, whereas
+		// v.AAAA type has a usable String() method.
+
 		switch v := record.(type) {
 		case *dns.A:
 			answer = v.A.String() + " (A)"
