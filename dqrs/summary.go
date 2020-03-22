@@ -11,8 +11,6 @@ import (
 	"fmt"
 	"os"
 	"text/tabwriter"
-
-	"github.com/miekg/dns"
 )
 
 // PrintSummary generates a table of all collected DNS query results
@@ -39,9 +37,9 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 	for _, item := range dqrs {
 
-		recordString, ok := dns.TypeToString[item.RequestedRecordType]
-		if !ok {
-			recordString = "LookupError"
+		rrString, err := RRTypeToString(item.RequestedRecordType)
+		if err != nil {
+			rrString = "rrString LookupError"
 		}
 
 		// if any errors were recorded when querying DNS server show those
@@ -51,7 +49,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 				"%s\t%s\t%s\t%s\t%s\n",
 				item.Server,
 				item.Query,
-				recordString,
+				rrString,
 				item.QueryError.Error(),
 				"",
 			)
@@ -65,7 +63,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 			"%s\t%s\t%s\t%s\t%s\n",
 			item.Server,
 			item.Query,
-			recordString,
+			rrString,
 			item.Records(),
 			item.TTLs(),
 		)

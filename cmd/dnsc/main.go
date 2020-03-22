@@ -11,12 +11,12 @@ import (
 	//"log"
 	"errors"
 	"flag"
+	"fmt"
 	"os"
 	"sort"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
-	"github.com/miekg/dns"
 
 	"github.com/apex/log"
 )
@@ -44,7 +44,7 @@ func main() {
 
 	// Get a list of all record types that we should request when submitting
 	// DNS queries
-	queryTypes := cfg.ResourceRecords()
+	queryTypes := cfg.QueryTypes()
 
 	expectedResponses := len(queryTypes) * len(cfg.Servers())
 
@@ -63,17 +63,26 @@ func main() {
 	// results on a channel
 	for _, server := range cfg.Servers() {
 
-		go func(server string, query string, requestTypes []uint16, results chan dqrs.DNSQueryResponse) {
+		go func(server string, query string, queryTypes []string, results chan dqrs.DNSQueryResponse) {
 			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
-			log.Debugf("Length of requested types: %d", len(requestTypes))
-			for _, requestType := range requestTypes {
-				requestTypeString, ok := dns.TypeToString[requestType]
-				if !ok {
-					requestTypeString = "LookupError"
+			log.Debugf("Length of requested query types: %d", len(queryTypes))
+			for _, rrString := range queryTypes {
+				rrType, err := dqrs.RRStringToType(rrString)
+				if err != nil {
+					// Record the error, log the error and send a minimal
+					// DNSQueryResponse type back on the channel with the
+					// specific error embedded.
+					failedQueryRequest := dqrs.DNSQueryResponse{
+						Server:     server,
+						Query:      query,
+						QueryError: fmt.Errorf("error converting Resource Record string to native type: %v", err),
+					}
+					log.Warn(failedQueryRequest.Error())
+					resultsChan <- failedQueryRequest
 				}
 				log.Debugf("Submitting query for %q of type %q to %q",
-					query, requestTypeString, server)
-				resultsChan <- dqrs.PerformQuery(query, server, requestType)
+					query, rrString, server)
+				resultsChan <- dqrs.PerformQuery(query, server, rrType)
 			}
 		}(server, cfg.Query(), queryTypes, resultsChan)
 

@@ -8,10 +8,7 @@
 package config
 
 import (
-	"strings"
-
 	"github.com/apex/log"
-	"github.com/miekg/dns"
 )
 
 // Servers returns a slice of configured DNS server entries or nil if DNS
@@ -91,32 +88,6 @@ func (c Config) QueryTypes() []string {
 			defaultQueryType)
 		return []string{defaultQueryType}
 	}
-}
-
-// ResourceRecords converts the requested string keys which represent
-// user-requested DNS record types into the native dns package types needed to
-// submit queries for those record types.
-func (c Config) ResourceRecords() []uint16 {
-
-	requestedTypes := c.QueryTypes()
-	if requestedTypes == nil || len(requestedTypes) < 1 {
-		return nil
-	}
-
-	// we have at least one record type to convert
-	recordTypes := make([]uint16, 0, len(requestedTypes))
-
-	// at this point we can be confident that we are only working with strings
-	// that fit within our supported collection *and* which properly map to
-	// dns.RR types
-	for _, requestedType := range requestedTypes {
-		if recordType, ok := dns.StringToType[strings.ToUpper(requestedType)]; ok {
-			recordTypes = append(recordTypes, recordType)
-		}
-	}
-
-	return recordTypes
-
 }
 
 // IgnoreDNSErrors returns the user-provided choice of ignoring DNS-related
