@@ -45,14 +45,14 @@ func (c Config) Validate() error {
 
 	// We'll go ahead and provide a default
 	//
-	// if c.RequestTypes() == nil {
+	// if c.QueryTypes() == nil {
 	// 	return fmt.Errorf("record type not provided")
 	// }
 
 	// if not nil, assume that we're dealing with one or more requested record
 	// types
-	for _, requestType := range c.RequestTypes() {
-		switch strings.ToUpper(requestType) {
+	for _, queryType := range c.QueryTypes() {
+		switch strings.ToUpper(queryType) {
 		case RequestTypeA:
 		case RequestTypeAAAA:
 		case RequestTypeCNAME:
@@ -60,11 +60,11 @@ func (c Config) Validate() error {
 		default:
 			return fmt.Errorf(
 				"invalid option %q provided for request type",
-				requestType,
+				queryType,
 			)
 		}
 	}
-	log.Debugf("c.RequestTypes() validates: %#v", c.RequestTypes())
+	log.Debugf("c.QueryTypes() validates: %#v", c.QueryTypes())
 
 	switch c.LogLevel() {
 	case LogLevelFatal:

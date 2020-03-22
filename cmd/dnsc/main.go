@@ -44,9 +44,9 @@ func main() {
 
 	// Get a list of all record types that we should request when submitting
 	// DNS queries
-	requestTypes := cfg.RecordTypes()
+	queryTypes := cfg.ResourceRecords()
 
-	expectedResponses := len(requestTypes) * len(cfg.Servers())
+	expectedResponses := len(queryTypes) * len(cfg.Servers())
 
 	results := make(dqrs.DNSQueryResponses, 0, expectedResponses)
 
@@ -75,7 +75,7 @@ func main() {
 					query, requestTypeString, server)
 				resultsChan <- dqrs.PerformQuery(query, server, requestType)
 			}
-		}(server, cfg.Query(), requestTypes, resultsChan)
+		}(server, cfg.Query(), queryTypes, resultsChan)
 
 	}
 

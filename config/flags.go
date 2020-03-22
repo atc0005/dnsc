@@ -22,8 +22,8 @@ func (c *Config) handleFlagsConfig() {
 	flag.Var(&c.cliConfig.Servers, "ds", dnsServerFlagHelp+" (shorthand)")
 	flag.Var(&c.cliConfig.Servers, "dns-server", dnsServerFlagHelp)
 
-	flag.Var(&c.cliConfig.RequestTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
-	flag.Var(&c.cliConfig.RequestTypes, "type", dnsRequestTypeFlagHelp)
+	flag.Var(&c.cliConfig.QueryTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
+	flag.Var(&c.cliConfig.QueryTypes, "type", dnsRequestTypeFlagHelp)
 
 	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
 	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)

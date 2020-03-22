@@ -77,28 +77,28 @@ func (c Config) ShowVersion() bool {
 	return c.showVersion
 }
 
-// RequestTypes returns the user-provided choice of which DNS record types to
+// QueryTypes returns the user-provided choice of which DNS record types to
 // request when submitting queries. If not set, defaults to A record type.
-func (c Config) RequestTypes() []string {
+func (c Config) QueryTypes() []string {
 
 	switch {
-	case c.cliConfig.RequestTypes != nil:
-		return c.cliConfig.RequestTypes
-	case c.fileConfig.RequestTypes != nil:
-		return c.fileConfig.RequestTypes
+	case c.cliConfig.QueryTypes != nil:
+		return c.cliConfig.QueryTypes
+	case c.fileConfig.QueryTypes != nil:
+		return c.fileConfig.QueryTypes
 	default:
 		log.Debugf("Requested record types not specified, using default: %q",
-			defaultRecordType)
-		return []string{defaultRecordType}
+			defaultQueryType)
+		return []string{defaultQueryType}
 	}
 }
 
-// RecordTypes converts the requested string keys which represent
+// ResourceRecords converts the requested string keys which represent
 // user-requested DNS record types into the native dns package types needed to
 // submit queries for those record types.
-func (c Config) RecordTypes() []uint16 {
+func (c Config) ResourceRecords() []uint16 {
 
-	requestedTypes := c.RequestTypes()
+	requestedTypes := c.QueryTypes()
 	if requestedTypes == nil || len(requestedTypes) < 1 {
 		return nil
 	}

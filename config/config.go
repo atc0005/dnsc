@@ -49,7 +49,7 @@ const (
 	defaultDisplayVersionAndExit bool   = false
 	defaultIgnoreDNSErrors       bool   = false
 	defaultConfigFileName        string = "config.toml"
-	defaultRecordType            string = "A"
+	defaultQueryType             string = "A"
 )
 
 // Log levels
@@ -173,11 +173,11 @@ type configTemplate struct {
 	// for testing queries.
 	Servers multiValueFlag `toml:"dns_servers"`
 
-	// RecordTypes is a list of the DNS records that should be requested when
-	// submitting queries. This is a a collection of plaintext types provided
-	// by the user. See also RecordTypes which is a set of dns.RR types
-	// converted from this collection.
-	RequestTypes multiValueFlag `toml:"dns_request_types"`
+	// QueryTypes is a list of the DNS records that will be requested when
+	// submitting queries. This is a a collection of keywords provided by the
+	// user. Each keyword/string corresponds to an internal Resource Record
+	// type (dns.RR).
+	QueryTypes multiValueFlag `toml:"dns_query_types"`
 
 	// Query represents the FQDN query strings submitted to each DNS server
 	Query string `toml:"query"`
@@ -194,21 +194,21 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, RequestTypes: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, RequestTypes: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, QueryTypes: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, QueryTypes: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
 		c.cliConfig.LogLevel,
 		c.cliConfig.LogFormat,
 		c.cliConfig.IgnoreDNSErrors,
-		c.cliConfig.RequestTypes,
+		c.cliConfig.QueryTypes,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
 		c.fileConfig.IgnoreDNSErrors,
-		c.fileConfig.RequestTypes,
+		c.fileConfig.QueryTypes,
 		c.configFile,
 		c.showVersion,
 	)

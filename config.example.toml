@@ -21,8 +21,11 @@ dns_servers = [
     "1.1.1.1",
 ]
 
-# What DNS record types will be requested when submitting DNS queries
-dns_request_types = [
+# The DNS query types that will be used when submitting DNS queries. Each type
+# listed here will be requested for each user-provided query, so if four types
+# are listed and there are five DNS server entries, there will be twenty DNS
+# queries submitted total.
+dns_query_types = [
     "A",
     "AAAA",
     "MX",
