@@ -2,6 +2,11 @@
 
 Submit query against a list of DNS servers and display summary of results
 
+[![Latest Release](https://img.shields.io/github/release/atc0005/dnsc.svg?style=flat-square)](https://github.com/atc0005/dnsc/releases/latest)
+[![GoDoc](https://godoc.org/github.com/atc0005/dnsc?status.svg)](https://godoc.org/github.com/atc0005/dnsc)
+![Validate Codebase](https://github.com/atc0005/dnsc/workflows/Validate%20Codebase/badge.svg)
+![Validate Docs](https://github.com/atc0005/dnsc/workflows/Validate%20Docs/badge.svg)
+
 - [dnsc](#dnsc)
   - [Project home](#project-home)
   - [Overview](#overview)
