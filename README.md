@@ -16,7 +16,7 @@ Submit query against a list of DNS servers and display summary of results
     - [Setup config file](#setup-config-file)
     - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
       - [Lots of output](#lots-of-output)
-    - [Short output](#short-output)
+      - [Short output](#short-output)
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
     - [Ignore errors, query all servers](#ignore-errors-query-all-servers)
   - [References](#references)
@@ -181,7 +181,7 @@ Server            Query            Type     Answers                             
 8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        85
 ```
 
-### Short output
+#### Short output
 
 ```ShellSession
 $ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.penzoil.com
