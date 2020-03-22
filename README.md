@@ -52,6 +52,10 @@ repeat use.
   - `AAAA`
   - `MX`
 
+- User configurable logging levels
+
+- User configurable logging format
+
 ### Planned
 
 See [our GitHub repo](https://github.com/atc0005/dnsc) for planned future
