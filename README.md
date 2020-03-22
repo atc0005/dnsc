@@ -155,36 +155,41 @@ See the [`config.example.toml`](config.example.toml) file for a starting point.
 #### Lots of output
 
 ```ShellSession
-$ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.yahoo.com
+$ dnsc -config-file ./config.example.toml -q www.yahoo.com
+
+  INFO[0000] User-specified config file provided, will attempt to load it
+  INFO[0000] Trying to load config file "./config.example.toml"
+  INFO[0000] Config file successfully loaded config_file=./config.example.toml
+
 
 Server            Query            Type     Answers                                                                                                                                                       TTL
 ---               ---              ---      ---                                                                                                                                                           ---
-1.1.1.1           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               357, 19, 19, 19, 19
-1.1.1.1           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        357
-1.1.1.1           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        357
-1.1.1.1           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA)    357, 11, 11, 11, 11
-208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        956
-208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               956, 23, 23, 23, 23
-208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    416, 30, 30, 30, 30
-208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        971
-208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    416, 30, 30, 30, 30
-208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        956
-208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               416, 31, 31, 31, 31
-208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        794
-8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 74.6.143.8 (A)                                                                                                        85, 3
-8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        106
-8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        85
-8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA), 2001:4998:44:41d::3 (AAAA)    107, 25, 25, 25, 25
-8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1639
-8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    110, 41, 41, 41, 41
-8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 74.6.143.8 (A)                                                                                                        85, 3
-8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        85
+1.1.1.1           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1082
+1.1.1.1           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1082, 41, 41, 41, 41
+1.1.1.1           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    1082, 33, 33, 33, 33
+1.1.1.1           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1082
+208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1137, 38, 38, 38, 38
+208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1047
+208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1047, 60, 60, 60, 60
+208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        679
+208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        679
+208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1047, 60, 60, 60, 60
+208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1524
+208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               679, 55, 55, 55, 55
+8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:58:1836::11 (AAAA)    569, 9, 9, 9, 9
+8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1121
+8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1008, 35, 35, 35, 35
+8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        806
+8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        927
+8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    924, 23, 23, 23, 23
+8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        903
+8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               576, 38, 38, 38, 38
 ```
 
 #### Short output
 
 ```ShellSession
-$ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.penzoil.com
+$ dnsc -config-file ./config.example.toml -q www.penzoil.com
 
   INFO[0000] User-specified config file provided, will attempt to load it
   INFO[0000] Trying to load config file "./config.example.toml"
