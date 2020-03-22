@@ -24,6 +24,7 @@ Submit query against a list of DNS servers and display summary of results
       - [Short output](#short-output)
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
     - [Ignore errors, query all servers](#ignore-errors-query-all-servers)
+  - [Inspiration](#inspiration)
   - [References](#references)
 
 ## Project home
@@ -324,6 +325,15 @@ Server            Query              Type     Answers                       TTL
 8.8.8.8           www.penzoil.com    AAAA     no records found for query
 8.8.8.8           www.penzoil.com    A        65.52.64.201 (A)              406
 ```
+
+## Inspiration
+
+This project was inspired by a small script that I used for many years to
+quickly spot outliers with DNS servers after moving virtual servers between
+subnets. The shell script is usable, but crude. It is provided as-is and can
+be found here:
+
+[dns_query.sh](contrib/dns_query.sh)
 
 ## References
 
