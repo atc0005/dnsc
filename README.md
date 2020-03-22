@@ -286,7 +286,7 @@ Server            Query    Type     Answers                       TTL
 8.8.8.8           tacos    AAAA     no records found for query
 ```
 
-Here is the www.penzoil.com query example from earlier, but now also with the
+Here is the www.penzoil.com query example from earlier, but now with the
 `-ide` flag set:
 
 ```ShellSession
