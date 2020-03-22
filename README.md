@@ -341,3 +341,4 @@ Server            Query              Type     Answers                       TTL
 - Free DNS servers for testing purposes
   - <https://developers.google.com/speed/public-dns>
   - <https://www.opendns.com/setupguide/>
+  - <https://blog.cloudflare.com/announcing-1111/>
