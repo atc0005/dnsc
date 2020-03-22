@@ -335,6 +335,11 @@ be found here:
 
 [dns_query.sh](contrib/dns_query.sh)
 
+This project also owes its existence to the `miekg/dns` package and the Black
+Hat Go authors whose example code got me started. See the
+[References](#references) for links to both resources. Many thanks to the
+authors of both!
+
 ## References
 
 - Golang basics
