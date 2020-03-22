@@ -28,12 +28,12 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 	// Header row in output
 	fmt.Fprintf(w,
-		"Server\tQuery\tType\tAnswers\tTTL\n")
+		"Server\tQuery\tType\tAnswers\tTTL\t\n")
 
 	// Separator row
 	// TODO: I'm sure this can be handled better
 	fmt.Fprintln(w,
-		"---\t---\t---\t---\t---")
+		"---\t---\t---\t---\t---\t")
 
 	for _, item := range dqrs {
 
@@ -46,7 +46,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		// instead of attempting to show real results
 		if item.QueryError != nil {
 			fmt.Fprintf(w,
-				"%s\t%s\t%s\t%s\t%s\n",
+				"%s\t%s\t%s\t%s\t%s\t\n",
 				item.Server,
 				item.Query,
 				rrString,
@@ -60,7 +60,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		item.SortRecordsAsc()
 
 		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\t%s\n",
+			"%s\t%s\t%s\t%s\t%s\t\n",
 			item.Server,
 			item.Query,
 			rrString,
