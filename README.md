@@ -14,7 +14,9 @@ Submit query against a list of DNS servers and display summary of results
     - [Configuration file](#configuration-file)
   - [Examples](#examples)
     - [Setup config file](#setup-config-file)
-    - [Use config file for DNS servers list](#use-config-file-for-dns-servers-list)
+    - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
+      - [Lots of output](#lots-of-output)
+    - [Short output](#short-output)
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
     - [Ignore errors, query all servers](#ignore-errors-query-all-servers)
   - [References](#references)
@@ -125,6 +127,7 @@ contents:
 ```toml
 
 dns_servers = [
+
     # https://developers.google.com/speed/public-dns
     "8.8.8.8",
     "8.8.4.4",
@@ -132,23 +135,72 @@ dns_servers = [
     # https://www.opendns.com/setupguide/
     "208.67.222.222",
     "208.67.220.220",
+
+    # https://blog.cloudflare.com/announcing-1111/
+    "1.1.1.1",
+]
+
+dns_query_types = [
+    "A",
+    "AAAA",
+    "MX",
+    "CNAME",
 ]
 ```
 
 See the [`config.example.toml`](config.example.toml) file for a starting point.
 
-### Use config file for DNS servers list
+### Use config file for DNS servers list and query types
+
+#### Lots of output
 
 ```ShellSession
 $ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.yahoo.com
 
-    Server            Query            Answers                                                                                                            TTL
-    ---               ---              ---                                                                                                                ---
-    208.67.220.220    www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 98.138.219.231 (A), 98.138.219.232 (A), 72.30.35.9 (A), 72.30.35.10 (A)    62, 30, 30, 30, 30
-    208.67.222.222    www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    1560, 40, 40, 40, 40
-    8.8.4.4           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            515, 44, 44
-    8.8.8.8           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            872, 17, 17
+Server            Query            Type     Answers                                                                                                                                                       TTL
+---               ---              ---      ---                                                                                                                                                           ---
+1.1.1.1           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               357, 19, 19, 19, 19
+1.1.1.1           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        357
+1.1.1.1           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        357
+1.1.1.1           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA)    357, 11, 11, 11, 11
+208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        956
+208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               956, 23, 23, 23, 23
+208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    416, 30, 30, 30, 30
+208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        971
+208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    416, 30, 30, 30, 30
+208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        956
+208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               416, 31, 31, 31, 31
+208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        794
+8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 74.6.143.8 (A)                                                                                                        85, 3
+8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        106
+8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        85
+8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA), 2001:4998:44:41d::3 (AAAA)    107, 25, 25, 25, 25
+8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1639
+8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    110, 41, 41, 41, 41
+8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 74.6.143.8 (A)                                                                                                        85, 3
+8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        85
 ```
+
+### Short output
+
+```ShellSession
+$ dnsc -config-file $HOME/.config/dnsc/config.toml -q www.penzoil.com
+
+  INFO[0000] User-specified config file provided, will attempt to load it
+  INFO[0000] Trying to load config file "./config.example.toml"
+  INFO[0000] Config file successfully loaded config_file=./config.example.toml
+
+
+Server     Query              Type    Answers                       TTL
+---        ---                ---     ---                           ---
+8.8.4.4    www.penzoil.com    A       65.52.64.201 (A)              751
+1.1.1.1    www.penzoil.com    A       65.52.64.201 (A)              753
+8.8.8.8    www.penzoil.com    A       65.52.64.201 (A)              899
+1.1.1.1    www.penzoil.com    AAAA    no records found for query
+```
+
+Here the process bailed when the first `AAAA` request (due to config file
+setting) failed.
 
 ### Specify DNS servers list via flags
 
@@ -157,13 +209,38 @@ You can also specify the DNS servers via CLI flags, though it is a bit more verb
 ```ShellSession
 $ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yahoo.com
 
-    Server            Query            Answers                                                                                                            TTL
-    ---               ---              ---                                                                                                                ---
-    208.67.220.220    www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A), 72.30.35.9 (A)    140, 53, 53, 53, 53
-    208.67.222.222    www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    464, 49, 49, 49, 49
-    8.8.4.4           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.10 (A), 72.30.35.9 (A), 98.138.219.232 (A), 98.138.219.231 (A)    348, 54, 54, 54, 54
-    8.8.8.8           www.yahoo.com    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.10 (A), 72.30.35.9 (A), 98.138.219.232 (A), 98.138.219.231 (A)    347, 53, 53, 53, 53
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+
+
+Server            Query            Type     Answers                                                                                                                                                       TTL
+---               ---              ---      ---                                                                                                                                                           ---
+208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1339, 11, 11, 11, 11
+208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1339, 40, 40, 40, 40
+208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1775
+208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1339
+208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        395
+208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1339, 11, 11, 11, 11
+208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        858
+208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               858, 35, 35, 35, 35
+8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:58:1836::10 (AAAA)                                                            1500, 55, 55
+8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1297
+8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                                                                       1581, 18, 18
+8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1580
+8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:58:1836::10 (AAAA)                                                            1587, 37, 37
+8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1483
+8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                                                                       1616, 53, 53
+8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1580
 ```
+
+No errors here since www.yahoo.com had records for all of the requested query
+types.
+
+It's also worth pointing out that I have a local copy of the `config.toml`
+file which was automatically detected and loaded.
 
 ### Ignore errors, query all servers
 
@@ -176,14 +253,66 @@ results.
 Here we use the short-hand `-ide` flag:
 
 ```ShellSession
-$ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q tacos -ide
+$ dnsc  -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q tacos -ide
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
 
-    Server            Query    Answers                       TTL
-    ---               ---      ---                           ---
-    208.67.220.220    tacos    no records found for query
-    208.67.222.222    tacos    no records found for query
-    8.8.4.4           tacos    no records found for query
-    8.8.8.8           tacos    no records found for query
+
+Server            Query    Type     Answers                       TTL
+---               ---      ---      ---                           ---
+208.67.220.220    tacos    CNAME    no records found for query
+208.67.220.220    tacos    A        no records found for query
+208.67.220.220    tacos    MX       no records found for query
+208.67.220.220    tacos    AAAA     no records found for query
+208.67.222.222    tacos    CNAME    no records found for query
+208.67.222.222    tacos    AAAA     no records found for query
+208.67.222.222    tacos    MX       no records found for query
+208.67.222.222    tacos    A        no records found for query
+8.8.4.4           tacos    AAAA     no records found for query
+8.8.4.4           tacos    CNAME    no records found for query
+8.8.4.4           tacos    MX       no records found for query
+8.8.4.4           tacos    A        no records found for query
+8.8.8.8           tacos    MX       no records found for query
+8.8.8.8           tacos    A        no records found for query
+8.8.8.8           tacos    CNAME    no records found for query
+8.8.8.8           tacos    AAAA     no records found for query
+```
+
+Here is the www.penzoil.com query example from earlier, but now also with the
+`-ide` flag set:
+
+```ShellSession
+$ dnsc -config-file ./config.example.toml -q www.penzoil.com -ide
+  INFO[0000] User-specified config file provided, will attempt to load it
+  INFO[0000] Trying to load config file "./config.example.toml"
+  INFO[0000] Config file successfully loaded config_file=./config.example.toml
+
+
+Server            Query              Type     Answers                       TTL
+---               ---                ---      ---                           ---
+1.1.1.1           www.penzoil.com    MX       no records found for query
+1.1.1.1           www.penzoil.com    A        65.52.64.201 (A)              260
+1.1.1.1           www.penzoil.com    CNAME    no records found for query
+1.1.1.1           www.penzoil.com    AAAA     no records found for query
+208.67.220.220    www.penzoil.com    CNAME    no records found for query
+208.67.220.220    www.penzoil.com    MX       no records found for query
+208.67.220.220    www.penzoil.com    AAAA     no records found for query
+208.67.220.220    www.penzoil.com    A        65.52.64.201 (A)              900
+208.67.222.222    www.penzoil.com    CNAME    no records found for query
+208.67.222.222    www.penzoil.com    A        65.52.64.201 (A)              497
+208.67.222.222    www.penzoil.com    AAAA     no records found for query
+208.67.222.222    www.penzoil.com    MX       no records found for query
+8.8.4.4           www.penzoil.com    A        65.52.64.201 (A)              258
+8.8.4.4           www.penzoil.com    MX       no records found for query
+8.8.4.4           www.penzoil.com    AAAA     no records found for query
+8.8.4.4           www.penzoil.com    CNAME    no records found for query
+8.8.8.8           www.penzoil.com    CNAME    no records found for query
+8.8.8.8           www.penzoil.com    MX       no records found for query
+8.8.8.8           www.penzoil.com    AAAA     no records found for query
+8.8.8.8           www.penzoil.com    A        65.52.64.201 (A)              406
 ```
 
 ## References
