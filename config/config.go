@@ -39,7 +39,7 @@ const (
 	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
 	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 	dnsServerFlagHelp       = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
-	dnsRequestTypeFlagHelp  = "DNS record type to request when submitting DNS query. This flag may be repeated for each additional DNS record type you wish to request."
+	dnsRequestTypeFlagHelp  = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
 )
 
 // Default flag settings if not overridden by user input
