@@ -26,6 +26,18 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.1.1] - 2020-03-22
+
+### Added
+
+- Add expanded coverage of config file purpose and supported locations for
+  auto-load behavior
+- Add simpler flags-only, A record only query
+
+### Fixed
+
+- Fix config file reference to match the filename used in examples
+
 ## [v0.1.0] - 2020-03-22
 
 ### Added
@@ -55,5 +67,6 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.1.1...HEAD
+[v0.1.1]: https://github.com/atc0005/dnsc/releases/tag/v0.1.1
 [v0.1.0]: https://github.com/atc0005/dnsc/releases/tag/v0.1.0
