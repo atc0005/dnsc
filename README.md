@@ -18,7 +18,8 @@ Submit query against a list of DNS servers and display summary of results
     - [Command-line arguments](#command-line-arguments)
     - [Configuration file](#configuration-file)
   - [Examples](#examples)
-    - [Setup config file](#setup-config-file)
+    - [Our config file](#our-config-file)
+    - [Flags only, no config file](#flags-only-no-config-file)
     - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
       - [Lots of output](#lots-of-output)
       - [Short output](#short-output)
@@ -140,7 +141,7 @@ sections for usage details.
 
 ## Examples
 
-### Setup config file
+### Our config file
 
 These examples assume that the referenced `config.example.toml` file has the
 following contents:
@@ -171,6 +172,36 @@ dns_query_types = [
 
 See the [Configuration file](#configuration-file) section for additional
 information, including supported locations for this file.
+
+### Flags only, no config file
+
+Here the `dnsc` application attempted to load a config file using the
+locations mentioned in the [Configuration file](#configuration-file) section,
+but one was not found:
+
+```ShellSession
+$ ./dnsc.exe -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yahoo.com
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  WARN[0000] Config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
+
+
+Server            Query            Type    Answers                                                                                                            TTL
+---               ---              ---     ---                                                                                                                ---
+208.67.220.220    www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    1304, 18, 18, 18, 18
+208.67.222.222    www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    1433, 40, 40, 40, 40
+8.8.4.4           www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            591, 31, 31
+8.8.8.8           www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    98, 32, 32, 32, 32
+```
+
+Since we did not specify a record query type, only `A` records were requested
+in the query to each DNS server. Since we have recursion enabled and the
+`dnsc` application does not exclude them, the initial `CNAME` record found by
+each query is also listed in the `Answers` section above for each DNS server
+that had it.
 
 ### Use config file for DNS servers list and query types
 
