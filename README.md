@@ -120,15 +120,30 @@ settings.
 | `log-format`        | `log_format`             |                                                                                    |
 | `type`              | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
 
-See the [`config.example.toml`](config.example.toml) file for an example of
-how to use these settings.
+The [`config.example.toml`](config.example.toml) file is intended as a
+starting point for your own `config.toml` configuration file and attempts to
+illustrate working values for the available command-line flags.
+
+Once reviewed and potentially adjusted, your copy of the `config.toml` file
+can be placed in one of the following locations to be automatically detected
+and used by this application:
+
+- alongside the `dnsc` (or `dnsc.exe`) binary (as `config.toml`)
+- at `$HOME/.config/dnsc/config.toml` on a UNIX-like system (e.g., Linux
+  distro, Mac)
+- at `C:\Users\YOUR_USERNAME\AppData\dnsc\config.toml` on a Windows system
+
+Feel free to place the file wherever you like and refer to it using the `-cf`
+(short flag name) or `-config-file` (full-length flag name). See the
+[Examples](#examples) and [Command-line arguments](#command-line-arguments)
+sections for usage details.
 
 ## Examples
 
 ### Setup config file
 
-These examples assume that the referenced `config.toml` file has the following
-contents:
+These examples assume that the referenced `config.example.toml` file has the
+following contents:
 
 ```toml
 
@@ -154,7 +169,8 @@ dns_query_types = [
 ]
 ```
 
-See the [`config.example.toml`](config.example.toml) file for a starting point.
+See the [Configuration file](#configuration-file) section for additional
+information, including supported locations for this file.
 
 ### Use config file for DNS servers list and query types
 
