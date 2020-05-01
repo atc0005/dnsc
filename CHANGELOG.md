@@ -26,6 +26,39 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.1.2] - 2020-05-01
+
+### Fixed
+
+- Remove bash shebang from GitHub Actions Workflow files
+- README missing requirements, installation instructions
+
+### Changed
+
+- Vendor dependencies
+
+- Update dependencies
+  - direct
+    - `apex/log` updated to `v1.1.4`
+    - `pelletier/go-toml` updated to `v1.7.0`
+  - indirect
+    - `stretchr/testify`
+    - `kr/pretty` replaced with `niemeyer/pretty`
+    - `mattn/go-colorable`
+    - `gopkg.in/check.v1`
+
+- Linting
+  - golangci-lint
+    - move settings to external config file
+    - enable `scopelint` linter
+    - enable `gofmt` linter
+    - enable `dogsled` linter
+    - switch from build-from-source to binary installation
+    - use v1.25.1 release
+  - Remove installation step for `gofmt`
+  - Remove separate `gofmt` and `golint` calls
+    - handled by golangci-lint now
+
 ## [v0.1.1] - 2020-03-22
 
 ### Added
@@ -67,6 +100,7 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.1.2...HEAD
+[v0.1.2]: https://github.com/atc0005/dnsc/releases/tag/v0.1.2
 [v0.1.1]: https://github.com/atc0005/dnsc/releases/tag/v0.1.1
 [v0.1.0]: https://github.com/atc0005/dnsc/releases/tag/v0.1.0
