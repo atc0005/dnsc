@@ -18,7 +18,17 @@ dns_servers = [
     "208.67.220.220",
 
     # https://blog.cloudflare.com/announcing-1111/
+    # https://blog.cloudflare.com/introducing-1-1-1-1-for-families/
+
+    # Original
     "1.1.1.1",
+
+     # (No Malware)
+     "1.1.1.2",
+
+     # (No Malware or Adult Content)
+     "1.1.1.3",
+
 ]
 
 # The DNS query types that will be used when submitting DNS queries. Each type
