@@ -64,10 +64,8 @@ lintinstall:
 
 	@export PATH="${PATH}:$(go env GOPATH)/bin"
 
-	@echo "Explicitly enabling Go modules mode"
-	@export GO111MODULE="on"
-	go get golang.org/x/lint/golint
-	go get honnef.co/go/tools/cmd/staticcheck
+	@echo "Explicitly enabling Go modules mode per command"
+	(cd; GO111MODULE="on" go get honnef.co/go/tools/cmd/staticcheck)
 
 	@echo Installing golangci-lint ${GOLANGCI_LINT_VERSION} per official binary installation docs ...
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin ${GOLANGCI_LINT_VERSION}
@@ -81,17 +79,8 @@ lintinstall:
 linting:
 	@echo "Running linting tools ..."
 
-	@echo "Running gofmt ..."
-
-	@test -z $(shell gofmt -l -e .) || (echo "WARNING: gofmt linting errors found" \
-		&& gofmt -l -e -d . \
-		&& exit 1 )
-
 	@echo "Running go vet ..."
 	@go vet ./...
-
-	@echo "Running golint ..."
-	@golint -set_exit_status ./...
 
 	@echo "Running golangci-lint ..."
 	@golangci-lint run
