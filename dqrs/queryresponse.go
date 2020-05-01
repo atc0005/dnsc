@@ -15,6 +15,7 @@ import (
 	"net"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/miekg/dns"
 )
@@ -42,6 +43,10 @@ type DNSQueryResponse struct {
 	// Error records whether an error occurred during any part of performing a
 	// query
 	QueryError error
+
+	// ResponseTime is a measurement of how long it takes a remote DNS server
+	// to respond to our query with an answer.
+	ResponseTime time.Duration
 }
 
 // DNSQueryResponses is a collection of DNS query responses. Intended for
@@ -174,8 +179,11 @@ func PerformQuery(query string, server string, qType uint16) DNSQueryResponse {
 		RequestedRecordType: qType,
 	}
 
+	queryStart := time.Now()
+
 	// Perform UDP-based query using default settings
 	in, err := dns.Exchange(&msg, server+":53")
+	dnsQueryResponse.ResponseTime = time.Since(queryStart)
 	if err != nil {
 		dnsQueryResponse.QueryError = err
 		return dnsQueryResponse

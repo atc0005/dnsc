@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"text/tabwriter"
+	"time"
 )
 
 // PrintSummary generates a table of all collected DNS query results
@@ -28,12 +29,12 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 	// Header row in output
 	fmt.Fprintf(w,
-		"Server\tQuery\tType\tAnswers\tTTL\t\n")
+		"Server\tWait\tQuery\tType\tAnswers\tTTL\t\n")
 
 	// Separator row
 	// TODO: I'm sure this can be handled better
 	fmt.Fprintln(w,
-		"---\t---\t---\t---\t---\t")
+		"---\t---\t---\t---\t---\t---\t")
 
 	for _, item := range dqrs {
 
@@ -46,8 +47,9 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		// instead of attempting to show real results
 		if item.QueryError != nil {
 			fmt.Fprintf(w,
-				"%s\t%s\t%s\t%s\t%s\t\n",
+				"%s\t%s\t%s\t%s\t%s\t%s\t\n",
 				item.Server,
+				item.ResponseTime.Round(time.Millisecond),
 				item.Query,
 				rrString,
 				item.QueryError.Error(),
@@ -60,8 +62,9 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 		item.SortRecordsAsc()
 
 		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\t%s\t\n",
+			"%s\t%s\t%s\t%s\t%s\t%s\t\n",
 			item.Server,
+			item.ResponseTime.Round(time.Millisecond),
 			item.Query,
 			rrString,
 			item.Records(),
