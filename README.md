@@ -70,6 +70,58 @@ repeat use.
 See [our GitHub repo](https://github.com/atc0005/dnsc) for planned future
 work.
 
+## Changelog
+
+See the [`CHANGELOG.md`](CHANGELOG.md) file for the changes associated with
+each release of this application. Changes that have been merged to `master`,
+but not yet an official release may also be noted in the file under the
+`Unreleased` section. A helpful link to the Git commit history since the last
+official release is also provided for further review.
+
+## Requirements
+
+- Go 1.13+ (for building)
+- GCC
+  - if building with custom options (as the provided `Makefile` does)
+- `make`
+  - if using the provided `Makefile`
+
+Tested using:
+
+- Go 1.13+
+- Windows 10 Version 1903
+  - native
+  - WSL
+- Ubuntu Linux 16.04+
+
+## How to install it
+
+1. [Download](https://golang.org/dl/) Go
+1. [Install](https://golang.org/doc/install) Go
+1. Clone the repo
+   1. `cd /tmp`
+   1. `git clone https://github.com/atc0005/dnsc`
+   1. `cd dnsc`
+1. Install dependencies (optional)
+   - for Ubuntu Linux
+     - `sudo apt-get install make gcc`
+   - for CentOS Linux
+     1. `sudo yum install make gcc`
+1. Build
+   - for current operating system
+     - `go build -mod=vendor ./cmd/dnsc/`
+       - *forces build to use bundled dependencies in top-level `vendor`
+         folder*
+   - for all supported platforms (where `make` is installed)
+      - `make all`
+   - for Windows
+      - `make windows`
+   - for Linux
+     - `make linux`
+1. Copy the applicable binary to whatever systems needs to run it
+   - if using `Makefile`: look in `/tmp/release_assets/dnsc/`
+   - if using `go build`: look in `/tmp/dnsc/`
+
 ## Configuration
 
 ### Precedence

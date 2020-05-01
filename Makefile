@@ -25,7 +25,7 @@ SHELL = /bin/bash
 APPNAME					= dnsc
 
 # What package holds the "version" variable used in branding/version output?
-VERSION_VAR_PKG			= github.com/atc0005/$(APPNAME)/config
+VERSION_VAR_PKG			= $(shell go list .)/config
 
 OUTPUTDIR 				= release_assets
 
@@ -38,8 +38,8 @@ GOLANGCI_LINT_VERSION		= v1.25.1
 
 # The default `go build` process embeds debugging information. Building
 # without that debugging information reduces the binary size by around 28%.
-BUILDCMD				=	go build -a -ldflags="-s -w -X $(VERSION_VAR_PKG).version=$(VERSION)"
-GOCLEANCMD				=	go clean ./...
+BUILDCMD				=	go build -mod=vendor -a -ldflags="-s -w -X $(VERSION_VAR_PKG).version=$(VERSION)"
+GOCLEANCMD				=	go clean -mod=vendor ./...
 GITCLEANCMD				= 	git clean -xfd
 CHECKSUMCMD				=	sha256sum -b
 
@@ -75,18 +75,17 @@ lintinstall:
 
 .PHONY: linting
 ## linting: runs common linting checks
-# https://stackoverflow.com/a/42510278/903870
 linting:
 	@echo "Running linting tools ..."
 
 	@echo "Running go vet ..."
-	@go vet ./...
+	@go vet -mod=vendor $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Running golangci-lint ..."
 	@golangci-lint run
 
 	@echo "Running staticcheck ..."
-	@staticcheck ./...
+	@staticcheck $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Finished running linting checks"
 
@@ -94,7 +93,7 @@ linting:
 ## gotests: runs go test recursively, verbosely
 gotests:
 	@echo "Running go tests ..."
-	@go test ./...
+	@go test -mod=vendor ./...
 	@echo "Finished running go tests"
 
 .PHONY: goclean
