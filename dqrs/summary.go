@@ -29,7 +29,7 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 
 	// Header row in output
 	fmt.Fprintf(w,
-		"Server\tWait\tQuery\tType\tAnswers\tTTL\t\n")
+		"Server\tRTT\tQuery\tType\tAnswers\tTTL\t\n")
 
 	// Separator row
 	// TODO: I'm sure this can be handled better

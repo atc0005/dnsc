@@ -45,6 +45,7 @@ func main() {
 	// Get a list of all record types that we should request when submitting
 	// DNS queries
 	queryTypes := cfg.QueryTypes()
+	queryTimeout := cfg.Timeout()
 
 	expectedResponses := len(queryTypes) * len(cfg.Servers())
 
@@ -82,7 +83,7 @@ func main() {
 				}
 				log.Debugf("Submitting query for %q of type %q to %q",
 					query, rrString, server)
-				resultsChan <- dqrs.PerformQuery(query, server, rrType)
+				resultsChan <- dqrs.PerformQuery(query, server, rrType, queryTimeout)
 			}
 		}(server, cfg.Query(), queryTypes, resultsChan)
 

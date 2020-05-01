@@ -8,6 +8,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/apex/log"
 )
 
@@ -87,6 +89,24 @@ func (c Config) QueryTypes() []string {
 		log.Debugf("Requested record types not specified, using default: %q",
 			defaultQueryType)
 		return []string{defaultQueryType}
+	}
+}
+
+// Timeout returns the user-provided choice of what timeout value to use for
+// DNS queries. If not set, returns the default value for our application.
+func (c Config) Timeout() time.Duration {
+
+	// FIXME: Initial implementation for GH-17; will need to be revisited
+	// alongside the work on GH-10.
+	switch {
+	case c.cliConfig.Timeout != 0:
+		return time.Duration(c.cliConfig.Timeout) * time.Second
+	case c.fileConfig.Timeout != 0:
+		return time.Duration(c.fileConfig.Timeout) * time.Second
+	default:
+		log.Debugf("Requested timeout value not specified, using default: %v",
+			defaultTimeout)
+		return time.Duration(defaultTimeout) * time.Second
 	}
 }
 
