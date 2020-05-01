@@ -160,9 +160,11 @@ func (dqr DNSQueryResponse) TTLs() string {
 
 // PerformQuery wraps the bulk of the query/record logic performed by this
 // application
-func PerformQuery(query string, server string, qType uint16) DNSQueryResponse {
+func PerformQuery(query string, server string, qType uint16, timeout time.Duration) DNSQueryResponse {
 
 	var msg dns.Msg
+
+	// TODO: construct dns.Msg manually
 
 	fqdn := dns.Fqdn(query)
 
@@ -179,15 +181,25 @@ func PerformQuery(query string, server string, qType uint16) DNSQueryResponse {
 		RequestedRecordType: qType,
 	}
 
+	// construct client so that we are able to override default settings
+	client := dns.Client{
+		Net:     "udp",
+		Timeout: timeout,
+	}
+
 	queryStart := time.Now()
 
 	// Perform UDP-based query using default settings
-	in, err := dns.Exchange(&msg, server+":53")
+	in, rtt, err := client.Exchange(&msg, server+":53")
 	dnsQueryResponse.ResponseTime = time.Since(queryStart)
 	if err != nil {
 		dnsQueryResponse.QueryError = err
 		return dnsQueryResponse
 	}
+
+	// TODO: Are these the same values?
+	fmt.Println("rtt:", rtt)
+	fmt.Println("dnsQueryResponse.ResponseTime:", dnsQueryResponse.ResponseTime)
 
 	// Early exit if the DNS server returns an unexpected result
 	if len(in.Answer) < 1 {

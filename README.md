@@ -13,6 +13,9 @@ Submit query against a list of DNS servers and display summary of results
   - [Features](#features)
     - [Current](#current)
     - [Planned](#planned)
+  - [Changelog](#changelog)
+  - [Requirements](#requirements)
+  - [How to install it](#how-to-install-it)
   - [Configuration](#configuration)
     - [Precedence](#precedence)
     - [Command-line arguments](#command-line-arguments)
@@ -64,6 +67,8 @@ repeat use.
 - User configurable logging levels
 
 - User configurable logging format
+
+- User configurable query timeout
 
 ### Planned
 
@@ -155,6 +160,7 @@ command-line flags and use the configuration file for the other settings.
 | `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                                     |
 | `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                               |
 | `t`, `type`                | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
+| `to`, `timeout`            | No       | `10`           | No      | *any positive whole number*                | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                  |
 
 ### Configuration file
 
@@ -172,6 +178,7 @@ settings.
 | `log-level`         | `log_level`              |                                                                                    |
 | `log-format`        | `log_format`             |                                                                                    |
 | `type`              | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
+| `timeout`           | `timeout`                |                                                                                    |
 
 The [`config.example.toml`](config.example.toml) file is intended as a
 starting point for your own `config.toml` configuration file and attempts to
