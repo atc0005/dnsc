@@ -69,3 +69,6 @@ log_format = "cli"
 # Specifying a static/hard-coded query here is not enabled by default, but
 # could prove useful in some situations.
 # query = "www.yahoo.com"
+
+# Maximum number of seconds allowed for a DNS query to take before timing out.
+# timeout = 10

@@ -40,6 +40,7 @@ const (
 	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 	dnsServerFlagHelp       = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
 	dnsRequestTypeFlagHelp  = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
+	dnsTimeoutFlagHelp      = "Maximum number of seconds allowed for a DNS query to take before timing out."
 )
 
 // Default flag settings if not overridden by user input
@@ -50,6 +51,12 @@ const (
 	defaultIgnoreDNSErrors       bool   = false
 	defaultConfigFileName        string = "config.toml"
 	defaultQueryType             string = "A"
+
+	// the default timeout is set by the `miekg/dns.dnsTimeout` value, which
+	// at the time of this writing is 2 seconds. we override with our own
+	// longer default (GH-17), but allow the user to override with their own
+	// preference later.
+	defaultTimeout int = 10
 )
 
 // Log levels
@@ -190,6 +197,10 @@ type configTemplate struct {
 	// of the formats supported by the third-party leveled-logging package
 	// used by this application.
 	LogFormat string `toml:"log_format"`
+
+	// Timeout is the number of seconds allowed for a DNS query to complete
+	// before it times out.
+	Timeout int `toml:"timeout"`
 }
 
 func (c Config) String() string {
