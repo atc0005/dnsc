@@ -20,6 +20,10 @@ import (
 	"github.com/miekg/dns"
 )
 
+// defaultDNSPort is the default UDP and TCP port used for incoming DNS
+// requests
+const defaultDNSPort = "53"
+
 // DNSQueryResponse represents a query and response from a DNS server.
 // Multiple records may be returned for a single query (e.g., CNAME and A
 // records).
@@ -44,8 +48,10 @@ type DNSQueryResponse struct {
 	// query
 	QueryError error
 
-	// ResponseTime is a measurement of how long it takes a remote DNS server
-	// to respond to our query with an answer.
+	// ResponseTime, also known as the Round-trip Time, can be best summed up
+	// by this Cloudflare definition: "Round-trip time (RTT) is the duration
+	// in milliseconds (ms) it takes for a network request to go from a
+	// starting point to a destination and back again to the starting point."
 	ResponseTime time.Duration
 }
 
@@ -164,8 +170,6 @@ func PerformQuery(query string, server string, qType uint16, timeout time.Durati
 
 	var msg dns.Msg
 
-	// TODO: construct dns.Msg manually
-
 	fqdn := dns.Fqdn(query)
 
 	// NOTE: Recursion is used by default, which resolves CNAME entries
@@ -187,19 +191,14 @@ func PerformQuery(query string, server string, qType uint16, timeout time.Durati
 		Timeout: timeout,
 	}
 
-	queryStart := time.Now()
-
-	// Perform UDP-based query using default settings
-	in, rtt, err := client.Exchange(&msg, server+":53")
-	dnsQueryResponse.ResponseTime = time.Since(queryStart)
+	// Perform UDP-based query using custom client settings
+	remoteAddress := net.JoinHostPort(server, defaultDNSPort)
+	in, rtt, err := client.Exchange(&msg, remoteAddress)
+	dnsQueryResponse.ResponseTime = rtt
 	if err != nil {
 		dnsQueryResponse.QueryError = err
 		return dnsQueryResponse
 	}
-
-	// TODO: Are these the same values?
-	fmt.Println("rtt:", rtt)
-	fmt.Println("dnsQueryResponse.ResponseTime:", dnsQueryResponse.ResponseTime)
 
 	// Early exit if the DNS server returns an unexpected result
 	if len(in.Answer) < 1 {

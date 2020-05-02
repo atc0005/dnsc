@@ -468,3 +468,6 @@ authors of both!
   - <https://developers.google.com/speed/public-dns>
   - <https://www.opendns.com/setupguide/>
   - <https://blog.cloudflare.com/announcing-1111/>
+
+- Definitions
+  - <https://www.cloudflare.com/learning/cdn/glossary/round-trip-time-rtt/>
