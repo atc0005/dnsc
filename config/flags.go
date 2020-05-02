@@ -25,8 +25,8 @@ func (c *Config) handleFlagsConfig() {
 	flag.Var(&c.cliConfig.QueryTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
 	flag.Var(&c.cliConfig.QueryTypes, "type", dnsRequestTypeFlagHelp)
 
-	flag.Var(&c.cliConfig.QueryTypes, "to", dnsTimeoutFlagHelp+" (shorthand)")
-	flag.Var(&c.cliConfig.QueryTypes, "timeout", dnsTimeoutFlagHelp)
+	flag.IntVar(&c.cliConfig.Timeout, "to", defaultTimeout, dnsTimeoutFlagHelp+" (shorthand)")
+	flag.IntVar(&c.cliConfig.Timeout, "timeout", defaultTimeout, dnsTimeoutFlagHelp)
 
 	flag.StringVar(&c.configFile, "cf", "", configFileFlagHelp+" (shorthand)")
 	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
