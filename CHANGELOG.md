@@ -26,6 +26,28 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.0] - 2020-05-02
+
+### Added
+
+- custom timeout value support
+  - new `-timeout`, `-to` flags to supply custom timeout values (in seconds)
+  - new `timeout` config file setting
+
+- extend example config file with additional DNS servers
+  - add Cloudflare filtered DNS servers
+    - 1.1.1.2 (No Malware)
+    - 1.1.1.3 (No Malware or Adult Content)
+    - see also <https://blog.cloudflare.com/introducing-1-1-1-1-for-families/>
+
+- report round-trip time (aka, response time) in summary output to assist with
+  identifying slow DNS servers
+
+### Changed
+
+- effective default query timeout changed from 2s to 10s
+  - allow for slower DNS servers to finish their work and respond
+
 ## [v0.1.2] - 2020-05-01
 
 ### Fixed
@@ -100,7 +122,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/atc0005/dnsc/releases/tag/v0.2.0
 [v0.1.2]: https://github.com/atc0005/dnsc/releases/tag/v0.1.2
 [v0.1.1]: https://github.com/atc0005/dnsc/releases/tag/v0.1.1
 [v0.1.0]: https://github.com/atc0005/dnsc/releases/tag/v0.1.0
