@@ -1,4 +1,19 @@
 
+v1.4.0 / 2020-06-16
+===================
+
+  * add AuthToken to apexlogs handler
+
+v1.3.0 / 2020-05-26
+===================
+
+  * change FromContext() to always return a logger
+
+v1.2.0 / 2020-05-26
+===================
+
+  * add log.NewContext() and log.FromContext(). Closes #78
+
 v1.1.4 / 2020-04-22
 ===================
 
