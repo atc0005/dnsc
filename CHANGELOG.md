@@ -26,6 +26,30 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.2.1] - 2020-07-07
+
+### Added
+
+- Enable Dependabot version updates
+  - `GitHub Actions`
+  - `Go Modules`
+
+### Changed
+
+- Update dependencies
+  - `actions/setup-go`
+    - `v2.0.3` to `v2.1.0`
+  - `actions/setup-node`
+    - `v2.0.0` to `v2.1.0`
+  - `actions/checkout`
+    - `v1` to `v2.3.1`
+  - `pelletier/go-toml`
+    - `v1.7.0` to `v1.8.0`
+  - `apex/log`
+    - `v1.1.4` to `v1.4.0`
+  - `miekg/dns`
+    - `v1.1.29` to `v1.1.30`
+
 ## [v0.2.0] - 2020-05-02
 
 ### Added
@@ -122,7 +146,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/atc0005/dnsc/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/dnsc/releases/tag/v0.2.0
 [v0.1.2]: https://github.com/atc0005/dnsc/releases/tag/v0.1.2
 [v0.1.1]: https://github.com/atc0005/dnsc/releases/tag/v0.1.1
