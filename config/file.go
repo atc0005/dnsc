@@ -42,8 +42,9 @@ func (c *Config) loadConfigFile(configFile string) (bool, error) {
 	return result, err
 }
 
-// localConfigFile returns the potential path to a  local config file or an
-// error if one is encountered constructing the path
+// localConfigFile returns the potential path to a config file found locally
+// alongside the executable, or an error if one is encountered constructing
+// the path
 func (c Config) localConfigFile() (string, error) {
 
 	exePath, err := os.Executable()
@@ -67,8 +68,9 @@ func (c Config) localConfigFile() (string, error) {
 	return localCfgFile, nil
 }
 
-// userConfigFile returns the potential path to a  local config file or an
-// error if one is encountered constructing the path
+// userConfigFile returns the potential path to a config file found in the
+// user's configuration path or an error if one is encountered constructing the
+// path
 func (c Config) userConfigFile() (string, error) {
 	// Ubuntu environment:
 	// os.UserHomeDir: /home/username
