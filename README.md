@@ -124,7 +124,7 @@ Tested using:
    - for Linux
      - `make linux`
 1. Copy the applicable binary to whatever systems needs to run it
-   - if using `Makefile`: look in `/tmp/release_assets/dnsc/`
+   - if using `Makefile`: look in `/tmp/dnsc/release_assets/dnsc/`
    - if using `go build`: look in `/tmp/dnsc/`
 
 ## Configuration
