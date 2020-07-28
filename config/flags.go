@@ -19,9 +19,11 @@ func (c *Config) handleFlagsConfig() {
 
 	log.Debugf("Before parsing flags: %v", c.String())
 
+	// slice
 	flag.Var(&c.cliConfig.Servers, "ds", dnsServerFlagHelp+" (shorthand)")
 	flag.Var(&c.cliConfig.Servers, "dns-server", dnsServerFlagHelp)
 
+	// slice
 	flag.Var(&c.cliConfig.QueryTypes, "t", dnsRequestTypeFlagHelp+" (shorthand)")
 	flag.Var(&c.cliConfig.QueryTypes, "type", dnsRequestTypeFlagHelp)
 
