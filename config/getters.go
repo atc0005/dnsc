@@ -110,17 +110,15 @@ func (c Config) Timeout() time.Duration {
 	}
 }
 
-// IgnoreDNSErrors returns the user-provided choice of ignoring DNS-related
-// errors or the default value for this choice.
-func (c Config) IgnoreDNSErrors() bool {
+// DNSErrorsFatal returns the user-provided choice of whether DNS-related
+// errors should be fatal or the default value for this choice.
+func (c Config) DNSErrorsFatal() bool {
 	switch {
-
-	// if not nil, a choice was made; use set choice, otherwise return default
-	case c.cliConfig.IgnoreDNSErrors != nil:
-		return *c.cliConfig.IgnoreDNSErrors
-	case c.fileConfig.IgnoreDNSErrors != nil:
-		return *c.fileConfig.IgnoreDNSErrors
+	case c.cliConfig.DNSErrorsFatal:
+		return c.cliConfig.DNSErrorsFatal
+	case c.fileConfig.DNSErrorsFatal:
+		return c.fileConfig.DNSErrorsFatal
 	default:
-		return defaultIgnoreDNSErrors
+		return defaultDNSErrorsFatal
 	}
 }

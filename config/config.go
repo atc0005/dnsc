@@ -32,15 +32,15 @@ const myAppName string = "dnsc"
 const myAppURL string = "https://github.com/atc0005/" + myAppName
 
 const (
-	versionFlagHelp         = "Whether to display application version and then immediately exit application."
-	queryFlagHelp           = "Fully-qualified system to lookup from all provided DNS servers."
-	logLevelFlagHelp        = "Log message priority filter. Log messages with a lower level are ignored."
-	logFormatFlagHelp       = "Log messages are written in this format"
-	ignoreDNSErrorsFlagHelp = "Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list."
-	configFileFlagHelp      = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
-	dnsServerFlagHelp       = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
-	dnsRequestTypeFlagHelp  = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
-	dnsTimeoutFlagHelp      = "Maximum number of seconds allowed for a DNS query to take before timing out."
+	versionFlagHelp        = "Whether to display application version and then immediately exit application."
+	queryFlagHelp          = "Fully-qualified system to lookup from all provided DNS servers."
+	logLevelFlagHelp       = "Log message priority filter. Log messages with a lower level are ignored."
+	logFormatFlagHelp      = "Log messages are written in this format"
+	dnsErrorsFatalFlagHelp = "Whether DNS-related errors should force this application to immediately exit"
+	configFileFlagHelp     = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
+	dnsServerFlagHelp      = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
+	dnsRequestTypeFlagHelp = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
+	dnsTimeoutFlagHelp     = "Maximum number of seconds allowed for a DNS query to take before timing out."
 )
 
 // Default flag settings if not overridden by user input
@@ -48,7 +48,7 @@ const (
 	defaultLogLevel              string = "info"
 	defaultLogFormat             string = "text"
 	defaultDisplayVersionAndExit bool   = false
-	defaultIgnoreDNSErrors       bool   = false
+	defaultDNSErrorsFatal        bool   = false
 	defaultConfigFileName        string = "config.toml"
 	defaultQueryType             string = "A"
 
@@ -173,7 +173,7 @@ type configTemplate struct {
 	// allows query-related DNS errors with one host to not block queries
 	// against remaining DNS servers. This can be useful to work around
 	// failures with one server in a pool of many.
-	IgnoreDNSErrors *bool `toml:"ignore_dns_errors"`
+	DNSErrorsFatal bool `toml:"dns_errors_fatal"`
 
 	// Servers is a list of the DNS servers used by this application. Most
 	// commonly set in a configuration file due to the number of servers used
@@ -205,20 +205,20 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, QueryTypes: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, IgnoreDNSErrors: %v, QueryTypes: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
 		c.cliConfig.LogLevel,
 		c.cliConfig.LogFormat,
-		c.cliConfig.IgnoreDNSErrors,
+		c.cliConfig.DNSErrorsFatal,
 		c.cliConfig.QueryTypes,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
-		c.fileConfig.IgnoreDNSErrors,
+		c.fileConfig.DNSErrorsFatal,
 		c.fileConfig.QueryTypes,
 		c.configFile,
 		c.showVersion,
@@ -279,22 +279,6 @@ func (c Config) configureLogging() {
 
 }
 
-// NewBaseConfig returns a bare-minimum initialized config object for further
-// customization before returning to a caller
-func NewBaseConfig() Config {
-
-	// we have to explicitly initialize our IgnoreDNSErrors pointer field
-	// to prevent "invalid memory address or nil pointer deference" panics
-	return Config{
-		cliConfig: configTemplate{
-			IgnoreDNSErrors: new(bool),
-		},
-		fileConfig: configTemplate{
-			IgnoreDNSErrors: new(bool),
-		},
-	}
-}
-
 // PathExists confirms that the specified path exists
 func PathExists(path string) bool {
 
@@ -321,7 +305,7 @@ func PathExists(path string) bool {
 // on user provided flag and config file values.
 func NewConfig() (*Config, error) {
 
-	config := NewBaseConfig()
+	var config Config
 
 	config.handleFlagsConfig()
 
