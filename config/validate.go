@@ -28,16 +28,6 @@ func (c Config) Validate() error {
 	}
 	log.Debugf("c.Servers() validates: (%d entries) %#v", len(c.Servers()), c.Servers())
 
-	if c.cliConfig.IgnoreDNSErrors == nil {
-		return fmt.Errorf("c.cliConfig.IgnoreDNSErrors not initialized")
-	}
-	log.Debug("c.cliConfig.IgnoreDNSErrors initialized")
-
-	if c.fileConfig.IgnoreDNSErrors == nil {
-		return fmt.Errorf("c.fileConfig.IgnoreDNSErrors not initialized")
-	}
-	log.Debug("c.fileConfig.IgnoreDNSErrors initialized")
-
 	if c.Query() == "" {
 		return fmt.Errorf("query not provided")
 	}

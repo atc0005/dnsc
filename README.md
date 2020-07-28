@@ -24,10 +24,8 @@ Submit query against a list of DNS servers and display summary of results
     - [Our config file](#our-config-file)
     - [Flags only, no config file](#flags-only-no-config-file)
     - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
-      - [Lots of output](#lots-of-output)
-      - [Short output](#short-output)
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
-    - [Ignore errors, query all servers](#ignore-errors-query-all-servers)
+    - [Force exit on first DNS error](#force-exit-on-first-dns-error)
   - [Inspiration](#inspiration)
   - [References](#references)
 
@@ -149,18 +147,18 @@ command-line flags and use the configuration file for the other settings.
 - Flags *not* marked as required are for settings where a useful default is
   already defined.
 
-| Flag                       | Required | Default        | Repeat  | Possible                                   | Description                                                                                                                                                   |
-| -------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`                | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                                                        |
-| `ds`, `dns-server`         | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                                                        |
-| `cf`, `config-file`        | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template.                                      |
-| `v`, `version`             | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                                                                 |
-| `ide`, `ignore-dns-errors` | No       | `false`        | No      | `ide`, `ignore-dns-errors`                 | Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.                                                   |
-| `q`, `query`               | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                                               |
-| `ll`, `log-level`          | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                                     |
-| `lf`, `log-format`         | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                               |
-| `t`, `type`                | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
-| `to`, `timeout`            | No       | `10`           | No      | *any positive whole number*                | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                  |
+| Flag                      | Required | Default        | Repeat  | Possible                                   | Description                                                                                                                                                   |
+| ------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`               | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                                                        |
+| `ds`, `dns-server`        | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                                                        |
+| `cf`, `config-file`       | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template.                                      |
+| `v`, `version`            | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                                                                 |
+| `def`, `dns-errors-fatal` | No       | `false`        | No      | `def`, `dns-errors-fatal`                  | Whether DNS-related errors should force this application to immediately exit.                                                                                 |
+| `q`, `query`              | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                                               |
+| `ll`, `log-level`         | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                                     |
+| `lf`, `log-format`        | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                               |
+| `t`, `type`               | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
+| `to`, `timeout`           | No       | `10`           | No      | *any positive whole number*                | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                  |
 
 ### Configuration file
 
@@ -170,15 +168,15 @@ See the [Command-line Arguments](#command-line-arguments) table for more
 information, including the available values for the listed configuration
 settings.
 
-| Flag Name           | Config file Setting Name | Notes                                                                              |
-| ------------------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| `dns-server`        | `dns_servers`            | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
-| `query`             | `query`                  | While supported, having a fixed query in the config file is not a normal use case. |
-| `ignore-dns-errors` | `ignore_dns_errors`      | Opt-in setting. Useful to have enabled for most use cases.                         |
-| `log-level`         | `log_level`              |                                                                                    |
-| `log-format`        | `log_format`             |                                                                                    |
-| `type`              | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
-| `timeout`           | `timeout`                |                                                                                    |
+| Flag Name          | Config file Setting Name | Notes                                                                              |
+| ------------------ | ------------------------ | ---------------------------------------------------------------------------------- |
+| `dns-server`       | `dns_servers`            | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
+| `query`            | `query`                  | While supported, having a fixed query in the config file is not a normal use case. |
+| `dns-errors-fatal` | `dns_errors_fatal`       | Opt-in setting. Useful to leave as-is for most use cases.                          |
+| `log-level`        | `log_level`              |                                                                                    |
+| `log-format`       | `log_format`             |                                                                                    |
+| `type`             | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
+| `timeout`          | `timeout`                |                                                                                    |
 
 The [`config.example.toml`](config.example.toml) file is intended as a
 starting point for your own `config.toml` configuration file and attempts to
@@ -264,7 +262,7 @@ that had it.
 
 ### Use config file for DNS servers list and query types
 
-#### Lots of output
+As can be seen below, this example produces quite a bit of output.
 
 ```ShellSession
 $ dnsc -config-file ./config.example.toml -q www.yahoo.com
@@ -297,27 +295,6 @@ Server            Query            Type     Answers                             
 8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        903
 8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               576, 38, 38, 38, 38
 ```
-
-#### Short output
-
-```ShellSession
-$ dnsc -config-file ./config.example.toml -q www.penzoil.com
-
-  INFO[0000] User-specified config file provided, will attempt to load it
-  INFO[0000] Trying to load config file "./config.example.toml"
-  INFO[0000] Config file successfully loaded config_file=./config.example.toml
-
-
-Server     Query              Type    Answers                       TTL
----        ---                ---     ---                           ---
-8.8.4.4    www.penzoil.com    A       65.52.64.201 (A)              751
-1.1.1.1    www.penzoil.com    A       65.52.64.201 (A)              753
-8.8.8.8    www.penzoil.com    A       65.52.64.201 (A)              899
-1.1.1.1    www.penzoil.com    AAAA    no records found for query
-```
-
-Here the process bailed when the first `AAAA` request (due to config file
-setting) failed.
 
 ### Specify DNS servers list via flags
 
@@ -359,78 +336,35 @@ types.
 It's also worth pointing out that I have a local copy of the `config.toml`
 file which was automatically detected and loaded.
 
-### Ignore errors, query all servers
+### Force exit on first DNS error
 
-By default, one failure causes the application to immediately fail and query
-results against other servers to be discarded. You can override this behavior
-to allow the results to be processed from other servers. This can be useful if
-you have one DNS server from the group unreachable or providing invalid
-results.
+As of `v0.3.0`, this application ignores query errors by default in order to
+allow the results to be processed from all servers. This can be useful if you
+have one DNS server from the group unreachable or providing invalid results.
+If however you wish to restore the previous behavior you can specify either
+the `dns-errors-fatal` or `def` flags, or set `dns_errors_fatal = true` in the
+`config.toml` config file.
 
-Here we use the short-hand `-ide` flag:
-
-```ShellSession
-$ dnsc  -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q tacos -ide
-  INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
-
-
-Server            Query    Type     Answers                       TTL
----               ---      ---      ---                           ---
-208.67.220.220    tacos    CNAME    no records found for query
-208.67.220.220    tacos    A        no records found for query
-208.67.220.220    tacos    MX       no records found for query
-208.67.220.220    tacos    AAAA     no records found for query
-208.67.222.222    tacos    CNAME    no records found for query
-208.67.222.222    tacos    AAAA     no records found for query
-208.67.222.222    tacos    MX       no records found for query
-208.67.222.222    tacos    A        no records found for query
-8.8.4.4           tacos    AAAA     no records found for query
-8.8.4.4           tacos    CNAME    no records found for query
-8.8.4.4           tacos    MX       no records found for query
-8.8.4.4           tacos    A        no records found for query
-8.8.8.8           tacos    MX       no records found for query
-8.8.8.8           tacos    A        no records found for query
-8.8.8.8           tacos    CNAME    no records found for query
-8.8.8.8           tacos    AAAA     no records found for query
-```
-
-Here is the www.penzoil.com query example from earlier, but now with the
-`-ide` flag set:
+Example:
 
 ```ShellSession
-$ dnsc -config-file ./config.example.toml -q www.penzoil.com -ide
+$ dnsc -config-file ./config.example.toml -q www.penzoil.com
+
   INFO[0000] User-specified config file provided, will attempt to load it
   INFO[0000] Trying to load config file "./config.example.toml"
   INFO[0000] Config file successfully loaded config_file=./config.example.toml
 
 
-Server            Query              Type     Answers                       TTL
----               ---                ---      ---                           ---
-1.1.1.1           www.penzoil.com    MX       no records found for query
-1.1.1.1           www.penzoil.com    A        65.52.64.201 (A)              260
-1.1.1.1           www.penzoil.com    CNAME    no records found for query
-1.1.1.1           www.penzoil.com    AAAA     no records found for query
-208.67.220.220    www.penzoil.com    CNAME    no records found for query
-208.67.220.220    www.penzoil.com    MX       no records found for query
-208.67.220.220    www.penzoil.com    AAAA     no records found for query
-208.67.220.220    www.penzoil.com    A        65.52.64.201 (A)              900
-208.67.222.222    www.penzoil.com    CNAME    no records found for query
-208.67.222.222    www.penzoil.com    A        65.52.64.201 (A)              497
-208.67.222.222    www.penzoil.com    AAAA     no records found for query
-208.67.222.222    www.penzoil.com    MX       no records found for query
-8.8.4.4           www.penzoil.com    A        65.52.64.201 (A)              258
-8.8.4.4           www.penzoil.com    MX       no records found for query
-8.8.4.4           www.penzoil.com    AAAA     no records found for query
-8.8.4.4           www.penzoil.com    CNAME    no records found for query
-8.8.8.8           www.penzoil.com    CNAME    no records found for query
-8.8.8.8           www.penzoil.com    MX       no records found for query
-8.8.8.8           www.penzoil.com    AAAA     no records found for query
-8.8.8.8           www.penzoil.com    A        65.52.64.201 (A)              406
+Server     Query              Type    Answers                       TTL
+---        ---                ---     ---                           ---
+8.8.4.4    www.penzoil.com    A       65.52.64.201 (A)              751
+1.1.1.1    www.penzoil.com    A       65.52.64.201 (A)              753
+8.8.8.8    www.penzoil.com    A       65.52.64.201 (A)              899
+1.1.1.1    www.penzoil.com    AAAA    no records found for query
 ```
+
+Here the process bailed when the first `AAAA` request failed. This is due to
+the `dns_errors_fatal = true` config file setting (not shown here).
 
 ## Inspiration
 

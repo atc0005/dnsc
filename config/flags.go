@@ -34,8 +34,8 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
 	flag.BoolVar(&c.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
 
-	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ignore-dns-errors", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp)
-	flag.BoolVar(c.cliConfig.IgnoreDNSErrors, "ide", defaultIgnoreDNSErrors, ignoreDNSErrorsFlagHelp+" (shorthand)")
+	flag.BoolVar(&c.cliConfig.DNSErrorsFatal, "dns-errors-fatal", defaultDNSErrorsFatal, dnsErrorsFatalFlagHelp)
+	flag.BoolVar(&c.cliConfig.DNSErrorsFatal, "def", defaultDNSErrorsFatal, dnsErrorsFatalFlagHelp+" (shorthand)")
 
 	flag.StringVar(&c.cliConfig.Query, "query", "", queryFlagHelp)
 	flag.StringVar(&c.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
