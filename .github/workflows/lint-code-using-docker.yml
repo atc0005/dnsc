@@ -36,4 +36,5 @@ jobs:
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           go version
           go run test.go
-          golangci-lint run -v --exclude-use-default
+          cd $GITHUB_WORKSPACE
+          golangci-lint run -v
