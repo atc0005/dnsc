@@ -31,7 +31,7 @@ jobs:
         # use the `--exclude-use-default` flag for now until
         # we merge GH-72
         run: |
-          pwd
-          ls
-          echo $GITHUB_WORKSPACE
+          echo "pwd is $(pwd)"
+          echo "Directory contents: $(ls -la)""
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           golangci-lint run -v --exclude-use-default
