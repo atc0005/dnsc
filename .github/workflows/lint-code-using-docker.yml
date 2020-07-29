@@ -31,5 +31,7 @@ jobs:
         # use the `--exclude-use-default` flag for now until
         # we merge GH-72
         run: |
+
+          # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
           cd $GITHUB_WORKSPACE
           golangci-lint run -v

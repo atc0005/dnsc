@@ -15,8 +15,25 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  lint_and_build_code:
-    name: Lint and Build codebase
+  lint_code:
+    name: Lint codebase
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: golangci/golangci-lint:v1.29
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.1
+
+      - name: Run golangci-lint using config file settings
+        run: |
+          # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
+          cd $GITHUB_WORKSPACE
+          golangci-lint run -v
+
+  build_code:
+    name: Build codebase
     runs-on: ${{ matrix.os }}
     # Default: 360 minutes
     timeout-minutes: 10
@@ -60,25 +77,9 @@ jobs:
       - name: Run all tests
         run: go test -mod=vendor -v ./...
 
-      - name: Install Go linting tools
-        run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:$(go env GOPATH)/bin
-          make lintinstall
-
       - name: Install Ubuntu packages
         if: contains(matrix.os, 'ubuntu')
         run: sudo apt update && sudo apt install -y --no-install-recommends make gcc
-
-      - name: Run Go linting tools using project Makefile
-        run: |
-          # add executables installed with go get to PATH
-          # TODO: this will hopefully be fixed by
-          # https://github.com/actions/setup-go/issues/14
-          export PATH=${PATH}:$(go env GOPATH)/bin
-          make linting
 
       - name: Build with (mostly) default options
         # Note: We use the `-mod=vendor` flag to explicitly request that our
