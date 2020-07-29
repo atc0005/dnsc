@@ -30,4 +30,8 @@ jobs:
       - name: Run golangci-lint using config file settings
         # use the `--exclude-use-default` flag for now until
         # we merge GH-72
-        run: golangci-lint run -v --exclude-use-default
+        run: |
+          pwd
+          ls
+          echo $GITHUB_WORKSPACE
+          golangci-lint run -v --exclude-use-default
