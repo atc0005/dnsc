@@ -31,3 +31,5 @@ linters:
     - golint
     - gocritic
     - scopelint
+    - govet
+    - staticcheck
