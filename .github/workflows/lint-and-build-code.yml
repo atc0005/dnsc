@@ -27,11 +27,29 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2.3.1
 
-      - name: Run golangci-lint using config file settings
+      - name: Run golangci-lint using repo-provided config file settings
         run: |
           # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
           cd $GITHUB_WORKSPACE
           golangci-lint run -v
+
+  test_code:
+    name: Run tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: ["1.13", "1.14", "rc"]
+
+    container:
+      image: golang:${{ matrix.go-version }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.3.1
+
+      - name: Run all tests
+        run: go test -mod=vendor -v ./...
 
   build_code:
     name: Build codebase
@@ -40,52 +58,18 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        # Supported versions of Go
-        go-version: [1.13.x, 1.14.x]
+        go-version: ["1.13", "1.14", "rc"]
 
-        # Supported LTS and latest version of Ubuntu Linux
-        #os: [ubuntu-16.04, ubuntu-18.04, ubuntu-latest]
-
-        # This should be good enough until we learn otherwise
-        os: [ubuntu-latest]
+    container:
+      image: golang:${{ matrix.go-version }}
 
     steps:
-      - name: Set up Go
-        # https://github.com/actions/setup-go
-        uses: actions/setup-go@v2.1.1
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go
-
-      # This could prove useful if we need to troubleshoot odd results and
-      # tie them back to a specific version of Go
       - name: Print go version
         run: |
           go version
 
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2.3.1
 
-      # NOTE: Disabled in favor of top-level `vendor` folder
-      #
-      # - name: Get dependencies
-      #   run: |
-      #     go get -v -t -d ./...
-
-      # Force tests to run early as it isn't worth doing much else if the
-      # tests fail to run properly.
-      # Note: The `vendor` top-level folder appears to be skipped by default.
-      - name: Run all tests
-        run: go test -mod=vendor -v ./...
-
-      - name: Install Ubuntu packages
-        if: contains(matrix.os, 'ubuntu')
-        run: sudo apt update && sudo apt install -y --no-install-recommends make gcc
-
-      - name: Build with (mostly) default options
-        # Note: We use the `-mod=vendor` flag to explicitly request that our
-        # top-level vendor folder be used instead of fetching remote packages
+      - name: Build using vendored dependencies
         run: go build -v -mod=vendor ./cmd/dnsc
-
-      - name: Build using project Makefile
-        run: make all
