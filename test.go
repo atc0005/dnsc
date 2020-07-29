@@ -17,12 +17,7 @@ func main() {
 
 	numEnvVars := len(os.Environ())
 
-	fmt.Printf(
-		"Total environment variables: %v",
-		numEnvVars,
-	)
-
-	fmt.Printf("Environment variables:\r\n\r\n")
+	fmt.Printf("Environment variables (%d):\n\n", numEnvVars)
 
 	origEnvVars := os.Environ()
 	sortedEnvVars := make([]string, len(origEnvVars))
