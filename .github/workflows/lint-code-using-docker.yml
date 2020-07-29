@@ -36,5 +36,9 @@ jobs:
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           go version
           go run test.go
+          echo "Changing diretory to $GITHUB_WORKSPACE"
           cd $GITHUB_WORKSPACE
+          echo "Listing contents of $GITHUB_WORKSPACE"
+          ls -la
+          go run test.go
           golangci-lint run -v
