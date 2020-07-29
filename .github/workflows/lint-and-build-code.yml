@@ -11,6 +11,7 @@ name: Validate Codebase
 # `synchronized` seems to equate to pushing new commits to a linked branch
 # (whether force-pushed or not)
 on:
+  push:
   pull_request:
     types: [opened, synchronize]
 
