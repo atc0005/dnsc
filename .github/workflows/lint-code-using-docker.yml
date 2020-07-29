@@ -34,6 +34,6 @@ jobs:
           echo "pwd is $(pwd)"
           echo "Directory contents: $(ls -la)"
           echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          set
           go version
+          go run test.go
           golangci-lint run -v --exclude-use-default
