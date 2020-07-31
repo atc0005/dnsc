@@ -12,6 +12,8 @@ import (
 	"os"
 	"text/tabwriter"
 	"time"
+
+	"github.com/apex/log"
 )
 
 // PrintSummary generates a table of all collected DNS query results
@@ -73,5 +75,9 @@ func (dqrs DNSQueryResponses) PrintSummary() {
 	}
 
 	fmt.Fprintln(w)
-	w.Flush()
+
+	// TODO: Add a retry?
+	if err := w.Flush(); err != nil {
+		log.Errorf("Error flushing tabwriter: %v", err.Error())
+	}
 }

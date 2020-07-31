@@ -8,6 +8,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -26,12 +27,22 @@ func (c *Config) loadConfigFile(configFile string) (bool, error) {
 		"config_file": configFile,
 	}).Debug("Attempting to open config file")
 
-	fh, err := os.Open(configFile)
+	fh, err := os.Open(filepath.Clean(configFile))
 	if err != nil {
 		return false, err
 	}
 	log.Debug("Config file opened")
-	defer fh.Close()
+	defer func() {
+		if err := fh.Close(); err != nil {
+			// Ignore "file already closed" errors
+			if !errors.Is(err, os.ErrClosed) {
+				log.Errorf(
+					"loadConfigFile: failed to close file %q: %s",
+					err.Error(),
+				)
+			}
+		}
+	}()
 
 	log.Debug("Attempting to import config file")
 	result, err := c.ImportConfigFile(fh)
