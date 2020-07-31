@@ -26,6 +26,57 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.0] - 2020-07-30
+
+### Added
+
+- Add `dns-errors-fatal`, `def` flags to halt application on first dns query
+  error
+
+- Use Docker containers from `atc0005/go-ci` project for linting, testing,
+  building in place of `actions/setup-go` provided environment
+  - "old stable"
+    - Go 1.13.x series (currently)
+  - "stable"
+    - Go 1.14.x series (currently)
+  - "unstable"
+    - Go 1.15rc1 (currently)
+
+### Changed
+
+- Disable `golangci-lint` default exclusions
+
+- Makefile
+  - install latest `golangci-lint` binary (not locked to specific version)
+
+- Ignore query errors by default
+  - Replace `ignore-dns-errors`, `ide` flags with inverse `dns-errors-fatal`,
+    `def` flags, flip default logic to allow query errors to be ignored by
+    default, but force failure on first error if desired.
+
+- Dependencies
+  - upgraded `apex/log`
+    - `v1.4.0` to `v1.6.0`
+  - upgraded `actions/setup-go`
+    - `v2.1.0` to `v2.1.1`
+  - upgraded `actions/setup-node`
+    - `v2.1.0` to `v2.1.1`
+
+### Removed
+
+- Replace `ignore-dns-errors`, `ide` flags with inverse `dns-errors-fatal`,
+  `def` flags, flip default logic.
+
+### Fixed
+
+- Documentation
+  - Update README files to list accurate build/deploy steps
+  - Doc comments cleanup
+- Unable to override CLI flag default for IgnoreDNSErrors from config file
+- Linting
+  - unhandled error return values
+  - file inclusion via variable
+
 ## [v0.2.1] - 2020-07-07
 
 ### Added
@@ -146,7 +197,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/atc0005/dnsc/releases/tag/v0.3.0
 [v0.2.1]: https://github.com/atc0005/dnsc/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/dnsc/releases/tag/v0.2.0
 [v0.1.2]: https://github.com/atc0005/dnsc/releases/tag/v0.1.2
