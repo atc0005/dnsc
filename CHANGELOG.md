@@ -24,7 +24,15 @@ The following types of changes will be recorded in this file:
 
 ## [Unreleased]
 
-- placeholder
+### Added
+
+- Add new README badges for additional CI workflows
+
+### Changed
+
+- Swap out `go-ci-stable` image tag for `go-ci-lint-only`
+  - the `go-ci-lint-only` image is substantially smaller and *should* result
+    in faster spin-up times
 
 ## [v0.3.0] - 2020-07-30
 

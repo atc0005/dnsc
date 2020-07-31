@@ -6,6 +6,8 @@ Submit query against a list of DNS servers and display summary of results
 [![GoDoc](https://godoc.org/github.com/atc0005/dnsc?status.svg)](https://godoc.org/github.com/atc0005/dnsc)
 ![Validate Codebase](https://github.com/atc0005/dnsc/workflows/Validate%20Codebase/badge.svg)
 ![Validate Docs](https://github.com/atc0005/dnsc/workflows/Validate%20Docs/badge.svg)
+![Lint and Build using Makefile](https://github.com/atc0005/dnsc/workflows/Lint%20and%20Build%20using%20Makefile/badge.svg)
+![Quick Validation](https://github.com/atc0005/dnsc/workflows/Quick%20Validation/badge.svg)
 
 - [dnsc](#dnsc)
   - [Project home](#project-home)
