@@ -24,15 +24,31 @@ The following types of changes will be recorded in this file:
 
 ## [Unreleased]
 
+- placeholder
+
+## [v0.3.1] - 2020-08-04
+
 ### Added
 
 - Add new README badges for additional CI workflows
+  - each badge also links to the associated workflow results
 
 ### Changed
 
-- Swap out `go-ci-stable` image tag for `go-ci-lint-only`
-  - the `go-ci-lint-only` image is substantially smaller and *should* result
-    in faster spin-up times
+- Dependencies
+  - upgrade `apex/log`
+    - `v1.6.0` to `v1.7.0`
+  - upgrade `miekg/dns`
+    - `v1.1.30` to `v1.1.31`
+
+- Linting
+  - CI
+  - Swap out `go-ci-stable` image tag for `go-ci-lint-only`
+    - the `go-ci-lint-only` image is substantially smaller and *should* result
+      in faster spin-up times
+  - Remove repo-provided copy of `golangci-lint` config file at start of
+    linting task in order to force use of Docker container-provided config
+    file
 
 ## [v0.3.0] - 2020-07-30
 
@@ -205,7 +221,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.1...HEAD
+[v0.3.1]: https://github.com/atc0005/dnsc/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/dnsc/releases/tag/v0.3.0
 [v0.2.1]: https://github.com/atc0005/dnsc/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/atc0005/dnsc/releases/tag/v0.2.0
