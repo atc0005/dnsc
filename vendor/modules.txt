@@ -1,4 +1,4 @@
-# github.com/apex/log v1.7.0
+# github.com/apex/log v1.8.0
 github.com/apex/log
 github.com/apex/log/handlers/cli
 github.com/apex/log/handlers/discard
