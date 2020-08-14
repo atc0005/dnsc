@@ -96,7 +96,7 @@ func main() {
 		result := <-resultsChan
 		results = append(results, result)
 		if result.QueryError != nil {
-			// Check whether the user has opted to treat errirs as fatal. If
+			// Check whether the user has opted to treat errors as fatal. If
 			// so, display current summary results and exit
 			if cfg.DNSErrorsFatal() {
 				results.PrintSummary()
