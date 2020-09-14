@@ -320,8 +320,9 @@ func NewConfig() (*Config, error) {
 	}
 
 	//
-	// Attempt to load requested config file, fallback to known alternates
-	// if user did not specify a config file
+	// Attempt to load requested config file first. If not provided or if
+	// unable to use, attempt to load config file from known alternative
+	// locations.
 	//
 
 	configFiles := make([]string, 0, 3)
