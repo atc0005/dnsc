@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
@@ -63,7 +64,7 @@ func main() {
 	// results on a channel
 	for _, server := range cfg.Servers() {
 
-		go func(server string, query string, queryTypes []string, results chan dqrs.DNSQueryResponse) {
+		go func(server string, query string, queryTypes []string, queryTimeout time.Duration, results chan dqrs.DNSQueryResponse) {
 			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
 			log.Debugf("Length of requested query types: %d", len(queryTypes))
 			for _, rrString := range queryTypes {
@@ -84,7 +85,7 @@ func main() {
 					query, rrString, server)
 				resultsChan <- dqrs.PerformQuery(query, server, rrType, queryTimeout)
 			}
-		}(server, cfg.Query(), queryTypes, resultsChan)
+		}(server, cfg.Query(), queryTypes, queryTimeout, resultsChan)
 
 	}
 
