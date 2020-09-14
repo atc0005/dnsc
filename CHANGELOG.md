@@ -26,6 +26,33 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.2] - 2020-09-14
+
+### Changed
+
+- Dependencies
+  - upgrade `go.mod` Go version
+    - `1.13` to `1.14`
+  - upgrade `apex/log`
+    - `v1.7.0` to `v1.9.0`
+  - upgrade `miekg/dns`
+    - `v1.1.30` to `v1.1.31`
+  - upgrade `mattn/go-colorable`
+    - `v0.1.6` to `v0.1.7`
+  - upgrade `gopkg.in/check.v1`
+    - `v1.0.0-20200227125254-8fa46927fb4f` to
+      `v1.0.0-20200902074654-038fdea0a05b`
+  - upgrade `actions/checkout`
+    - `v2.3.1` to `v2.3.2`
+
+### Fixed
+
+- Explicitly pass `queryTimeout` to goroutine
+- Documentation
+  - Attempt to clarify config file load behavior
+  - Typo
+- Misc linting issues surfaced by `golangci-lint` `v1.31.0` release
+
 ## [v0.3.1] - 2020-08-04
 
 ### Added
@@ -221,7 +248,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.2...HEAD
+[v0.3.2]: https://github.com/atc0005/dnsc/releases/tag/v0.3.2
 [v0.3.1]: https://github.com/atc0005/dnsc/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/dnsc/releases/tag/v0.3.0
 [v0.2.1]: https://github.com/atc0005/dnsc/releases/tag/v0.2.1
