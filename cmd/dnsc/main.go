@@ -8,7 +8,6 @@
 package main
 
 import (
-	//"log"
 	"errors"
 	"flag"
 	"fmt"

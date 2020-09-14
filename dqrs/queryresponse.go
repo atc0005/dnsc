@@ -138,7 +138,7 @@ func (dqr DNSQueryResponse) Records() string {
 			answer = v.AAAA.String() + " (AAAA)"
 		case *dns.CNAME:
 			answer = v.Target + " (CNAME)"
-			//fmt.Println("Check *dns.CNAME type switch case stmt")
+			// fmt.Println("Check *dns.CNAME type switch case stmt")
 			// answer = v.String() + " (CNAME)"
 		case *dns.MX:
 			answer = v.Mx + " (MX)"

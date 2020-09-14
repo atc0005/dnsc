@@ -19,10 +19,10 @@ import (
 // PrintSummary generates a table of all collected DNS query results
 func (dqrs DNSQueryResponses) PrintSummary() {
 	w := new(tabwriter.Writer)
-	//w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
+	// w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '.', tabwriter.AlignRight|tabwriter.Debug)
 
 	// Format in tab-separated columns
-	//w.Init(os.Stdout, 16, 8, 8, '\t', 0)
+	// w.Init(os.Stdout, 16, 8, 8, '\t', 0)
 	w.Init(os.Stdout, 4, 4, 4, ' ', 0)
 
 	// Add some lead-in spacing to better separate any earlier log messages from
