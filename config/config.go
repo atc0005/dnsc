@@ -293,7 +293,7 @@ func PathExists(path string) bool {
 
 	// https://gist.github.com/mattes/d13e273314c3b3ade33f
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
-		//log.Println("path found")
+		// log.Println("path found")
 		return true
 	}
 
@@ -380,7 +380,7 @@ func NewConfig() (*Config, error) {
 	}
 	log.Debug("Configuration validated")
 
-	//log.Debugf("Config object: %v", config.String())
+	// log.Debugf("Config object: %v", config.String())
 
 	return &config, nil
 
