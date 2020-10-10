@@ -26,6 +26,41 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.3] - 2020-10-10
+
+### Added
+
+- Statically linked binary release
+  - Built using Go 1.15.2
+  - Native Go binaries (no cgo)
+  - Windows
+    - x86
+    - x64
+  - Linux
+    - x86
+    - x64
+
+### Changed
+
+- Dependencies
+  - `actions/checkout`
+    - `v2.3.2` to `v2.3.3`
+  - `actions/setup-node`
+    - `v2.1.1` to `v2.1.2`
+
+- Build options updated
+  - Add `-trimpath` build flag
+  - Explicitly disable cgo
+  - Apply `osusergo` and `netgo` build tags
+    - help ensure static builds that are not dependent on glibc
+
+### Fixed
+
+- Makefile generates checksums with qualified path
+- Makefile build options do not generate static binaries
+- Missing shorthand suffix in flags help text
+- (Some) getter methods do not appear to return intended default values
+
 ## [v0.3.2] - 2020-09-14
 
 ### Changed
@@ -248,7 +283,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.3...HEAD
+[v0.3.3]: https://github.com/atc0005/dnsc/releases/tag/v0.3.3
 [v0.3.2]: https://github.com/atc0005/dnsc/releases/tag/v0.3.2
 [v0.3.1]: https://github.com/atc0005/dnsc/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/atc0005/dnsc/releases/tag/v0.3.0
