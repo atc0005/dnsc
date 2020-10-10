@@ -28,8 +28,9 @@ func (c Config) Servers() []string {
 	}
 }
 
-// Query returns the user-provided DNS server query or empty string if DNS
-// server query was not provided. CLI flag values take precedence if provided.
+// Query returns the user-provided DNS server query or the default value if
+// DNS server query was not provided. CLI flag values take precedence if
+// provided.
 func (c Config) Query() string {
 
 	switch {
@@ -38,12 +39,12 @@ func (c Config) Query() string {
 	case c.fileConfig.Query != "":
 		return c.fileConfig.Query
 	default:
-		return ""
+		return defaultQuery
 	}
 }
 
-// LogLevel returns the user-provided logging level or empty string if not
-// provided. CLI flag values take precedence if provided.
+// LogLevel returns the user-provided logging level or the default value if
+// not provided. CLI flag values take precedence if provided.
 func (c Config) LogLevel() string {
 
 	switch {
@@ -52,7 +53,7 @@ func (c Config) LogLevel() string {
 	case c.fileConfig.LogLevel != "":
 		return c.fileConfig.LogLevel
 	default:
-		return ""
+		return defaultLogLevel
 	}
 }
 
@@ -66,7 +67,7 @@ func (c Config) LogFormat() string {
 	case c.fileConfig.LogFormat != "":
 		return c.fileConfig.LogFormat
 	default:
-		return ""
+		return defaultLogFormat
 	}
 }
 
