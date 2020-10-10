@@ -41,11 +41,11 @@ func (c *Config) handleFlagsConfig() {
 	flag.StringVar(&c.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
 
 	// create shorter and longer logging level flag options
-	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp)
+	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp+" (shorthand)")
 	flag.StringVar(&c.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
 
 	// create shorter and longer logging format flag options
-	flag.StringVar(&c.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp)
+	flag.StringVar(&c.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp+" (shorthand)")
 	flag.StringVar(&c.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
 
 	flag.Usage = flagsUsage()
