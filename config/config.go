@@ -51,6 +51,8 @@ const (
 	defaultDNSErrorsFatal        bool   = false
 	defaultConfigFileName        string = "config.toml"
 	defaultQueryType             string = "A"
+	defaultConfigFile            string = ""
+	defaultQuery                 string = ""
 
 	// the default timeout is set by the `miekg/dns.dnsTimeout` value, which
 	// at the time of this writing is 2 seconds. we override with our own
