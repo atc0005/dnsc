@@ -17,7 +17,7 @@ github.com/kr/logfmt
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
-# github.com/miekg/dns v1.1.33
+# github.com/miekg/dns v1.1.34
 ## explicit
 github.com/miekg/dns
 # github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
