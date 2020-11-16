@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.4] - 2020-11-16
+
+### Changed
+
+- Dependencies
+  - built using Go 1.15.5
+    - **Statically linked**
+    - Windows
+      - x86
+      - x64
+    - Linux
+      - x86
+      - x64
+  - `miekg/dns`
+    - `v1.1.31` to `v1.1.35`
+  - `actions/checkout`
+    - `v2.3.3` to `v2.3.4`
+
 ## [v0.3.3] - 2020-10-10
 
 ### Added
@@ -283,7 +301,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.4...HEAD
+[v0.3.4]: https://github.com/atc0005/dnsc/releases/tag/v0.3.4
 [v0.3.3]: https://github.com/atc0005/dnsc/releases/tag/v0.3.3
 [v0.3.2]: https://github.com/atc0005/dnsc/releases/tag/v0.3.2
 [v0.3.1]: https://github.com/atc0005/dnsc/releases/tag/v0.3.1
