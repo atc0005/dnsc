@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.3.5] - 2021-02-21
+
+### Overview
+
+- Dependency updates
+- built using Go 1.15.8
+
+### Changed
+
+- Swap out GoDoc badge for pkg.go.dev badge
+
+- dependencies
+  - `go.mod` Go version
+    - updated from `1.14` to `1.15`
+  - built using Go 1.15.8
+    - Statically linked
+    - Windows (x86, x64)
+    - Linux (x86, x64)
+  - `miekg/dns`
+    - `v1.1.35` to `v1.1.38`
+  - `actions/setup-node`
+    - `v2.1.2` to `v2.1.4`
+
 ## [v0.3.4] - 2020-11-16
 
 ### Changed
@@ -301,7 +324,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.5...HEAD
+[v0.3.5]: https://github.com/atc0005/dnsc/releases/tag/v0.3.5
 [v0.3.4]: https://github.com/atc0005/dnsc/releases/tag/v0.3.4
 [v0.3.3]: https://github.com/atc0005/dnsc/releases/tag/v0.3.3
 [v0.3.2]: https://github.com/atc0005/dnsc/releases/tag/v0.3.2
