@@ -40,6 +40,11 @@ dns_query_types = [
     "AAAA",
     "MX",
     "CNAME",
+
+    # This type expects the query string to be in IP Address format, which is
+    # likely to not be the case if searching other record types.
+    #
+    # "PTR",
 ]
 
 # Whether DNS-related errors should force this application to immediately exit.

@@ -142,6 +142,8 @@ func (dqr DNSQueryResponse) Records() string {
 			// answer = v.String() + " (CNAME)"
 		case *dns.MX:
 			answer = v.Mx + " (MX)"
+		case *dns.PTR:
+			answer = v.Ptr + " (PTR)"
 		default:
 			answer = "type unknown"
 		}
@@ -170,11 +172,26 @@ func PerformQuery(query string, server string, qType uint16, timeout time.Durati
 
 	var msg dns.Msg
 
-	fqdn := dns.Fqdn(query)
+	var qualifiedQuery string
+	switch {
+	case qType == dns.TypePTR:
+		arpa, err := dns.ReverseAddr(query)
+		if err != nil {
+			return DNSQueryResponse{
+				Server:              server,
+				Query:               query,
+				RequestedRecordType: qType,
+				QueryError:          err,
+			}
+		}
+		qualifiedQuery = arpa
+	default:
+		qualifiedQuery = dns.Fqdn(query)
+	}
 
-	// NOTE: Recursion is used by default, which resolves CNAME entries
-	// back to the actual A or AAAA records
-	msg.SetQuestion(fqdn, qType)
+	// NOTE: Recursion is used by default. This results in CNAME entries
+	// resolving back to the actual A or AAAA records.
+	msg.SetQuestion(qualifiedQuery, qType)
 
 	// Record the reliable DNS-related details we have thus far. Use zero
 	// value initially for Answer field. We'll set a value for QueryError if
