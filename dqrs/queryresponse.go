@@ -144,6 +144,8 @@ func (dqr DNSQueryResponse) Records() string {
 			answer = v.Mx + " (MX)"
 		case *dns.PTR:
 			answer = v.Ptr + " (PTR)"
+		case *dns.SRV:
+			answer = v.Target + " (SRV)"
 		default:
 			answer = "type unknown"
 		}

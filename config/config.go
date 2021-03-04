@@ -90,6 +90,7 @@ const (
 	RequestTypeCNAME string = "CNAME"
 	RequestTypeMX    string = "MX"
 	RequestTypePTR   string = "PTR"
+	RequestTypeSRV   string = "SRV"
 )
 
 // 	apex/log Handlers
