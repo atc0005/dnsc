@@ -45,6 +45,10 @@ dns_query_types = [
     # likely to not be the case if searching other record types.
     #
     # "PTR",
+
+    # This type expects the query string to be ina  very specific format,
+    # which is likely to not be the case if searching other record types.
+    # "SRV",
 ]
 
 # Whether DNS-related errors should force this application to immediately exit.

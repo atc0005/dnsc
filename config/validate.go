@@ -48,6 +48,7 @@ func (c Config) Validate() error {
 		case RequestTypeCNAME:
 		case RequestTypeMX:
 		case RequestTypePTR:
+		case RequestTypeSRV:
 		default:
 			return fmt.Errorf(
 				"invalid option %q provided for request type",
