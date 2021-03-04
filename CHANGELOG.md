@@ -26,6 +26,27 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.4.0] - 2021-03-04
+
+### Overview
+
+- Add support for additional record types
+- Dependency updates
+- built using Go 1.15.8
+
+### Added
+
+- Support for `PTR` record queries
+- Support for `SRV` record queries
+
+### Changed
+
+- dependencies
+  - `miekg/dns`
+    - `v1.1.38` to `v1.1.40`
+  - `actions/setup-node`
+    - `v2.1.4` to `v2.1.5`
+
 ## [v0.3.5] - 2021-02-21
 
 ### Overview
@@ -324,7 +345,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.3.5...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/atc0005/dnsc/releases/tag/v0.4.0
 [v0.3.5]: https://github.com/atc0005/dnsc/releases/tag/v0.3.5
 [v0.3.4]: https://github.com/atc0005/dnsc/releases/tag/v0.3.4
 [v0.3.3]: https://github.com/atc0005/dnsc/releases/tag/v0.3.3
