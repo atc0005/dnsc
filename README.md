@@ -27,6 +27,7 @@ Submit query against a list of DNS servers and display summary of results
     - [Flags only, no config file](#flags-only-no-config-file)
     - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
+    - [Query pointer record (PTR) using IP Address](#query-pointer-record-ptr-using-ip-address)
     - [Force exit on first DNS error](#force-exit-on-first-dns-error)
   - [Inspiration](#inspiration)
   - [References](#references)
@@ -63,6 +64,7 @@ repeat use.
   - `A`
   - `AAAA`
   - `MX`
+  - `PTR`
 
 - User configurable logging levels
 
@@ -159,7 +161,7 @@ command-line flags and use the configuration file for the other settings.
 | `q`, `query`              | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                                               |
 | `ll`, `log-level`         | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                                     |
 | `lf`, `log-format`        | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                               |
-| `t`, `type`               | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`                 | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
+| `t`, `type`               | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`, `PTR`          | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
 | `to`, `timeout`           | No       | `10`           | No      | *any positive whole number*                | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                  |
 
 ### Configuration file
@@ -337,6 +339,29 @@ types.
 
 It's also worth pointing out that I have a local copy of the `config.toml`
 file which was automatically detected and loaded.
+
+### Query pointer record (PTR) using IP Address
+
+Not shown is the initial query for `www.yahoo.com` which resolved to multiple
+`A` records. I picked one of the IP Addresses from the list and used it in the
+example below.
+
+```ShellSession
+
+$ dnsc --ds 8.8.8.8 --q 74.6.143.25 -t ptr
+
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+
+
+Server     RTT    Query          Type    Answers                                                  TTL
+---        ---    ---            ---     ---                                                      ---
+8.8.8.8    7ms    74.6.143.25    PTR     media-router-fp73.prod.media.vip.bf1.yahoo.com. (PTR)    483
+
+```
 
 ### Force exit on first DNS error
 
