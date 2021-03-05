@@ -29,7 +29,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.IntVar(&c.cliConfig.Timeout, "timeout", defaultTimeout, dnsTimeoutFlagHelp)
 
 	flag.StringVar(&c.configFile, "cf", defaultConfigFile, configFileFlagHelp+" (shorthand)")
-	flag.StringVar(&c.configFile, "config-file", "", configFileFlagHelp)
+	flag.StringVar(&c.configFile, "config-file", defaultConfigFile, configFileFlagHelp)
 
 	flag.BoolVar(&c.showVersion, "version", defaultDisplayVersionAndExit, versionFlagHelp)
 	flag.BoolVar(&c.showVersion, "v", defaultDisplayVersionAndExit, versionFlagHelp+" (shorthand)")
@@ -38,7 +38,7 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.cliConfig.DNSErrorsFatal, "def", defaultDNSErrorsFatal, dnsErrorsFatalFlagHelp+" (shorthand)")
 
 	flag.StringVar(&c.cliConfig.Query, "query", defaultQuery, queryFlagHelp)
-	flag.StringVar(&c.cliConfig.Query, "q", "", queryFlagHelp+" (shorthand)")
+	flag.StringVar(&c.cliConfig.Query, "q", defaultQuery, queryFlagHelp+" (shorthand)")
 
 	// create shorter and longer logging level flag options
 	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp+" (shorthand)")
