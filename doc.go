@@ -24,52 +24,18 @@ FEATURES
 
 • single binary, no outside dependencies
 
+• Multiple query types supported
+
+• (Optional) SRV record protocol "shortcuts" for more complex queries
+
 • User configurable logging levels
 
 • User configurable logging format
 
 USAGE
 
-Help output is below. See the README for examples.
+See the README for examples.
 
-$ ./dnsc.exe -h
-
-    dnsc dev build
-    https://github.com/atc0005/dnsc
-
-    Usage of "dnsc.exe":
-    -cf string
-        Full path to TOML-formatted configuration file. See config.example.toml for a starter template. (shorthand)
-    -config-file string
-        Full path to TOML-formatted configuration file. See config.example.toml for a starter template.
-    -dns-server value
-        DNS server to submit query against. This flag may be repeated for each additional DNS server to query.
-    -ds value
-        DNS server to submit query against. This flag may be repeated for each additional DNS server to query. (shorthand)
-    -ide
-        Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list. (shorthand)
-    -ignore-dns-errors
-        Whether DNS-related errors with one server should be ignored in order to try other DNS servers in the list.
-    -lf string
-        Log messages are written in this format (default "text")
-    -ll string
-        Log message priority filter. Log messages with a lower level are ignored. (default "info")
-    -log-format string
-        Log messages are written in this format (default "text")
-    -log-level string
-        Log message priority filter. Log messages with a lower level are ignored. (default "info")
-    -q string
-        Fully-qualified system to lookup from all provided DNS servers. (shorthand)
-    -query string
-            Fully-qualified system to lookup from all provided DNS servers.
-    -t value
-        DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request. (shorthand)
-    -type value
-        DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request.
-    -v
-        Whether to display application version and then immediately exit application. (shorthand)
-    -version
-        Whether to display application version and then immediately exit application.
 
 */
 package main

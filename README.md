@@ -20,6 +20,8 @@ Submit query against a list of DNS servers and display summary of results
   - [How to install it](#how-to-install-it)
   - [Configuration](#configuration)
     - [Precedence](#precedence)
+    - [Query types supported](#query-types-supported)
+    - [Service Location (SRV) Protocol "shortcuts"](#service-location-srv-protocol-shortcuts)
     - [Command-line arguments](#command-line-arguments)
     - [Configuration file](#configuration-file)
   - [Examples](#examples)
@@ -29,6 +31,7 @@ Submit query against a list of DNS servers and display summary of results
     - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
     - [Query pointer record (PTR) using IP Address](#query-pointer-record-ptr-using-ip-address)
     - [Query server record (SRV)](#query-server-record-srv)
+    - [Query server record (SRV) using SRV protocol keyword (aka, "shortcut")](#query-server-record-srv-using-srv-protocol-keyword-aka-shortcut)
     - [Force exit on first DNS error](#force-exit-on-first-dns-error)
   - [Inspiration](#inspiration)
   - [References](#references)
@@ -60,13 +63,9 @@ repeat use.
 - Query just one server or as many as are provided
   - Note: A configuration file is recommended for providing multiple DNS
     servers
-- Multiple query types supported
-  - `CNAME`
-  - `A`
-  - `AAAA`
-  - `MX`
-  - `PTR`
-  - `SRV`
+- Multiple [query types supported](#query-types-supported)
+
+- Multiple [Service Location (SRV) Protocol "shortcuts" supported](#service-location-srv-protocol-shortcuts)
 
 - User configurable logging levels
 
@@ -146,6 +145,37 @@ configuration settings; if a configuration file provides nearly all settings
 that you want, specify just the settings that you wish to override via
 command-line flags and use the configuration file for the other settings.
 
+### Query types supported
+
+These are the record types currently supported:
+
+- `CNAME`
+- `A`
+- `AAAA`
+- `MX`
+- `PTR`
+- `SRV`
+
+Other types will be added as I encounter a need for them, or as requested.
+
+### Service Location (SRV) Protocol "shortcuts"
+
+These are the keywords currently supported along with an example of the query
+string used for a user-provided query string of `example.com`. Others will be
+added as I encounter a need for them, or as requested.
+
+These "shortcuts" are entirely optional. For example, you may still specify
+the `srv` query type and provide the `_ldap._tcp.dc._msdcs.example.com` query
+string manually to get the same effect.
+
+| User-specified query string | Keyword      | Query string submitted to servers  |
+| --------------------------- | ------------ | ---------------------------------- |
+| `example.com`               | `msdcs`      | `_ldap._tcp.dc._msdcs.example.com` |
+| `example.com`               | `kerberos`   | `_kerberos._tcp.example.com`       |
+| `example.com`               | `xmppsrv`    | `_xmpp-server._tcp.example.com`    |
+| `example.com`               | `xmppclient` | `_xmpp-client._tcp.example.com`    |
+| `example.com`               | `sip`        | `_sip._tcp.example.com`            |
+
 ### Command-line arguments
 
 - Flags marked as **`required`** must be set via CLI flag *or* within a
@@ -153,18 +183,19 @@ command-line flags and use the configuration file for the other settings.
 - Flags *not* marked as required are for settings where a useful default is
   already defined.
 
-| Flag                      | Required | Default        | Repeat  | Possible                                   | Description                                                                                                                                                   |
-| ------------------------- | -------- | -------------- | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `h`, `help`               | No       | `false`        | No      | `h`, `help`                                | Show Help text along with the list of supported flags.                                                                                                        |
-| `ds`, `dns-server`        | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation* | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                                                        |
-| `cf`, `config-file`       | **Yes**  | *empty string* | No      | *valid file name characters*               | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template.                                      |
-| `v`, `version`            | No       | `false`        | No      | `v`, `version`                             | Whether to display application version and then immediately exit application.                                                                                 |
-| `def`, `dns-errors-fatal` | No       | `false`        | No      | `def`, `dns-errors-fatal`                  | Whether DNS-related errors should force this application to immediately exit.                                                                                 |
-| `q`, `query`              | **Yes**  | *empty string* | No      | *any valid FQDN string*                    | Fully-qualified system to lookup from all provided DNS servers.                                                                                               |
-| `ll`, `log-level`         | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`  | Log message priority filter. Log messages with a lower level are ignored.                                                                                     |
-| `lf`, `log-format`        | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard` | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                               |
-| `t`, `type`               | No       | `A`            | **Yes** | `A`, `AAAA`, `MX`, `CNAME`, `PTR`, `SRV`   | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request. |
-| `to`, `timeout`           | No       | `10`           | No      | *any positive whole number*                | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                  |
+| Flag                      | Required | Default        | Repeat  | Possible                                                       | Description                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------- | -------- | -------------- | ------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `h`, `help`               | No       | `false`        | No      | `h`, `help`                                                    | Show Help text along with the list of supported flags.                                                                                                                                                                                                                                                                                                         |
+| `ds`, `dns-server`        | **Yes**  | *empty string* | **Yes** | *one valid IP Address per flag invocation*                     | DNS server to submit query against. This flag may be repeated for each additional DNS server to query.                                                                                                                                                                                                                                                         |
+| `cf`, `config-file`       | **Yes**  | *empty string* | No      | *valid file name characters*                                   | Full path to TOML-formatted configuration file. See [`config.example.toml`](config.example.toml) for a starter template.                                                                                                                                                                                                                                       |
+| `v`, `version`            | No       | `false`        | No      | `v`, `version`                                                 | Whether to display application version and then immediately exit application.                                                                                                                                                                                                                                                                                  |
+| `def`, `dns-errors-fatal` | No       | `false`        | No      | `def`, `dns-errors-fatal`                                      | Whether DNS-related errors should force this application to immediately exit.                                                                                                                                                                                                                                                                                  |
+| `q`, `query`              | **Yes**  | *empty string* | No      | *any valid FQDN string*                                        | Fully-qualified system to lookup from all provided DNS servers.                                                                                                                                                                                                                                                                                                |
+| `sp`, `srv-protocol`      | No       | *empty list*   | **Yes** | [supported keywords](#service-location-srv-protocol-shortcuts) | Service Location (SRV) protocols associated with a given domain name as the query string. For example, `msdcs` can be specified as the SRV record protocol along with `example.com` as the query string to search DNS for `_ldap._tcp.dc._msdcs.example.com`. This flag may be repeated for each additional SRV protocol that you wish to request records for. |
+| `ll`, `log-level`         | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`                      | Log message priority filter. Log messages with a lower level are ignored.                                                                                                                                                                                                                                                                                      |
+| `lf`, `log-format`        | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard`                     | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                                                                                                                                                                                                                                |
+| `t`, `type`               | No       | `A`            | **Yes** | [supported types](#query-types-supported)                      | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request.                                                                                                                                                                                                  |
+| `to`, `timeout`           | No       | `10`           | No      | *any positive whole number*                                    | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                                                                                                                                                                                                                   |
 
 ### Configuration file
 
@@ -182,6 +213,7 @@ settings.
 | `log-level`        | `log_level`              |                                                                                    |
 | `log-format`       | `log_format`             |                                                                                    |
 | `type`             | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
+| `srv-protocol`     | `dns_srv_protocols`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
 | `timeout`          | `timeout`                |                                                                                    |
 
 The [`config.example.toml`](config.example.toml) file is intended as a
@@ -384,6 +416,50 @@ Server     RTT      Query                                 Type    Answers       
 ---        ---      ---                                   ---     ---                                                            ---
 8.8.8.8    113ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
 
+```
+
+### Query server record (SRV) using SRV protocol keyword (aka, "shortcut")
+
+In this example, we query for available XMPP servers for `conversations.im`
+using a SRV protocol keyword or "shortcut". This makes the query a little less
+verbose to type. You may optionally omit `-t srv` from this example and you
+will receive the same result; if specifying a SRV protocol keyword, this
+application assumes that you wish to submit a SRV record query.
+
+```ShellSession
+$ dnsc --ds 8.8.8.8 --q "conversations.im" -sp "xmppclient" -t srv
+
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+
+
+Server     RTT    Query                                 Type    Answers                                                        TTL
+---        ---    ---                                   ---     ---                                                            ---
+8.8.8.8    8ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
+```
+
+As with other record/query types, you may also mix several together. Here we
+specify the SRV protocol as before, but leave out the explicit `-t srv`
+(relying on implicit inclusion) and also specify that we wish to query for
+available `A` records.
+
+```ShellSession
+$ dnsc --ds 8.8.8.8 --q "conversations.im" -sp "xmppclient" -t a
+
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
+  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
+  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+
+
+Server     RTT     Query                                 Type    Answers                                                        TTL
+---        ---     ---                                   ---     ---                                                            ---
+8.8.8.8    23ms    conversations.im                      A       78.47.177.120 (A)                                              3599
+8.8.8.8    61ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
 ```
 
 ### Force exit on first DNS error

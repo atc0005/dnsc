@@ -58,6 +58,52 @@ func (c Config) Validate() error {
 	}
 	log.Debugf("c.QueryTypes() validates: %#v", c.QueryTypes())
 
+	switch {
+	case len(c.SrvProtocols()) > 0:
+
+		// Perfectly acceptable to not specify a SRV protocol, but if specified,
+		// limit provided keywords to a valid list.
+		for _, queryType := range c.QueryTypes() {
+			if strings.ToUpper(queryType) == RequestTypeSRV {
+				for _, srvProtocol := range c.SrvProtocols() {
+					_, err := SrvProtocolTmplLookup(srvProtocol)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+		log.Debugf("c.SrvProtocols() validation; valid keywords provided: %#v", c.SrvProtocols())
+
+		// The SRV record query type should have been included earlier as part
+		// of creating a new configuration object if the user specifies a SRV
+		// protocol. This action is performed as a convenience to the user. We
+		// assert that this is true here as the query type is needed for later
+		// logic checks.
+		var srvTypeSpecified bool
+		for _, queryType := range c.QueryTypes() {
+			if strings.ToUpper(queryType) == RequestTypeSRV {
+				srvTypeSpecified = true
+				for _, srvProtocol := range c.SrvProtocols() {
+					_, err := SrvProtocolTmplLookup(srvProtocol)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+
+		if !srvTypeSpecified {
+			return fmt.Errorf("SRV record protocol specified, but SRV record type NOT specified")
+		}
+		log.Debugf("c.SrvProtocols() validation; SRV query type present: %#v", c.QueryTypes())
+
+		log.Debug("c.SrvProtocols() validates: all checks pass")
+	default:
+
+		log.Debug("c.SrvProtocols() validates: No SRV record protocols specified")
+	}
+
 	switch c.LogLevel() {
 	case LogLevelFatal:
 	case LogLevelError:

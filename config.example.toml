@@ -46,9 +46,22 @@ dns_query_types = [
     #
     # "PTR",
 
-    # This type expects the query string to be ina  very specific format,
+    # This type expects the query string to be in a very specific format,
     # which is likely to not be the case if searching other record types.
     # "SRV",
+]
+
+# The DNS Service Location (SRV) protocols that will be used when submitting
+# DNS queries for SRV records. Each SRV protocol listed here will be requested
+# for each user-provided SRV query (e.g., "example.com"), so if five types are
+# listed and there are five DNS server entries, there will be twenty five
+# queries submitted in total.
+dns_srv_protocols = [
+    "msdcs",
+    "kerberos",
+    "xmppsrv",
+    "xmppclient",
+    "sip",
 ]
 
 # Whether DNS-related errors should force this application to immediately exit.
