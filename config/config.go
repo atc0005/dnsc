@@ -130,22 +130,38 @@ const (
 type multiValueFlag []string
 
 // String returns a comma separated string consisting of all slice elements
-func (i *multiValueFlag) String() string {
+func (mvf *multiValueFlag) String() string {
 
 	// From the `flag` package docs:
 	// "The flag package may call the String method with a zero-valued
 	// receiver, such as a nil pointer."
-	if i == nil {
+	if mvf == nil {
 		return ""
 	}
 
-	return strings.Join(*i, ",")
+	return strings.Join(*mvf, ",")
 }
 
 // Set is called once by the flag package, in command line order, for each
 // flag present
-func (i *multiValueFlag) Set(value string) error {
-	*i = append(*i, value)
+func (mvf *multiValueFlag) Set(value string) error {
+
+	// for _, flagVal := range *mvf {
+	// 	if flagVal == value {
+	// 		return nil
+	// 	}
+	// }
+	// *mvf = append(*mvf, value)
+	for i := range *mvf {
+		// dereference the pointer slice in order to index into the slice
+		// https://stackoverflow.com/questions/38468258/why-is-indexing-on-the-slice-pointer-not-allowed-in-golang
+		// https://stackoverflow.com/questions/28709254/how-to-access-elements-from-slice-using-index-which-is-passed-by-reference-in-go
+		if (*mvf)[i] == value {
+			return nil
+		}
+	}
+	*mvf = append(*mvf, value)
+
 	return nil
 }
 
