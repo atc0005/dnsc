@@ -13,10 +13,12 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/atc0005/dnsc/config"
 	"github.com/atc0005/dnsc/dqrs"
+	"github.com/miekg/dns"
 
 	"github.com/apex/log"
 )
@@ -47,25 +49,60 @@ func main() {
 	queryTypes := cfg.QueryTypes()
 	queryTimeout := cfg.Timeout()
 
-	expectedResponses := len(queryTypes) * len(cfg.Servers())
+	var expectedResponses int
+	switch {
+	case len(cfg.SrvProtocols()) > 0:
+		types := len(queryTypes) - 1         // exclude SRV record query type
+		protocols := len(cfg.SrvProtocols()) // SRV query type calculated here
+		servers := len(cfg.Servers())
+
+		expectedResponses = (types * servers) + (protocols * servers)
+	default:
+		expectedResponses = len(queryTypes) * len(cfg.Servers())
+	}
+
+	log.Debugf("%d queries to submit, equal number responses expected\n", expectedResponses)
 
 	results := make(dqrs.DNSQueryResponses, 0, expectedResponses)
+	resultsChan := make(chan dqrs.DNSQueryResponse)
 
-	// one buffered "slot" per expected response? seems overkill?
-	// capacity := len(cfg.Servers())
-	capacity := expectedResponses
-	log.WithFields(log.Fields{
-		"results_channel_capacity": capacity,
-	}).Debug("Creating results channel with capacity to match defined DNS servers")
-	// resultsChan := make(chan dqrs.DNSQueryResponse)
-	resultsChan := make(chan dqrs.DNSQueryResponse, capacity)
+	var queriesWG sync.WaitGroup
+	var collectorWG sync.WaitGroup
+
+	// spin off "collector" for results channel
+	collectorWG.Add(1)
+	go func() {
+		defer collectorWG.Done()
+		// Collect all responses
+		for result := range resultsChan {
+
+			log.Debug("collector: Received result")
+
+			results = append(results, result)
+			if result.QueryError != nil {
+				// Check whether the user has opted to treat errors as fatal. If
+				// so, display current summary results and exit
+				if cfg.DNSErrorsFatal() {
+					results.PrintSummary()
+					os.Exit(1)
+				}
+			}
+
+			log.Debug("collector: Saved result")
+		}
+
+		log.Debug("collector: Exited collection loop")
+	}()
 
 	// spin off a separate goroutine for each of our DNS servers, send back
 	// results on a channel
 	for _, server := range cfg.Servers() {
 
+		queriesWG.Add(1)
 		go func(server string, query string, queryTypes []string, queryTimeout time.Duration, results chan dqrs.DNSQueryResponse) {
-			// dnsQueryResponse := dqrs.PerformQuery(query, server, dns.TypeA)
+
+			defer queriesWG.Done()
+
 			log.Debugf("Length of requested query types: %d", len(queryTypes))
 			for _, rrString := range queryTypes {
 				rrType, err := dqrs.RRStringToType(rrString)
@@ -76,42 +113,90 @@ func main() {
 					failedQueryRequest := dqrs.DNSQueryResponse{
 						Server:     server,
 						Query:      query,
-						QueryError: fmt.Errorf("error converting Resource Record string to native type: %v", err),
+						QueryError: fmt.Errorf("error converting Resource Record string to native type: %w", err),
 					}
 					log.Warn(failedQueryRequest.Error())
-					resultsChan <- failedQueryRequest
+					queriesWG.Add(1)
+					go func() {
+						defer queriesWG.Done()
+						resultsChan <- failedQueryRequest
+					}()
+
 				}
-				log.Debugf("Submitting query for %q of type %q to %q",
-					query, rrString, server)
-				resultsChan <- dqrs.PerformQuery(query, server, rrType, queryTimeout)
+
+				var totalQueries int
+				switch {
+				case rrType == dns.TypeSRV && len(cfg.SrvProtocols()) > 0:
+					totalQueries = len(cfg.SrvProtocols())
+				default:
+					totalQueries = 1
+				}
+				queries := make([]string, 0, totalQueries)
+
+				switch {
+
+				// If performing SRV record queries, check to see if SRV
+				// protocols were specified. If so, submit a separate query
+				// for each one after resolving the protocol record syntax
+				// needed.
+				case rrType == dns.TypeSRV && len(cfg.SrvProtocols()) > 0:
+					for _, srvProtocol := range cfg.SrvProtocols() {
+						queryTemplate, err := config.SrvProtocolTmplLookup(srvProtocol)
+						if err != nil {
+							// Record the error, log the error and send a
+							// minimal DNSQueryResponse type back on the
+							// channel with the specific error embedded.
+							failedQueryRequest := dqrs.DNSQueryResponse{
+								Server:     server,
+								Query:      query,
+								QueryError: fmt.Errorf("error retrieving SRV protocol template: %w", err),
+							}
+							log.Warn(failedQueryRequest.Error())
+							queriesWG.Add(1)
+							go func() {
+								defer queriesWG.Done()
+								resultsChan <- failedQueryRequest
+							}()
+
+						}
+						queries = append(queries, fmt.Sprintf(queryTemplate, query))
+					}
+				// use the query string as-is if SRV protocols not specified
+				default:
+					queries = append(queries, query)
+				}
+
+				log.Debugf("Total queries collected: %d", len(queries))
+
+				for i := range queries {
+					log.Debugf("Submitting query for %q of type %q to %q",
+						queries[i], rrString, server)
+
+					queriesWG.Add(1)
+					go func(q string) {
+						defer queriesWG.Done()
+						resultsChan <- dqrs.PerformQuery(q, server, rrType, queryTimeout)
+						log.Debug("Query completed, results sent back on channel")
+					}(queries[i])
+
+				}
+
 			}
 		}(server, cfg.Query(), queryTypes, queryTimeout, resultsChan)
 
 	}
 
-	// Collect all responses, continue until we exhaust the number of expected
-	// responses calculated earlier as our signal to stop collecting responses
-	remainingResponses := expectedResponses
-	for remainingResponses > 0 {
-		result := <-resultsChan
-		results = append(results, result)
-		if result.QueryError != nil {
-			// Check whether the user has opted to treat errors as fatal. If
-			// so, display current summary results and exit
-			if cfg.DNSErrorsFatal() {
-				results.PrintSummary()
-				os.Exit(1)
-			}
-		}
+	// Close results channel after all queries have been submitted and results
+	// are ready to be collected
+	queriesWG.Wait()
+	close(resultsChan)
 
-		// note that we've received another response from a DNS server in our
-		// list; get the next response, break out of loop once done
-		remainingResponses--
-	}
+	// Wait on collector to finish saving results from earlier queries
+	collectorWG.Wait()
 
-	// Sort DNS query results results by server used for query. This is done
-	// in an effort to arrange responses based on the group of DNS servers
-	// (assuming that they're group together using a consecutive IP block)
+	// Sort DNS query results by server used for query. This is done in an
+	// effort to arrange responses based on the group of DNS servers (assuming
+	// that they're grouped together using a consecutive IP block)
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Server < results[j].Server
 	})

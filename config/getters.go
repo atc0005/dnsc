@@ -93,6 +93,28 @@ func (c Config) QueryTypes() []string {
 	}
 }
 
+// SrvProtocols returns the user-provided choice of which Service Location
+// (SRV) record protocols should be used with a given query string. This is a
+// "shortcut" of sorts that allows specifying one or more short strings
+// instead of providing a much longer, unwieldy formatted string as the query
+// value as separate queries.
+//
+// For example, "msdcs" can be specified as a SRV record protocol along with
+// "example.com" as the query string to search DNS for
+// "_ldap._tcp.dc._msdcs.example.com".
+func (c Config) SrvProtocols() []string {
+	switch {
+	case c.cliConfig.SrvProtocols != nil:
+		return c.cliConfig.SrvProtocols
+	case c.fileConfig.SrvProtocols != nil:
+		return c.fileConfig.SrvProtocols
+	default:
+		log.Debug("Requested SRV protocol not specified, skipping SRV protocol templating")
+
+		return nil
+	}
+}
+
 // Timeout returns the user-provided choice of what timeout value to use for
 // DNS queries. If not set, returns the default value for our application.
 func (c Config) Timeout() time.Duration {

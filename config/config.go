@@ -41,6 +41,7 @@ const (
 	dnsServerFlagHelp      = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
 	dnsRequestTypeFlagHelp = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
 	dnsTimeoutFlagHelp     = "Maximum number of seconds allowed for a DNS query to take before timing out."
+	srvProtocolFlagHelp    = "Service Location (SRV) protocols associated with a given domain name as the query string. For example, \"msdcs\" can be specified as the SRV record protocol along with \"example.com\" as the query string to search DNS for \"_ldap._tcp.dc._msdcs.example.com\". This flag may be repeated for each additional SRV protocol that you wish to request records for."
 )
 
 // Default flag settings if not overridden by user input
@@ -91,6 +92,15 @@ const (
 	RequestTypeMX    string = "MX"
 	RequestTypePTR   string = "PTR"
 	RequestTypeSRV   string = "SRV"
+)
+
+// Supported Service Location (SRV) Protocol keywords
+const (
+	SrvProtocolMSDCS      string = "msdcs"
+	SrvProtocolKerberos   string = "kerberos"
+	SrvProtocolXMPPServer string = "xmppsrv"
+	SrvProtocolXMPPClient string = "xmppclient"
+	SrvProtocolSIP        string = "sip"
 )
 
 // 	apex/log Handlers
@@ -209,6 +219,10 @@ type configTemplate struct {
 	// Query represents the FQDN query strings submitted to each DNS server
 	Query string `toml:"query"`
 
+	// SrvProtocols is a list of the Service Location (SRV) record protocol
+	// keywords associated with a given domain name.
+	SrvProtocols multiValueFlag `toml:"dns_srv_protocols"`
+
 	// LogLevel is the chosen logging level
 	LogLevel string `toml:"log_level"`
 
@@ -225,8 +239,8 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
@@ -234,12 +248,14 @@ func (c Config) String() string {
 		c.cliConfig.LogFormat,
 		c.cliConfig.DNSErrorsFatal,
 		c.cliConfig.QueryTypes,
+		c.cliConfig.SrvProtocols,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
 		c.fileConfig.DNSErrorsFatal,
 		c.fileConfig.QueryTypes,
+		c.fileConfig.SrvProtocols,
 		c.configFile,
 		c.showVersion,
 	)
@@ -321,6 +337,37 @@ func PathExists(path string) bool {
 
 }
 
+// SrvProtocolTmplLookup looks up the protocol record template associated with
+// a given protocol keyword. An error is returned if support is not provided
+// for a specific protocol keyword.
+func SrvProtocolTmplLookup(keyword string) (string, error) {
+
+	if strings.TrimSpace(keyword) == "" {
+		return "", fmt.Errorf("missing SRV protocol keyword")
+
+	}
+
+	// valid keywords/protocol strings
+	srvProtocolIdx := map[string]string{
+		SrvProtocolMSDCS:      "_ldap._tcp.dc._msdcs.%s",
+		SrvProtocolKerberos:   "_kerberos._tcp.%s",
+		SrvProtocolXMPPServer: "_xmpp-server._tcp.%s",
+		SrvProtocolXMPPClient: "_xmpp-client._tcp.%s",
+		SrvProtocolSIP:        "_sip._tcp.%s",
+	}
+
+	val, ok := srvProtocolIdx[keyword]
+	if !ok {
+		return "", fmt.Errorf(
+			"unsupported SRV protocol keyword specified: %s. ",
+			keyword,
+		)
+	}
+
+	return val, nil
+
+}
+
 // NewConfig is a factory function that produces a new Config object based
 // on user provided flag and config file values.
 func NewConfig() (*Config, error) {
@@ -393,6 +440,32 @@ func NewConfig() (*Config, error) {
 
 	// Apply logging settings based on any provided config file settings
 	config.configureLogging()
+
+	// If SRV record protocol(s) specified, assume that user has specified or
+	// wishes to also specify SRV record type; add to the list of query types
+	// as a convenience to the user.
+	if len(config.SrvProtocols()) > 0 {
+
+		switch {
+		case config.cliConfig.QueryTypes != nil:
+			err := config.cliConfig.QueryTypes.Set(strings.ToLower(RequestTypeSRV))
+			if err != nil {
+				return nil, fmt.Errorf(
+					"failed to assert SRV record query type for specified SRV protocols: %w",
+					err,
+				)
+			}
+		case config.fileConfig.QueryTypes != nil:
+			err := config.fileConfig.QueryTypes.Set(strings.ToLower(RequestTypeSRV))
+			if err != nil {
+				return nil, fmt.Errorf(
+					"failed to assert SRV record query type for specified SRV protocols: %w",
+					err,
+				)
+			}
+		}
+
+	}
 
 	log.Debug("Validating configuration ...")
 	if err := config.Validate(); err != nil {
