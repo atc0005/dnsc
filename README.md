@@ -33,6 +33,7 @@ Submit query against a list of DNS servers and display summary of results
     - [Query server record (SRV)](#query-server-record-srv)
     - [Query server record (SRV) using SRV protocol keyword (aka, "shortcut")](#query-server-record-srv-using-srv-protocol-keyword-aka-shortcut)
     - [Force exit on first DNS error](#force-exit-on-first-dns-error)
+    - [Use single-line summary output format](#use-single-line-summary-output-format)
   - [Inspiration](#inspiration)
   - [References](#references)
 
@@ -70,6 +71,8 @@ repeat use.
 - User configurable logging levels
 
 - User configurable logging format
+
+- User configurable results summary output format
 
 - User configurable query timeout
 
@@ -194,6 +197,7 @@ string manually to get the same effect.
 | `sp`, `srv-protocol`      | No       | *empty list*   | **Yes** | [supported keywords](#service-location-srv-protocol-shortcuts) | Service Location (SRV) protocols associated with a given domain name as the query string. For example, `msdcs` can be specified as the SRV record protocol along with `example.com` as the query string to search DNS for `_ldap._tcp.dc._msdcs.example.com`. This flag may be repeated for each additional SRV protocol that you wish to request records for. |
 | `ll`, `log-level`         | No       | `info`         | No      | `fatal`, `error`, `warn`, `info`, `debug`                      | Log message priority filter. Log messages with a lower level are ignored.                                                                                                                                                                                                                                                                                      |
 | `lf`, `log-format`        | No       | `text`         | No      | `cli`, `json`, `logfmt`, `text`, `discard`                     | Use the specified `apex/log` package "handler" to output log messages in that handler's format.                                                                                                                                                                                                                                                                |
+| `ro`, `results-output`    | No       | `multi-line`   | No      | `multi-line`, `single-line`                                    | Specifies whether the results summary output is composed of a single comma-separated line of records for a query, or whether the records are returned one per line.                                                                                                                                                                                            |
 | `t`, `type`               | No       | `A`            | **Yes** | [supported types](#query-types-supported)                      | DNS query type to use when submitting a DNS query to each provided server. This flag may be repeated for each additional DNS record type you wish to request.                                                                                                                                                                                                  |
 | `to`, `timeout`           | No       | `10`           | No      | *any positive whole number*                                    | Maximum number of seconds allowed for a DNS query to take before timing out.                                                                                                                                                                                                                                                                                   |
 
@@ -212,6 +216,7 @@ settings.
 | `dns-errors-fatal` | `dns_errors_fatal`       | Opt-in setting. Useful to leave as-is for most use cases.                          |
 | `log-level`        | `log_level`              |                                                                                    |
 | `log-format`       | `log_format`             |                                                                                    |
+| `results-output`   | `results_output`         |                                                                                    |
 | `type`             | `dns_request_types`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
 | `srv-protocol`     | `dns_srv_protocols`      | [Multi-line array](https://github.com/toml-lang/toml#user-content-array)           |
 | `timeout`          | `timeout`                |                                                                                    |
@@ -263,6 +268,8 @@ dns_query_types = [
     "MX",
     "CNAME",
 ]
+
+results_output = "multi-line"
 ```
 
 See the [Configuration file](#configuration-file) section for additional
@@ -275,21 +282,37 @@ locations mentioned in the [Configuration file](#configuration-file) section,
 but one was not found:
 
 ```ShellSession
-$ ./dnsc.exe -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yahoo.com
+$ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yahoo.com
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  WARN[0000] Config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
   WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server            Query            Type    Answers                                                                                                            TTL
----               ---              ---     ---                                                                                                                ---
-208.67.220.220    www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    1304, 18, 18, 18, 18
-208.67.222.222    www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    1433, 40, 40, 40, 40
-8.8.4.4           www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                            591, 31, 31
-8.8.8.8           www.yahoo.com    A       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)    98, 32, 32, 32, 32
+Server            RTT     Query            Query Type    Answer                          Answer Type    TTL
+---               ---     ---              ---           ---                             ---            ---
+208.67.220.220    20ms    www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          21
+208.67.220.220    20ms    www.yahoo.com    A             74.6.143.25                     A              33
+208.67.220.220    20ms    www.yahoo.com    A             74.6.143.26                     A              33
+208.67.220.220    20ms    www.yahoo.com    A             74.6.231.20                     A              33
+208.67.220.220    20ms    www.yahoo.com    A             74.6.231.21                     A              33
+208.67.222.222    20ms    www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          54
+208.67.222.222    20ms    www.yahoo.com    A             74.6.143.25                     A              29
+208.67.222.222    20ms    www.yahoo.com    A             74.6.143.26                     A              29
+208.67.222.222    20ms    www.yahoo.com    A             74.6.231.20                     A              29
+208.67.222.222    20ms    www.yahoo.com    A             74.6.231.21                     A              29
+8.8.4.4           7ms     www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          36
+8.8.4.4           7ms     www.yahoo.com    A             74.6.143.25                     A              45
+8.8.4.4           7ms     www.yahoo.com    A             74.6.143.26                     A              45
+8.8.4.4           7ms     www.yahoo.com    A             74.6.231.20                     A              45
+8.8.4.4           7ms     www.yahoo.com    A             74.6.231.21                     A              45
+8.8.8.8           8ms     www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          25
+8.8.8.8           8ms     www.yahoo.com    A             74.6.143.25                     A              22
+8.8.8.8           8ms     www.yahoo.com    A             74.6.143.26                     A              22
+8.8.8.8           8ms     www.yahoo.com    A             74.6.231.20                     A              22
+8.8.8.8           8ms     www.yahoo.com    A             74.6.231.21                     A              22
 ```
 
 Since we did not specify a record query type, only `A` records were requested
@@ -303,35 +326,74 @@ that had it.
 As can be seen below, this example produces quite a bit of output.
 
 ```ShellSession
-$ dnsc -config-file ./config.example.toml -q www.yahoo.com
-
+$ dnsc --config-file ./config.example.toml -q www.yahoo.com
   INFO[0000] User-specified config file provided, will attempt to load it
   INFO[0000] Trying to load config file "./config.example.toml"
   INFO[0000] Config file successfully loaded config_file=./config.example.toml
 
 
-Server            Query            Type     Answers                                                                                                                                                       TTL
----               ---              ---      ---                                                                                                                                                           ---
-1.1.1.1           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1082
-1.1.1.1           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1082, 41, 41, 41, 41
-1.1.1.1           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    1082, 33, 33, 33, 33
-1.1.1.1           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1082
-208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1137, 38, 38, 38, 38
-208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1047
-208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1047, 60, 60, 60, 60
-208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        679
-208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        679
-208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1047, 60, 60, 60, 60
-208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1524
-208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               679, 55, 55, 55, 55
-8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:58:1836::11 (AAAA)    569, 9, 9, 9, 9
-8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1121
-8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1008, 35, 35, 35, 35
-8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        806
-8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        927
-8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA), 2001:4998:58:1836::10 (AAAA)    924, 23, 23, 23, 23
-8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        903
-8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               576, 38, 38, 38, 38
+Server            RTT     Query            Type     Answers                         TTL
+---               ---     ---              ---      ---                             ---
+1.1.1.1           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    8
+1.1.1.1           7ms     www.yahoo.com    A        74.6.143.25                     8
+1.1.1.1           7ms     www.yahoo.com    A        74.6.143.26                     8
+1.1.1.1           7ms     www.yahoo.com    A        74.6.231.20                     8
+1.1.1.1           7ms     www.yahoo.com    A        74.6.231.21                     8
+1.1.1.1           51ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    60
+1.1.1.1           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    12
+1.1.1.1           7ms     www.yahoo.com    AAAA     2001:4998:124:1507::f000        12
+1.1.1.1           7ms     www.yahoo.com    AAAA     2001:4998:124:1507::f001        12
+1.1.1.1           7ms     www.yahoo.com    AAAA     2001:4998:44:3507::8000         12
+1.1.1.1           7ms     www.yahoo.com    AAAA     2001:4998:44:3507::8001         12
+1.1.1.1           73ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    60
+208.67.220.220    21ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    19
+208.67.220.220    21ms    www.yahoo.com    AAAA     2001:4998:44:3507::8001         16
+208.67.220.220    21ms    www.yahoo.com    AAAA     2001:4998:124:1507::f000        16
+208.67.220.220    21ms    www.yahoo.com    AAAA     2001:4998:124:1507::f001        16
+208.67.220.220    21ms    www.yahoo.com    AAAA     2001:4998:44:3507::8000         16
+208.67.220.220    23ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    42
+208.67.220.220    22ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    20
+208.67.220.220    22ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    19
+208.67.220.220    22ms    www.yahoo.com    A        74.6.143.25                     58
+208.67.220.220    22ms    www.yahoo.com    A        74.6.143.26                     58
+208.67.220.220    22ms    www.yahoo.com    A        74.6.231.20                     58
+208.67.220.220    22ms    www.yahoo.com    A        74.6.231.21                     58
+208.67.222.222    22ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    25
+208.67.222.222    22ms    www.yahoo.com    A        74.6.143.25                     50
+208.67.222.222    22ms    www.yahoo.com    A        74.6.143.26                     50
+208.67.222.222    22ms    www.yahoo.com    A        74.6.231.20                     50
+208.67.222.222    22ms    www.yahoo.com    A        74.6.231.21                     50
+208.67.222.222    21ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    19
+208.67.222.222    21ms    www.yahoo.com    AAAA     2001:4998:44:3507::8001         16
+208.67.222.222    21ms    www.yahoo.com    AAAA     2001:4998:124:1507::f000        16
+208.67.222.222    21ms    www.yahoo.com    AAAA     2001:4998:124:1507::f001        16
+208.67.222.222    21ms    www.yahoo.com    AAAA     2001:4998:44:3507::8000         16
+208.67.222.222    21ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    20
+208.67.222.222    23ms    www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    19
+8.8.4.4           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    34
+8.8.4.4           8ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    52
+8.8.4.4           8ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    34
+8.8.4.4           8ms     www.yahoo.com    AAAA     2001:4998:44:3507::8001         1
+8.8.4.4           8ms     www.yahoo.com    AAAA     2001:4998:124:1507::f000        1
+8.8.4.4           8ms     www.yahoo.com    AAAA     2001:4998:44:3507::8000         1
+8.8.4.4           8ms     www.yahoo.com    AAAA     2001:4998:124:1507::f001        1
+8.8.4.4           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    33
+8.8.4.4           7ms     www.yahoo.com    A        74.6.143.25                     3
+8.8.4.4           7ms     www.yahoo.com    A        74.6.143.26                     3
+8.8.4.4           7ms     www.yahoo.com    A        74.6.231.20                     3
+8.8.4.4           7ms     www.yahoo.com    A        74.6.231.21                     3
+8.8.8.8           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    34
+8.8.8.8           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    27
+8.8.8.8           7ms     www.yahoo.com    AAAA     2001:4998:124:1507::f000        9
+8.8.8.8           7ms     www.yahoo.com    AAAA     2001:4998:124:1507::f001        9
+8.8.8.8           7ms     www.yahoo.com    AAAA     2001:4998:44:3507::8000         9
+8.8.8.8           7ms     www.yahoo.com    AAAA     2001:4998:44:3507::8001         9
+8.8.8.8           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    52
+8.8.8.8           7ms     www.yahoo.com    A        74.6.143.25                     1
+8.8.8.8           7ms     www.yahoo.com    A        74.6.143.26                     1
+8.8.8.8           7ms     www.yahoo.com    A        74.6.231.20                     1
+8.8.8.8           7ms     www.yahoo.com    A        74.6.231.21                     1
+8.8.8.8           7ms     www.yahoo.com    CNAME    new-fp-shed.wg1.b.yahoo.com.    52
 ```
 
 ### Specify DNS servers list via flags
@@ -340,39 +402,38 @@ You can also specify the DNS servers via CLI flags, though it is a bit more verb
 
 ```ShellSession
 $ dnsc -ds 8.8.8.8 -ds 8.8.4.4 -ds 208.67.220.220 -ds 208.67.222.222 -q www.yahoo.com
-
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server            Query            Type     Answers                                                                                                                                                       TTL
----               ---              ---      ---                                                                                                                                                           ---
-208.67.220.220    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1339, 11, 11, 11, 11
-208.67.220.220    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               1339, 40, 40, 40, 40
-208.67.220.220    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1775
-208.67.220.220    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1339
-208.67.222.222    www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        395
-208.67.222.222    www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::10 (AAAA), 2001:4998:58:1836::11 (AAAA), 2001:4998:44:41d::3 (AAAA), 2001:4998:44:41d::4 (AAAA)    1339, 11, 11, 11, 11
-208.67.222.222    www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        858
-208.67.222.222    www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A), 98.138.219.231 (A), 98.138.219.232 (A)                                               858, 35, 35, 35, 35
-8.8.4.4           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:58:1836::10 (AAAA)                                                            1500, 55, 55
-8.8.4.4           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1297
-8.8.4.4           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                                                                       1581, 18, 18
-8.8.4.4           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1580
-8.8.8.8           www.yahoo.com    AAAA     atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:58:1836::11 (AAAA), 2001:4998:58:1836::10 (AAAA)                                                            1587, 37, 37
-8.8.8.8           www.yahoo.com    MX       atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1483
-8.8.8.8           www.yahoo.com    A        atsv2-fp-shed.wg1.b.yahoo.com. (CNAME), 72.30.35.9 (A), 72.30.35.10 (A)                                                                                       1616, 53, 53
-8.8.8.8           www.yahoo.com    CNAME    atsv2-fp-shed.wg1.b.yahoo.com. (CNAME)                                                                                                                        1580
+Server            RTT     Query            Query Type    Answer                          Answer Type    TTL
+---               ---     ---              ---           ---                             ---            ---
+208.67.220.220    20ms    www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          43
+208.67.220.220    20ms    www.yahoo.com    A             74.6.143.25                     A              48
+208.67.220.220    20ms    www.yahoo.com    A             74.6.143.26                     A              48
+208.67.220.220    20ms    www.yahoo.com    A             74.6.231.20                     A              48
+208.67.220.220    20ms    www.yahoo.com    A             74.6.231.21                     A              48
+208.67.222.222    20ms    www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          54
+208.67.222.222    20ms    www.yahoo.com    A             74.6.143.24                     A              42
+208.67.222.222    20ms    www.yahoo.com    A             74.6.231.19                     A              42
+8.8.4.4           7ms     www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          44
+8.8.4.4           7ms     www.yahoo.com    A             74.6.143.25                     A              44
+8.8.4.4           7ms     www.yahoo.com    A             74.6.143.26                     A              44
+8.8.4.4           7ms     www.yahoo.com    A             74.6.231.20                     A              44
+8.8.4.4           7ms     www.yahoo.com    A             74.6.231.21                     A              44
+8.8.8.8           7ms     www.yahoo.com    A             new-fp-shed.wg1.b.yahoo.com.    CNAME          44
+8.8.8.8           7ms     www.yahoo.com    A             74.6.143.25                     A              44
+8.8.8.8           7ms     www.yahoo.com    A             74.6.143.26                     A              44
+8.8.8.8           7ms     www.yahoo.com    A             74.6.231.20                     A              44
+8.8.8.8           7ms     www.yahoo.com    A             74.6.231.21                     A              44
 ```
 
 No errors here since www.yahoo.com had records for all of the requested query
 types.
-
-It's also worth pointing out that I have a local copy of the `config.toml`
-file which was automatically detected and loaded.
 
 ### Query pointer record (PTR) using IP Address
 
@@ -383,18 +444,17 @@ example below.
 ```ShellSession
 
 $ dnsc --ds 8.8.8.8 --q 74.6.143.25 -t ptr
-
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server     RTT    Query          Type    Answers                                                  TTL
----        ---    ---            ---     ---                                                      ---
-8.8.8.8    7ms    74.6.143.25    PTR     media-router-fp73.prod.media.vip.bf1.yahoo.com. (PTR)    483
-
+Server     RTT    Query          Query Type    Answer                                             Answer Type    TTL
+---        ---    ---            ---           ---                                                ---            ---
+8.8.8.8    7ms    74.6.143.25    PTR           media-router-fp73.prod.media.vip.bf1.yahoo.com.    PTR            186
 ```
 
 ### Query server record (SRV)
@@ -404,18 +464,18 @@ In this example, we query for available XMPP servers for `conversations.im`.
 ```ShellSession
 
 $ dnsc --ds 8.8.8.8 --q "_xmpp-client._tcp.conversations.im" -t srv
-
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server     RTT      Query                                 Type    Answers                                                        TTL
----        ---      ---                                   ---     ---                                                            ---
-8.8.8.8    113ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
-
+Server     RTT    Query                                 Query Type    Answer                     Answer Type    TTL
+---        ---    ---                                   ---           ---                        ---            ---
+8.8.8.8    7ms    _xmpp-client._tcp.conversations.im    SRV           xmpp.conversations.im.     SRV            2533
+8.8.8.8    7ms    _xmpp-client._tcp.conversations.im    SRV           xmpps.conversations.im.    SRV            2533
 ```
 
 ### Query server record (SRV) using SRV protocol keyword (aka, "shortcut")
@@ -428,17 +488,18 @@ application assumes that you wish to submit a SRV record query.
 
 ```ShellSession
 $ dnsc --ds 8.8.8.8 --q "conversations.im" -sp "xmppclient" -t srv
-
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server     RTT    Query                                 Type    Answers                                                        TTL
----        ---    ---                                   ---     ---                                                            ---
-8.8.8.8    8ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
+Server     RTT    Query                                 Query Type    Answer                     Answer Type    TTL
+---        ---    ---                                   ---           ---                        ---            ---
+8.8.8.8    8ms    _xmpp-client._tcp.conversations.im    SRV           xmpps.conversations.im.    SRV            2837
+8.8.8.8    8ms    _xmpp-client._tcp.conversations.im    SRV           xmpp.conversations.im.     SRV            2837
 ```
 
 As with other record/query types, you may also mix several together. Here we
@@ -448,18 +509,19 @@ available `A` records.
 
 ```ShellSession
 $ dnsc --ds 8.8.8.8 --q "conversations.im" -sp "xmppclient" -t a
-
   INFO[0000] User-specified config file not provided
-  INFO[0000] Trying to load config file "T:\\github\\dnsc\\config.toml"
-  WARN[0000] Config file "T:\\github\\dnsc\\config.toml" not found or unable to load
-  INFO[0000] Trying to load config file "C:\\Users\\adam\\AppData\\Roaming\\dnsc\\config.toml"
-  INFO[0000] Config file successfully loaded config_file=C:\Users\adam\AppData\Roaming\dnsc\config.toml
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
 
 
-Server     RTT     Query                                 Type    Answers                                                        TTL
----        ---     ---                                   ---     ---                                                            ---
-8.8.8.8    23ms    conversations.im                      A       78.47.177.120 (A)                                              3599
-8.8.8.8    61ms    _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    3599, 3599
+Server     RTT      Query                                 Query Type    Answer                     Answer Type    TTL
+---        ---      ---                                   ---           ---                        ---            ---
+8.8.8.8    27ms     _xmpp-client._tcp.conversations.im    SRV           xmpp.conversations.im.     SRV            3599
+8.8.8.8    27ms     _xmpp-client._tcp.conversations.im    SRV           xmpps.conversations.im.    SRV            3599
+8.8.8.8    231ms    conversations.im                      A             78.47.177.120              A              3599
 ```
 
 ### Force exit on first DNS error
@@ -469,28 +531,66 @@ allow the results to be processed from all servers. This can be useful if you
 have one DNS server from the group unreachable or providing invalid results.
 If however you wish to restore the previous behavior you can specify either
 the `dns-errors-fatal` or `def` flags, or set `dns_errors_fatal = true` in the
-`config.toml` config file.
+`config.toml` config file. The example below assumes that you've set
+`dns_errors_fatal = true` in the `config.toml` config file.
 
 Example:
 
 ```ShellSession
 $ dnsc -config-file ./config.example.toml -q www.penzoil.com
-
   INFO[0000] User-specified config file provided, will attempt to load it
   INFO[0000] Trying to load config file "./config.example.toml"
   INFO[0000] Config file successfully loaded config_file=./config.example.toml
 
 
-Server     Query              Type    Answers                       TTL
----        ---                ---     ---                           ---
-8.8.4.4    www.penzoil.com    A       65.52.64.201 (A)              751
-1.1.1.1    www.penzoil.com    A       65.52.64.201 (A)              753
-8.8.8.8    www.penzoil.com    A       65.52.64.201 (A)              899
-1.1.1.1    www.penzoil.com    AAAA    no records found for query
+Server     RTT     Query              Type    Answers                       TTL
+---        ---     ---                ---     ---                           ---
+8.8.4.4    33ms    www.penzoil.com    A       65.52.64.201 (A)              899
+8.8.4.4    8ms     www.penzoil.com    AAAA    no records found for query
 ```
 
 Here the process bailed when the first `AAAA` request failed. This is due to
-the `dns_errors_fatal = true` config file setting (not shown here).
+the `dns_errors_fatal = true` config file setting noted earlier.
+
+### Use single-line summary output format
+
+This is the previous default output format. This format reads well when the
+result set is small, but may be harder to read when many records are returned
+for a query type (e.g., large pool of front-end web servers).
+
+```ShellSession
+$ dnsc --ds 8.8.8.8 --q "conversations.im" -sp "xmppclient" -t a --ro single-line
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
+
+
+Server     RTT      Query                                 Type    Answers                                                        TTL
+---        ---      ---                                   ---     ---                                                            ---
+8.8.8.8    8ms      _xmpp-client._tcp.conversations.im    SRV     xmpps.conversations.im. (SRV), xmpp.conversations.im. (SRV)    1545, 1545
+8.8.8.8    944ms    conversations.im                      A       78.47.177.120 (A)                                              3599
+```
+
+Here is an example where this format does not read quite as well:
+
+```ShellSession
+$ dnsc --ds 8.8.8.8 -q www.yahoo.com -t a -t aaaa --ro single-line
+  INFO[0000] User-specified config file not provided
+  INFO[0000] Trying to load config file "/mnt/t/github/dnsc/config.toml"
+  WARN[0000] Config file "/mnt/t/github/dnsc/config.toml" not found or unable to load
+  INFO[0000] Trying to load config file "/home/ubuntu/.config/dnsc/config.toml"
+  WARN[0000] Config file "/home/ubuntu/.config/dnsc/config.toml" not found or unable to load
+  WARN[0000] Failed to load config files, relying only on provided flag settings
+
+
+Server     RTT    Query            Type    Answers                                                                                                                                                                   TTL
+---        ---    ---              ---     ---                                                                                                                                                                       ---
+8.8.8.8    8ms    www.yahoo.com    AAAA    new-fp-shed.wg1.b.yahoo.com. (CNAME), 2001:4998:44:3507::8000 (AAAA), 2001:4998:44:3507::8001 (AAAA), 2001:4998:124:1507::f001 (AAAA), 2001:4998:124:1507::f000 (AAAA)    5, 5, 5, 5, 5
+8.8.8.8    7ms    www.yahoo.com    A       new-fp-shed.wg1.b.yahoo.com. (CNAME), 74.6.143.25 (A), 74.6.143.26 (A), 74.6.231.20 (A), 74.6.231.21 (A)                                                                  39, 40, 40, 40, 40
+```
 
 ## Inspiration
 

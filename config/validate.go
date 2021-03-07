@@ -128,6 +128,15 @@ func (c Config) Validate() error {
 	}
 	log.Debugf("c.LogFormat() validates: %#v", c.LogFormat())
 
+	switch c.ResultsOutput() {
+	case ResultsOutputSingleLine:
+	case ResultsOutputMultiLine:
+	default:
+		return fmt.Errorf("invalid option %q provided for results summary output",
+			c.ResultsOutput())
+	}
+	log.Debugf("c.ResultsOutput() validates: %#v", c.ResultsOutput())
+
 	// Optimist
 	log.Debug("All validation checks pass")
 	return nil

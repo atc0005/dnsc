@@ -42,6 +42,7 @@ const (
 	dnsRequestTypeFlagHelp = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
 	dnsTimeoutFlagHelp     = "Maximum number of seconds allowed for a DNS query to take before timing out."
 	srvProtocolFlagHelp    = "Service Location (SRV) protocols associated with a given domain name as the query string. For example, \"msdcs\" can be specified as the SRV record protocol along with \"example.com\" as the query string to search DNS for \"_ldap._tcp.dc._msdcs.example.com\". This flag may be repeated for each additional SRV protocol that you wish to request records for."
+	resultsOutputFlagHelp  = "Specifies whether the results summary output is composed of a single comma-separated line of records for a query, or whether the records are returned one per line."
 )
 
 // Default flag settings if not overridden by user input
@@ -54,6 +55,7 @@ const (
 	defaultQueryType             string = "A"
 	defaultConfigFile            string = ""
 	defaultQuery                 string = ""
+	defaultResultsOutput         string = ResultsOutputMultiLine
 
 	// the default timeout is set by the `miekg/dns.dnsTimeout` value, which
 	// at the time of this writing is 2 seconds. we override with our own
@@ -85,6 +87,7 @@ const (
 )
 
 // Supported Request types
+// TODO: Duplicated in dqrs package
 const (
 	RequestTypeA     string = "A"
 	RequestTypeAAAA  string = "AAAA"
@@ -133,6 +136,13 @@ const (
 
 	// LogFormatDiscard discards all logs
 	LogFormatDiscard string = "discard"
+)
+
+// Results summary output display options
+// TODO: Duplicated in dqrs package
+const (
+	ResultsOutputSingleLine string = "single-line"
+	ResultsOutputMultiLine  string = "multi-line"
 )
 
 // multiValueFlag is a custom type that satisfies the flag.Value interface in
@@ -232,6 +242,11 @@ type configTemplate struct {
 	// used by this application.
 	LogFormat string `toml:"log_format"`
 
+	// ResultsOutput specifies whether the results summary is composed of a
+	// single comma-separated line of records for a query, or whether the
+	// records are returned one per line.
+	ResultsOutput string `toml:"results_output"`
+
 	// Timeout is the number of seconds allowed for a DNS query to complete
 	// before it times out.
 	Timeout int `toml:"timeout"`
@@ -239,13 +254,14 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
 		c.cliConfig.LogLevel,
 		c.cliConfig.LogFormat,
+		c.cliConfig.ResultsOutput,
 		c.cliConfig.DNSErrorsFatal,
 		c.cliConfig.QueryTypes,
 		c.cliConfig.SrvProtocols,
@@ -253,6 +269,7 @@ func (c Config) String() string {
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
 		c.fileConfig.LogFormat,
+		c.fileConfig.ResultsOutput,
 		c.fileConfig.DNSErrorsFatal,
 		c.fileConfig.QueryTypes,
 		c.fileConfig.SrvProtocols,

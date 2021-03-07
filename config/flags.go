@@ -43,13 +43,14 @@ func (c *Config) handleFlagsConfig() {
 	flag.Var(&c.cliConfig.SrvProtocols, "srv-protocol", srvProtocolFlagHelp)
 	flag.Var(&c.cliConfig.SrvProtocols, "sp", srvProtocolFlagHelp+" (shorthand)")
 
-	// create shorter and longer logging level flag options
 	flag.StringVar(&c.cliConfig.LogLevel, "ll", defaultLogLevel, logLevelFlagHelp+" (shorthand)")
 	flag.StringVar(&c.cliConfig.LogLevel, "log-level", defaultLogLevel, logLevelFlagHelp)
 
-	// create shorter and longer logging format flag options
 	flag.StringVar(&c.cliConfig.LogFormat, "lf", defaultLogFormat, logFormatFlagHelp+" (shorthand)")
 	flag.StringVar(&c.cliConfig.LogFormat, "log-format", defaultLogFormat, logFormatFlagHelp)
+
+	flag.StringVar(&c.cliConfig.ResultsOutput, "ro", defaultResultsOutput, resultsOutputFlagHelp+" (shorthand)")
+	flag.StringVar(&c.cliConfig.ResultsOutput, "results-output", defaultResultsOutput, resultsOutputFlagHelp)
 
 	flag.Usage = flagsUsage()
 	flag.Parse()

@@ -71,6 +71,21 @@ func (c Config) LogFormat() string {
 	}
 }
 
+// ResultsOutput specifies whether the results summary is composed of a single
+// comma-separated line of records for a query, or whether the records are
+// returned one per line.
+func (c Config) ResultsOutput() string {
+
+	switch {
+	case c.cliConfig.ResultsOutput != "":
+		return c.cliConfig.ResultsOutput
+	case c.fileConfig.ResultsOutput != "":
+		return c.fileConfig.ResultsOutput
+	default:
+		return defaultResultsOutput
+	}
+}
+
 // ShowVersion returns the user-provided choice of displaying the application
 // version and exiting or the default value for this choice.
 func (c Config) ShowVersion() bool {

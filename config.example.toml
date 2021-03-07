@@ -91,3 +91,11 @@ log_format = "cli"
 
 # Maximum number of seconds allowed for a DNS query to take before timing out.
 # timeout = 10
+
+# Specifies whether the results summary is composed of a single
+# comma-separated line of records for a query, or whether the records are
+# returned one per line.
+#
+# single-line
+# multi-line
+results_output = "multi-line"
