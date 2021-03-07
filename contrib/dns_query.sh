@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2020 Adam Chalkley
+# Copyright 2021 Adam Chalkley
 #
 # https://github.com/atc0005/dnsc
 #
