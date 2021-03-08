@@ -5,8 +5,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for
 // full license information.
 
-// Package dqrs provides types and functions used by this application to
-// collect and process DNS queries and responses.
 package dqrs
 
 import (
@@ -14,15 +12,10 @@ import (
 	"fmt"
 	"net"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/miekg/dns"
 )
-
-// defaultDNSPort is the default UDP and TCP port used for incoming DNS
-// requests
-const defaultDNSPort = "53"
 
 // DNSQueryResponse represents a query and response from a DNS server.
 // Multiple records may be returned for a single query (e.g., CNAME and A
@@ -114,15 +107,15 @@ func (dqr *DNSQueryResponse) SortRecordsDesc() {
 
 }
 
-// Records returns a comma-separated string of all DNS records retrieved by an
-// earlier query. The output is formatted for display in a Tabwriter table.
-func (dqr DNSQueryResponse) Records() string {
+// Records returns all DNS records associated with a query response.
+func (dqr DNSQueryResponse) Records() []DNSRecord {
 
-	records := make([]string, 0, 5)
+	records := make([]DNSRecord, 0, len(dqr.Answer))
 
 	for _, record := range dqr.Answer {
 
-		var answer string
+		var recordVal string
+		var recordType string
 
 		// FIXME: How to dynamically get a "short" string value for each
 		// record type so that we don't have to hard-code in a switch
@@ -133,39 +126,38 @@ func (dqr DNSQueryResponse) Records() string {
 
 		switch v := record.(type) {
 		case *dns.A:
-			answer = v.A.String() + " (A)"
+			recordVal = v.A.String()
+			recordType = RequestTypeA
 		case *dns.AAAA:
-			answer = v.AAAA.String() + " (AAAA)"
+			recordVal = v.AAAA.String()
+			recordType = RequestTypeAAAA
 		case *dns.CNAME:
-			answer = v.Target + " (CNAME)"
-			// fmt.Println("Check *dns.CNAME type switch case stmt")
-			// answer = v.String() + " (CNAME)"
+			recordVal = v.Target
+			recordType = RequestTypeCNAME
 		case *dns.MX:
-			answer = v.Mx + " (MX)"
+			recordVal = v.Mx
+			recordType = RequestTypeMX
 		case *dns.PTR:
-			answer = v.Ptr + " (PTR)"
+			recordVal = v.Ptr
+			recordType = RequestTypePTR
 		case *dns.SRV:
-			answer = v.Target + " (SRV)"
+			recordVal = v.Target
+			recordType = RequestTypeSRV
 		default:
-			answer = "type unknown"
+			recordVal = recordValueUnknown
+			recordType = RequestTypeUnknown
 		}
 
-		records = append(records, answer)
+		ttl := record.Header().Ttl
+
+		records = append(records, DNSRecord{
+			Value: recordVal,
+			Type:  recordType,
+			TTL:   ttl,
+		})
 	}
 
-	return strings.Join(records, ", ")
-}
-
-// TTLs returns a comma-separated list of record TTLs from an earlier query
-func (dqr DNSQueryResponse) TTLs() string {
-
-	ttlEntries := make([]string, 0, 5)
-
-	for _, record := range dqr.Answer {
-		ttlEntries = append(ttlEntries, fmt.Sprint(record.Header().Ttl))
-	}
-
-	return strings.Join(ttlEntries, ", ")
+	return records
 }
 
 // PerformQuery wraps the bulk of the query/record logic performed by this

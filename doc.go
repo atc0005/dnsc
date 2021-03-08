@@ -32,6 +32,10 @@ FEATURES
 
 • User configurable logging format
 
+• User configurable results summary output format
+
+• User configurable query timeout
+
 USAGE
 
 See the README for examples.
