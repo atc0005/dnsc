@@ -26,6 +26,41 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.0] - 2021-03-08
+
+### Overview
+
+- Add support for SRV record protocol "shortcuts"
+- Add new (default) multi-line results summary output format
+- Misc bugfixes
+- built using Go 1.15.8
+
+### Added
+
+- Add support for SRV record protocol "shortcuts"
+  - e.g., allows specifying `msdcs` as protocol keyword and `example.com` as
+    the query string to query for available domain controllers instead of
+    specifying `_ldap._tcp.dc._msdcs.example.com` as the query string.
+- Add new (default) multi-line results summary output format
+  - attempts to work around display issues with many results per record type
+
+### Changed
+
+- Default results summary output changed from `single-line` to `multi-line`
+  - the prior format can be set persistently via config file or one-off via
+    CLI flag
+- Modify concurrency implementation to better support future work and help
+  with implementing SRV protocol "shortcuts"
+  - while this should be an improvement overall, this has not been fully
+    tested yet
+
+### Fixed
+
+- Repeating query type flag results in duplicate queries
+- Use default consts (which are currently empty strings) instead of actual
+  empty strings
+  - this was a bug waiting to happen
+
 ## [v0.4.0] - 2021-03-04
 
 ### Overview
@@ -345,7 +380,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.0...HEAD
+[v0.5.0]: https://github.com/atc0005/dnsc/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/atc0005/dnsc/releases/tag/v0.4.0
 [v0.3.5]: https://github.com/atc0005/dnsc/releases/tag/v0.3.5
 [v0.3.4]: https://github.com/atc0005/dnsc/releases/tag/v0.3.4
