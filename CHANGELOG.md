@@ -26,6 +26,29 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.1] - 2021-04-05
+
+### Overview
+
+- Bug fixes
+- built using Go 1.16.3
+  - Statically linked
+  - Linux (x86, x64)
+
+### Changed
+
+- dependencies
+  - `miekg/dns`
+    - `v1.1.40` to `v1.1.41`
+
+### Fixed
+
+- linting
+  - fieldalignment: struct with X pointer bytes could be Y (govet)
+  - `golangci/golangci-lint`
+    - replace deprecated `maligned` linter with `govet: fieldalignment`
+    - replace deprecated `scopelint` linter with `exportloopref`
+
 ## [v0.5.0] - 2021-03-08
 
 ### Overview
@@ -380,7 +403,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.1...HEAD
+[v0.5.1]: https://github.com/atc0005/dnsc/releases/tag/v0.5.1
 [v0.5.0]: https://github.com/atc0005/dnsc/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/atc0005/dnsc/releases/tag/v0.4.0
 [v0.3.5]: https://github.com/atc0005/dnsc/releases/tag/v0.3.5
