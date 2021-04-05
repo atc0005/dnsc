@@ -191,13 +191,13 @@ func (mvf *multiValueFlag) Set(value string) error {
 // intended to be retrieved via "Getter" methods.
 type Config struct {
 
-	// Use our template, define distinct collections of configuration settings
-	cliConfig  configTemplate
-	fileConfig configTemplate
-
 	// configFile represents the fully-qualified path to a configuration file
 	// consulted for settings not provided via CLI flags
 	configFile string `toml:"-"`
+
+	// Use our template, define distinct collections of configuration settings
+	cliConfig  configTemplate
+	fileConfig configTemplate
 
 	// showVersion is a flag indicating whether the user opted to display only
 	// the version string and then immediately exit the application
@@ -207,31 +207,6 @@ type Config struct {
 // configTemplate is our base configuration template used to collect values
 // specified by various configuration sources
 type configTemplate struct {
-
-	// IgnoreDNSErrors is a boolean *pointer* flag indicating whether
-	// individual DNS errors should be ignored. If enabled, this setting
-	// allows query-related DNS errors with one host to not block queries
-	// against remaining DNS servers. This can be useful to work around
-	// failures with one server in a pool of many.
-	DNSErrorsFatal bool `toml:"dns_errors_fatal"`
-
-	// Servers is a list of the DNS servers used by this application. Most
-	// commonly set in a configuration file due to the number of servers used
-	// for testing queries.
-	Servers multiValueFlag `toml:"dns_servers"`
-
-	// QueryTypes is a list of the DNS records that will be requested when
-	// submitting queries. This is a a collection of keywords provided by the
-	// user. Each keyword/string corresponds to an internal Resource Record
-	// type (dns.RR).
-	QueryTypes multiValueFlag `toml:"dns_query_types"`
-
-	// Query represents the FQDN query strings submitted to each DNS server
-	Query string `toml:"query"`
-
-	// SrvProtocols is a list of the Service Location (SRV) record protocol
-	// keywords associated with a given domain name.
-	SrvProtocols multiValueFlag `toml:"dns_srv_protocols"`
 
 	// LogLevel is the chosen logging level
 	LogLevel string `toml:"log_level"`
@@ -247,9 +222,34 @@ type configTemplate struct {
 	// records are returned one per line.
 	ResultsOutput string `toml:"results_output"`
 
+	// Query represents the FQDN query strings submitted to each DNS server
+	Query string `toml:"query"`
+
+	// Servers is a list of the DNS servers used by this application. Most
+	// commonly set in a configuration file due to the number of servers used
+	// for testing queries.
+	Servers multiValueFlag `toml:"dns_servers"`
+
+	// QueryTypes is a list of the DNS records that will be requested when
+	// submitting queries. This is a a collection of keywords provided by the
+	// user. Each keyword/string corresponds to an internal Resource Record
+	// type (dns.RR).
+	QueryTypes multiValueFlag `toml:"dns_query_types"`
+
+	// SrvProtocols is a list of the Service Location (SRV) record protocol
+	// keywords associated with a given domain name.
+	SrvProtocols multiValueFlag `toml:"dns_srv_protocols"`
+
 	// Timeout is the number of seconds allowed for a DNS query to complete
 	// before it times out.
 	Timeout int `toml:"timeout"`
+
+	// IgnoreDNSErrors is a boolean *pointer* flag indicating whether
+	// individual DNS errors should be ignored. If enabled, this setting
+	// allows query-related DNS errors with one host to not block queries
+	// against remaining DNS servers. This can be useful to work around
+	// failures with one server in a pool of many.
+	DNSErrorsFatal bool `toml:"dns_errors_fatal"`
 }
 
 func (c Config) String() string {

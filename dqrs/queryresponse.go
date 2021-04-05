@@ -22,30 +22,30 @@ import (
 // records).
 type DNSQueryResponse struct {
 
-	// Answer may potentially be composed of multiple Resource Record types
-	// such as CNAME and A records. We later separate out the types when
-	// needed.
-	Answer []dns.RR
-
 	// Server is the DNS server used for this query and response.
 	Server string
 
 	// Query is the FQDN that we requested a record for.
 	Query string
 
-	// RequestedRecordType represents the type of record requested as part of
-	// the query
-	RequestedRecordType uint16
-
 	// Error records whether an error occurred during any part of performing a
 	// query
 	QueryError error
+
+	// Answer may potentially be composed of multiple Resource Record types
+	// such as CNAME and A records. We later separate out the types when
+	// needed.
+	Answer []dns.RR
 
 	// ResponseTime, also known as the Round-trip Time, can be best summed up
 	// by this Cloudflare definition: "Round-trip time (RTT) is the duration
 	// in milliseconds (ms) it takes for a network request to go from a
 	// starting point to a destination and back again to the starting point."
 	ResponseTime time.Duration
+
+	// RequestedRecordType represents the type of record requested as part of
+	// the query
+	RequestedRecordType uint16
 }
 
 // DNSQueryResponses is a collection of DNS query responses. Intended for
