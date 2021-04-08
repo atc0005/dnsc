@@ -40,6 +40,8 @@ The following types of changes will be recorded in this file:
 - dependencies
   - `miekg/dns`
     - `v1.1.40` to `v1.1.41`
+  - `pelletier/go-toml`
+    - `v1.8.1` to `v1.9.0`
 
 ### Fixed
 
