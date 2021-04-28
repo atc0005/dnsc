@@ -412,9 +412,9 @@ func NewConfig() (*Config, error) {
 	configFiles := make([]string, 0, 3)
 
 	if config.configFile == "" {
-		log.Info("User-specified config file not provided")
+		log.Debug("User-specified config file not provided")
 	} else {
-		log.Info("User-specified config file provided, will attempt to load it")
+		log.Debug("User-specified config file provided, will attempt to load it")
 		configFiles = append(configFiles, config.configFile)
 	}
 
@@ -432,27 +432,27 @@ func NewConfig() (*Config, error) {
 
 	var loadCfgFileSuccess bool
 	for _, file := range configFiles {
-		log.Infof("Trying to load config file %q", file)
+		log.Debugf("Trying to load config file %q", file)
 		ok, err := config.loadConfigFile(file)
 		if ok {
 			loadCfgFileSuccess = true
 			// if there were no errors, we're done loading config files
 			log.WithFields(log.Fields{
 				"config_file": file,
-			}).Info("Config file successfully loaded")
+			}).Debug("Config file successfully loaded")
 			log.Debug("Config file successfully parsed")
 			log.Debugf("After loading config file: %v", config.String())
 			break
 		}
 
-		log.Warnf("Config file %q not found or unable to load", file)
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Debug("")
+			"file":  file,
+		}).Debug("Config file not found or unable to load")
 	}
 
 	if !loadCfgFileSuccess {
-		log.Warn("Failed to load config files, relying only on provided flag settings")
+		log.Debug("Failed to load config files, relying only on provided flag settings")
 	}
 
 	// Apply logging settings based on any provided config file settings
