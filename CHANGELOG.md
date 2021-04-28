@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.2] - 2021-04-28
+
+### Overview
+
+- Logging tweak
+- built using Go 1.16.3
+  - Statically linked
+  - Linux (x86, x64)
+
+### Changed
+
+- Change logging level for config file loading status messages from `INFO` to
+  `DEBUG`
+
+### Fixed
+
+- Add missing deps to v0.5.1 changelog entry
+
 ## [v0.5.1] - 2021-04-05
 
 ### Overview
@@ -405,7 +423,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.2...HEAD
+[v0.5.2]: https://github.com/atc0005/dnsc/releases/tag/v0.5.2
 [v0.5.1]: https://github.com/atc0005/dnsc/releases/tag/v0.5.1
 [v0.5.0]: https://github.com/atc0005/dnsc/releases/tag/v0.5.0
 [v0.4.0]: https://github.com/atc0005/dnsc/releases/tag/v0.4.0
