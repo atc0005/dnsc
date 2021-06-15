@@ -7,6 +7,6 @@ require (
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/miekg/dns v1.1.42
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
-	github.com/pelletier/go-toml v1.9.2
+	github.com/pelletier/go-toml v1.9.3
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
 )
