@@ -10,6 +10,7 @@
 package config
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -26,6 +27,10 @@ import (
 
 // Overridden via Makefile for release builds
 var version string = "dev build"
+
+// ErrVersionRequested indicates that the user requested application version
+// information.
+var ErrVersionRequested = errors.New("version information requested")
 
 // Primarily used with branding
 const myAppName string = "dnsc"
@@ -400,7 +405,7 @@ func NewConfig() (*Config, error) {
 
 	// Return immediately if user just wants version details
 	if config.ShowVersion() {
-		return &config, nil
+		return &config, ErrVersionRequested
 	}
 
 	//
