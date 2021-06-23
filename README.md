@@ -1,3 +1,4 @@
+<!-- omit in toc -->
 # dnsc
 
 Submit query against a list of DNS servers and display summary of results
@@ -9,33 +10,35 @@ Submit query against a list of DNS servers and display summary of results
 [![Lint and Build using Makefile](https://github.com/atc0005/dnsc/workflows/Lint%20and%20Build%20using%20Makefile/badge.svg)](https://github.com/atc0005/dnsc/actions?query=workflow%3A%22Lint+and+Build+using+Makefile%22)
 [![Quick Validation](https://github.com/atc0005/dnsc/workflows/Quick%20Validation/badge.svg)](https://github.com/atc0005/dnsc/actions?query=workflow%3A%22Quick+Validation%22)
 
-- [dnsc](#dnsc)
-  - [Project home](#project-home)
-  - [Overview](#overview)
-  - [Features](#features)
-    - [Current](#current)
-    - [Planned](#planned)
-  - [Changelog](#changelog)
-  - [Requirements](#requirements)
-  - [How to install it](#how-to-install-it)
-  - [Configuration](#configuration)
-    - [Precedence](#precedence)
-    - [Query types supported](#query-types-supported)
-    - [Service Location (SRV) Protocol "shortcuts"](#service-location-srv-protocol-shortcuts)
-    - [Command-line arguments](#command-line-arguments)
-    - [Configuration file](#configuration-file)
-  - [Examples](#examples)
-    - [Our config file](#our-config-file)
-    - [Flags only, no config file](#flags-only-no-config-file)
-    - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
-    - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
-    - [Query pointer record (PTR) using IP Address](#query-pointer-record-ptr-using-ip-address)
-    - [Query server record (SRV)](#query-server-record-srv)
-    - [Query server record (SRV) using SRV protocol keyword (aka, "shortcut")](#query-server-record-srv-using-srv-protocol-keyword-aka-shortcut)
-    - [Force exit on first DNS error](#force-exit-on-first-dns-error)
-    - [Use single-line summary output format](#use-single-line-summary-output-format)
-  - [Inspiration](#inspiration)
-  - [References](#references)
+<!-- omit in toc -->
+## Table of Contents
+
+- [Project home](#project-home)
+- [Overview](#overview)
+- [Features](#features)
+  - [Current](#current)
+  - [Planned](#planned)
+- [Changelog](#changelog)
+- [Requirements](#requirements)
+- [How to install it](#how-to-install-it)
+- [Configuration](#configuration)
+  - [Precedence](#precedence)
+  - [Query types supported](#query-types-supported)
+  - [Service Location (SRV) Protocol "shortcuts"](#service-location-srv-protocol-shortcuts)
+  - [Command-line arguments](#command-line-arguments)
+  - [Configuration file](#configuration-file)
+- [Examples](#examples)
+  - [Our config file](#our-config-file)
+  - [Flags only, no config file](#flags-only-no-config-file)
+  - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
+  - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
+  - [Query pointer record (PTR) using IP Address](#query-pointer-record-ptr-using-ip-address)
+  - [Query server record (SRV)](#query-server-record-srv)
+  - [Query server record (SRV) using SRV protocol keyword (aka, "shortcut")](#query-server-record-srv-using-srv-protocol-keyword-aka-shortcut)
+  - [Force exit on first DNS error](#force-exit-on-first-dns-error)
+  - [Use single-line summary output format](#use-single-line-summary-output-format)
+- [Inspiration](#inspiration)
+- [References](#references)
 
 ## Project home
 
@@ -91,7 +94,7 @@ official release is also provided for further review.
 
 ## Requirements
 
-- Go 1.13+ (for building)
+- Go 1.15+ (for building)
 - GCC
   - if building with custom options (as the provided `Makefile` does)
 - `make`
@@ -99,11 +102,9 @@ official release is also provided for further review.
 
 Tested using:
 
-- Go 1.13+
-- Windows 10 Version 1903
-  - native
-  - WSL
-- Ubuntu Linux 16.04+
+- Go 1.15+
+- Windows 10
+- Ubuntu Linux 18.04+
 
 ## How to install it
 

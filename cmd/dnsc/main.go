@@ -9,7 +9,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -30,18 +29,13 @@ func main() {
 	// choices yet.
 	log.Debug("Initializing application")
 
-	cfg, err := config.NewConfig()
+	cfg, cfgErr := config.NewConfig()
 	switch {
-	// TODO: How else to guard against nil cfg object?
-	case cfg != nil && cfg.ShowVersion():
+	case errors.Is(cfgErr, config.ErrVersionRequested):
 		config.Branding()
 		os.Exit(0)
-	case err == nil:
-		// do nothing for this one
-	case errors.Is(err, flag.ErrHelp):
-		os.Exit(0)
-	default:
-		log.Fatalf("failed to initialize application: %s", err)
+	case cfgErr != nil:
+		log.Fatalf("failed to initialize application: %s", cfgErr)
 	}
 
 	// Get a list of all record types that we should request when submitting
