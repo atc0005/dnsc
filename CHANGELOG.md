@@ -26,6 +26,25 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.3] - 2021-06-23
+
+### Overview
+
+- Dependency updates
+- built using Go 1.16.5
+  - Statically linked
+  - Linux (x86, x64)
+
+### Changed
+
+- `flag.ErrHelp` handling updated
+- minimum Go version bumped to 1.15
+- dependencies
+  - `miekg/dns`
+    - `v1.1.41` to `v1.1.43`
+  - `pelletier/go-toml`
+    - `v1.9.0` to `v1.9.3`
+
 ## [v0.5.2] - 2021-04-28
 
 ### Overview
@@ -423,7 +442,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.3...HEAD
+[v0.5.3]: https://github.com/atc0005/dnsc/releases/tag/v0.5.3
 [v0.5.2]: https://github.com/atc0005/dnsc/releases/tag/v0.5.2
 [v0.5.1]: https://github.com/atc0005/dnsc/releases/tag/v0.5.1
 [v0.5.0]: https://github.com/atc0005/dnsc/releases/tag/v0.5.0
