@@ -26,7 +26,7 @@ import (
 )
 
 // Overridden via Makefile for release builds
-var version string = "dev build"
+var version = "dev build"
 
 // ErrVersionRequested indicates that the user requested application version
 // information.
