@@ -26,6 +26,38 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.4] - 2021-07-01
+
+### Overview
+
+- Bugfixes
+- Output tweak
+- built using Go 1.16.5
+  - Statically linked
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-169) Create "canary" Dockerfile to track stable Go releases, serve as a
+  reminder to generate fresh binaries
+
+### Changed
+
+- dependencies
+  - (GH-172) `actions/setup-node`
+    - `v2.1.5` to `v2.2.0`
+
+- output
+  - (GH-171) Exclude unused columns when no records for query are found
+
+### Fixed
+
+- linting
+  - (GH-176) var-declaration: should omit type string from declaration of var
+    version; it will be inferred from the right-hand side (revive)
+  - (GH-173) `golangci/golangci-lint`
+    - replace deprecated `golint` linter with `revive`
+
 ## [v0.5.3] - 2021-06-23
 
 ### Overview
@@ -442,7 +474,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.4...HEAD
+[v0.5.4]: https://github.com/atc0005/dnsc/releases/tag/v0.5.4
 [v0.5.3]: https://github.com/atc0005/dnsc/releases/tag/v0.5.3
 [v0.5.2]: https://github.com/atc0005/dnsc/releases/tag/v0.5.2
 [v0.5.1]: https://github.com/atc0005/dnsc/releases/tag/v0.5.1
