@@ -17,7 +17,9 @@ import (
 	"github.com/apex/log"
 )
 
-func (dqrs DNSQueryResponses) resultsSummaryOutputMultiLine() {
+// PrintSummary generates a summary of all collected DNS query results in the
+// specified format.
+func (dqrs DNSQueryResponses) PrintSummary(outputFormat string) {
 
 	w := tabwriter.NewWriter(os.Stdout, 4, 4, 4, ' ', 0)
 
@@ -25,13 +27,43 @@ func (dqrs DNSQueryResponses) resultsSummaryOutputMultiLine() {
 	// summary output
 	fmt.Fprintf(w, "\n\n")
 
+	// REMINDER: Column cells must be tab-terminated, not tab-separated:
+	// non-tab terminated trailing text at the end of a line forms a cell but
+	// that cell is not part of an aligned column.
+	var headerRowTmpl string
+	var separatorRowTmpl string
+	var recordRowErrorTmpl string
+	var recordRowSuccessTmpl string
+
+	switch {
+
+	case !dqrs.RecordsFound():
+
+		headerRowTmpl = "Server\tRTT\tQuery\tType\tAnswer\t"
+		separatorRowTmpl = "---\t---\t---\t---\t---\t"
+		recordRowErrorTmpl = "%s\t%s\t%s\t%s\t%s\t\n"
+		recordRowSuccessTmpl = "%s\t%s\t%s\t%s\t%s\t\n"
+
+	case outputFormat == ResultsOutputMultiLine:
+
+		headerRowTmpl = "Server\tRTT\tQuery\tType\tAnswer\tAnswer Type\tTTL\t"
+		separatorRowTmpl = "---\t---\t---\t---\t---\t---\t---\t"
+		recordRowErrorTmpl = "%s\t%s\t%s\t%s\t%s\t\t\t\n"
+		recordRowSuccessTmpl = "%s\t%s\t%s\t%s\t%s\t%s\t%d\t\n"
+
+	case outputFormat == ResultsOutputSingleLine:
+		headerRowTmpl = "Server\tRTT\tQuery\tType\tAnswers\tTTL\t"
+		separatorRowTmpl = "---\t---\t---\t---\t---\t---\t"
+		recordRowErrorTmpl = "%s\t%s\t%s\t%s\t%s\t\t\n"
+		recordRowSuccessTmpl = "%s\t%s\t%s\t%s\t%s\t%s\t\n"
+
+	}
+
 	// Header row in output
-	fmt.Fprintf(w,
-		"Server\tRTT\tQuery\tQuery Type\tAnswer\tAnswer Type\tTTL\t\n")
+	fmt.Fprintln(w, headerRowTmpl)
 
 	// Separator row
-	fmt.Fprintln(w,
-		"---\t---\t---\t---\t---\t---\t---\t")
+	fmt.Fprintln(w, separatorRowTmpl)
 
 	for _, item := range dqrs {
 
@@ -44,14 +76,12 @@ func (dqrs DNSQueryResponses) resultsSummaryOutputMultiLine() {
 		// instead of attempting to show real results
 		if item.QueryError != nil {
 			fmt.Fprintf(w,
-				"%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n",
+				recordRowErrorTmpl,
 				item.Server,
 				item.ResponseTime.Round(time.Millisecond),
 				item.Query,
 				requestType,
 				item.QueryError.Error(),
-				"",
-				"",
 			)
 			continue
 		}
@@ -59,20 +89,48 @@ func (dqrs DNSQueryResponses) resultsSummaryOutputMultiLine() {
 		// Sort records before printing them
 		item.SortRecordsAsc()
 
-		for _, record := range item.Records() {
+		switch outputFormat {
+		case ResultsOutputMultiLine:
+
+			for _, record := range item.Records() {
+				fmt.Fprintf(w,
+					recordRowSuccessTmpl,
+					item.Server,
+					item.ResponseTime.Round(time.Millisecond),
+					item.Query,
+					requestType,
+					record.Value,
+
+					// Display request type from record, which may not match the
+					// original request type (e.g., CNAME and A records returned
+					// for original lookup.
+					record.Type,
+					record.TTL,
+				)
+			}
+
+		case ResultsOutputSingleLine:
+
+			var responses []string
+			var ttls []string
+			for _, record := range item.Records() {
+				response := fmt.Sprintf(
+					"%s (%s)",
+					record.Value,
+					record.Type,
+				)
+				responses = append(responses, response)
+				ttls = append(ttls, fmt.Sprint(record.TTL))
+			}
+
 			fmt.Fprintf(w,
-				"%s\t%s\t%s\t%s\t%s\t%s\t%d\t\n",
+				recordRowSuccessTmpl,
 				item.Server,
 				item.ResponseTime.Round(time.Millisecond),
 				item.Query,
 				requestType,
-				record.Value,
-
-				// Display request type from record, which may not match the
-				// original request type (e.g., CNAME and A records returned
-				// for original lookup.
-				record.Type,
-				record.TTL,
+				strings.Join(responses, ", "),
+				strings.Join(ttls, ", "),
 			)
 		}
 
@@ -82,94 +140,6 @@ func (dqrs DNSQueryResponses) resultsSummaryOutputMultiLine() {
 
 	if err := w.Flush(); err != nil {
 		log.Errorf("Error flushing tabwriter: %v", err.Error())
-	}
-}
-
-func (dqrs DNSQueryResponses) resultsSummaryOutputSingleLine() {
-
-	w := tabwriter.NewWriter(os.Stdout, 4, 4, 4, ' ', 0)
-
-	// Add some lead-in spacing to better separate any earlier log messages from
-	// summary output
-	fmt.Fprintf(w, "\n\n")
-
-	// Header row in output
-	fmt.Fprintf(w,
-		"Server\tRTT\tQuery\tType\tAnswers\tTTL\t\n")
-
-	// Separator row
-	fmt.Fprintln(w,
-		"---\t---\t---\t---\t---\t---\t")
-
-	for _, item := range dqrs {
-
-		rrString, err := RRTypeToString(item.RequestedRecordType)
-		if err != nil {
-			rrString = "rrString LookupError"
-		}
-
-		// if any errors were recorded when querying DNS server show those
-		// instead of attempting to show real results
-		if item.QueryError != nil {
-			fmt.Fprintf(w,
-				"%s\t%s\t%s\t%s\t%s\t%s\t\n",
-				item.Server,
-				item.ResponseTime.Round(time.Millisecond),
-				item.Query,
-				rrString,
-				item.QueryError.Error(),
-				"",
-			)
-			continue
-		}
-
-		// Sort records before printing them
-		item.SortRecordsAsc()
-
-		var responses []string
-		var ttls []string
-		for _, record := range item.Records() {
-			response := fmt.Sprintf(
-				"%s (%s)",
-				record.Value,
-				record.Type,
-			)
-			responses = append(responses, response)
-			ttls = append(ttls, fmt.Sprint(record.TTL))
-		}
-
-		fmt.Fprintf(w,
-			"%s\t%s\t%s\t%s\t%s\t%s\t\n",
-			item.Server,
-			item.ResponseTime.Round(time.Millisecond),
-			item.Query,
-			rrString,
-			strings.Join(responses, ", "),
-			strings.Join(ttls, ", "),
-		)
-	}
-
-	fmt.Fprintln(w)
-
-	if err := w.Flush(); err != nil {
-		log.Errorf("Error flushing tabwriter: %v", err.Error())
-	}
-}
-
-// PrintSummary generates a summary of all collected DNS query results in the
-// specified format.
-func (dqrs DNSQueryResponses) PrintSummary(outputFormat string) {
-
-	switch outputFormat {
-
-	case ResultsOutputMultiLine:
-		dqrs.resultsSummaryOutputMultiLine()
-	case ResultsOutputSingleLine:
-		dqrs.resultsSummaryOutputSingleLine()
-	default:
-		log.Warnf("Unknown results output format specified: %s", outputFormat)
-		log.Warnf("Defaulting to %s output", ResultsOutputSingleLine)
-		dqrs.resultsSummaryOutputSingleLine()
 	}
 
 }

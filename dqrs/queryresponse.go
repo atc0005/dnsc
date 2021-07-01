@@ -9,6 +9,7 @@ package dqrs
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"net"
 	"sort"
@@ -16,6 +17,10 @@ import (
 
 	"github.com/miekg/dns"
 )
+
+// ErrNoRecordsFound indicates that a nameserver found no records for the
+// specified query.
+var ErrNoRecordsFound = errors.New("no records found for query")
 
 // DNSQueryResponse represents a query and response from a DNS server.
 // Multiple records may be returned for a single query (e.g., CNAME and A
@@ -160,6 +165,25 @@ func (dqr DNSQueryResponse) Records() []DNSRecord {
 	return records
 }
 
+// RecordsFound indicates whether any query responses indicate records were
+// found.
+func (dqrs DNSQueryResponses) RecordsFound() bool {
+
+	for i := range dqrs {
+
+		// If a lookup failure occurs, or if there are no records found for a
+		// query this field will be set. As long as at least one
+		// DNSQueryResponse does not have an associated error, there is a
+		// valid record to report.
+		if dqrs[i].QueryError == nil {
+			return true
+		}
+	}
+
+	return false
+
+}
+
 // PerformQuery wraps the bulk of the query/record logic performed by this
 // application
 func PerformQuery(query string, server string, qType uint16, timeout time.Duration) DNSQueryResponse {
@@ -213,7 +237,7 @@ func PerformQuery(query string, server string, qType uint16, timeout time.Durati
 
 	// Early exit if the DNS server returns an unexpected result
 	if len(in.Answer) < 1 {
-		dnsQueryResponse.QueryError = fmt.Errorf("no records found for query")
+		dnsQueryResponse.QueryError = ErrNoRecordsFound
 		return dnsQueryResponse
 	}
 
