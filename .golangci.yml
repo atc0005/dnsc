@@ -27,7 +27,7 @@ linters:
     - dupl
     - unconvert
     - gofmt
-    - golint
+    - revive
     - gocritic
     - exportloopref
     - govet
