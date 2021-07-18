@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.5] - 2021-07-18
+
+### Overview
+
+- Dependency updates
+- built using Go 1.16.6
+  - Statically linked
+  - Linux (x86, x64)
+
+### Changed
+
+- dependencies
+  - `Go`
+    - `1.16.5` to `1.16.6`
+  - `actions/setup-node`
+    - update `node-version` value to always use latest LTS version instead of
+      hard-coded version
+
 ## [v0.5.4] - 2021-07-01
 
 ### Overview
@@ -474,7 +492,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.5...HEAD
+[v0.5.5]: https://github.com/atc0005/dnsc/releases/tag/v0.5.5
 [v0.5.4]: https://github.com/atc0005/dnsc/releases/tag/v0.5.4
 [v0.5.3]: https://github.com/atc0005/dnsc/releases/tag/v0.5.3
 [v0.5.2]: https://github.com/atc0005/dnsc/releases/tag/v0.5.2
