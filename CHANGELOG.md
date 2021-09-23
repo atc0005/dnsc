@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.7] - 2021-09-23
+
+### Overview
+
+- Dependency updates
+- built using Go 1.16.8
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.7` to `1.16.8`
+  - `pelletier/go-toml`
+    - `v1.9.3` to `v1.9.4`
+
 ## [v0.5.6] - 2021-08-08
 
 ### Overview
@@ -510,7 +528,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.7...HEAD
+[v0.5.7]: https://github.com/atc0005/dnsc/releases/tag/v0.5.7
 [v0.5.6]: https://github.com/atc0005/dnsc/releases/tag/v0.5.6
 [v0.5.5]: https://github.com/atc0005/dnsc/releases/tag/v0.5.5
 [v0.5.4]: https://github.com/atc0005/dnsc/releases/tag/v0.5.4
