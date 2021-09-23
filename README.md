@@ -21,6 +21,8 @@ Submit query against a list of DNS servers and display summary of results
 - [Changelog](#changelog)
 - [Requirements](#requirements)
 - [How to install it](#how-to-install-it)
+  - [From source](#from-source)
+  - [Using release binaries](#using-release-binaries)
 - [Configuration](#configuration)
   - [Precedence](#precedence)
   - [Query types supported](#query-types-supported)
@@ -108,6 +110,8 @@ Tested using:
 
 ## How to install it
 
+### From source
+
 1. [Download](https://golang.org/dl/) Go
 1. [Install](https://golang.org/doc/install) Go
 1. Clone the repo
@@ -133,6 +137,14 @@ Tested using:
 1. Copy the applicable binary to whatever systems needs to run it
    - if using `Makefile`: look in `/tmp/dnsc/release_assets/dnsc/`
    - if using `go build`: look in `/tmp/dnsc/`
+
+### Using release binaries
+
+1. Download the [latest
+   release](https://github.com/atc0005/dnsc/releases/latest) binaries
+1. Deploy
+   - Place `dnsc` in a location of your choice
+     - e.g., `/usr/local/bin/`
 
 ## Configuration
 
