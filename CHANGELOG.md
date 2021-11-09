@@ -26,6 +26,31 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.5.8] - 2021-11-09
+
+### Overview
+
+- Dependency updates
+- built using Go 1.16.10
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.8` to `1.16.10`
+  - `actions/checkout`
+    - `v2.3.4` to `v2.4.0`
+  - `actions/setup-node`
+    - `v2.4.0` to `v2.4.1`
+
+### Fixed
+
+- (GH-202) False positive `G307: Deferring unsafe method "Close" on type
+  "*os.File" (gosec)` linting error
+
 ## [v0.5.7] - 2021-09-23
 
 ### Overview
@@ -528,7 +553,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.7...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.8...HEAD
+[v0.5.8]: https://github.com/atc0005/dnsc/releases/tag/v0.5.8
 [v0.5.7]: https://github.com/atc0005/dnsc/releases/tag/v0.5.7
 [v0.5.6]: https://github.com/atc0005/dnsc/releases/tag/v0.5.6
 [v0.5.5]: https://github.com/atc0005/dnsc/releases/tag/v0.5.5
