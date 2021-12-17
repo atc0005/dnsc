@@ -42,6 +42,7 @@ const (
 	logLevelFlagHelp       = "Log message priority filter. Log messages with a lower level are ignored."
 	logFormatFlagHelp      = "Log messages are written in this format."
 	dnsErrorsFatalFlagHelp = "Whether DNS-related errors should force this application to immediately exit."
+	omitTimestampFlagHelp  = "Whether the date/time that results are generated is omitted from the results output."
 	configFileFlagHelp     = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 	dnsServerFlagHelp      = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
 	dnsRequestTypeFlagHelp = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
@@ -56,6 +57,7 @@ const (
 	defaultLogFormat             string = "text"
 	defaultDisplayVersionAndExit bool   = false
 	defaultDNSErrorsFatal        bool   = false
+	defaultOmitTimestamp         bool   = false
 	defaultConfigFileName        string = "config.toml"
 	defaultQueryType             string = "A"
 	defaultConfigFile            string = ""
@@ -255,12 +257,16 @@ type configTemplate struct {
 	// against remaining DNS servers. This can be useful to work around
 	// failures with one server in a pool of many.
 	DNSErrorsFatal bool `toml:"dns_errors_fatal"`
+
+	// OmitTimestamp specifies whether the date & time for when the output is
+	// generated is omitted from the results.
+	OmitTimestamp bool `toml:"omit_timestamp"`
 }
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
@@ -268,6 +274,7 @@ func (c Config) String() string {
 		c.cliConfig.LogFormat,
 		c.cliConfig.ResultsOutput,
 		c.cliConfig.DNSErrorsFatal,
+		c.cliConfig.OmitTimestamp,
 		c.cliConfig.QueryTypes,
 		c.cliConfig.SrvProtocols,
 		c.fileConfig.Servers,
@@ -276,6 +283,7 @@ func (c Config) String() string {
 		c.fileConfig.LogFormat,
 		c.fileConfig.ResultsOutput,
 		c.fileConfig.DNSErrorsFatal,
+		c.fileConfig.OmitTimestamp,
 		c.fileConfig.QueryTypes,
 		c.fileConfig.SrvProtocols,
 		c.configFile,

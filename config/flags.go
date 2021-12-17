@@ -37,6 +37,9 @@ func (c *Config) handleFlagsConfig() {
 	flag.BoolVar(&c.cliConfig.DNSErrorsFatal, "dns-errors-fatal", defaultDNSErrorsFatal, dnsErrorsFatalFlagHelp)
 	flag.BoolVar(&c.cliConfig.DNSErrorsFatal, "def", defaultDNSErrorsFatal, dnsErrorsFatalFlagHelp+" (shorthand)")
 
+	flag.BoolVar(&c.cliConfig.OmitTimestamp, "omit-timestamp", defaultOmitTimestamp, omitTimestampFlagHelp)
+	flag.BoolVar(&c.cliConfig.OmitTimestamp, "ot", defaultOmitTimestamp, omitTimestampFlagHelp+" (shorthand)")
+
 	flag.StringVar(&c.cliConfig.Query, "query", defaultQuery, queryFlagHelp)
 	flag.StringVar(&c.cliConfig.Query, "q", defaultQuery, queryFlagHelp+" (shorthand)")
 

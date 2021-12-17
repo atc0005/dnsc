@@ -160,3 +160,16 @@ func (c Config) DNSErrorsFatal() bool {
 		return defaultDNSErrorsFatal
 	}
 }
+
+// OmitTimestamp returns the user-provided choice of whether the date/time
+// when results are generated should be omitted from the results output.
+func (c Config) OmitTimestamp() bool {
+	switch {
+	case c.cliConfig.OmitTimestamp:
+		return c.cliConfig.OmitTimestamp
+	case c.fileConfig.OmitTimestamp:
+		return c.fileConfig.OmitTimestamp
+	default:
+		return defaultOmitTimestamp
+	}
+}
