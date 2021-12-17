@@ -26,6 +26,37 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.0] - 2021-12-17
+
+### Overview
+
+- Bugfixes
+- Output tweak
+- Dependency updates
+- built using Go 1.16.12
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-161) Add timestamp to query results output with optional flag & config
+  setting to omit if desired
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.16.10` to `1.16.12`
+  - `actions/setup-node`
+    - `v2.4.1` to `v2.5.0`
+
+### Fixed
+
+- (GH-206) Deferred logging statement missing filename reference
+- (GH-207) Add missing filename to deferred logging call
+- (GH-210) Minor typo fixes
+
 ## [v0.5.8] - 2021-11-09
 
 ### Overview
@@ -553,7 +584,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.0...HEAD
+[v0.6.0]: https://github.com/atc0005/dnsc/releases/tag/v0.6.0
 [v0.5.8]: https://github.com/atc0005/dnsc/releases/tag/v0.5.8
 [v0.5.7]: https://github.com/atc0005/dnsc/releases/tag/v0.5.7
 [v0.5.6]: https://github.com/atc0005/dnsc/releases/tag/v0.5.6
