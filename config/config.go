@@ -40,8 +40,8 @@ const (
 	versionFlagHelp        = "Whether to display application version and then immediately exit application."
 	queryFlagHelp          = "Fully-qualified system to lookup from all provided DNS servers."
 	logLevelFlagHelp       = "Log message priority filter. Log messages with a lower level are ignored."
-	logFormatFlagHelp      = "Log messages are written in this format"
-	dnsErrorsFatalFlagHelp = "Whether DNS-related errors should force this application to immediately exit"
+	logFormatFlagHelp      = "Log messages are written in this format."
+	dnsErrorsFatalFlagHelp = "Whether DNS-related errors should force this application to immediately exit."
 	configFileFlagHelp     = "Full path to TOML-formatted configuration file. See config.example.toml for a starter template."
 	dnsServerFlagHelp      = "DNS server to submit query against. This flag may be repeated for each additional DNS server to query."
 	dnsRequestTypeFlagHelp = "DNS query type to use when submitting DNS queries. The default is the 'A' query type. This flag may be repeated for each additional DNS record type you wish to request."
@@ -249,7 +249,7 @@ type configTemplate struct {
 	// before it times out.
 	Timeout int `toml:"timeout"`
 
-	// IgnoreDNSErrors is a boolean *pointer* flag indicating whether
+	// DNSErrorsFatal is a boolean *pointer* flag indicating whether
 	// individual DNS errors should be ignored. If enabled, this setting
 	// allows query-related DNS errors with one host to not block queries
 	// against remaining DNS servers. This can be useful to work around
