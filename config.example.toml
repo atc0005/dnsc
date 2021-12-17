@@ -99,3 +99,7 @@ log_format = "cli"
 # single-line
 # multi-line
 results_output = "multi-line"
+
+# Specifies whether the date/time that results are generated should be omitted
+# from the results output.
+omit_timestamp = false

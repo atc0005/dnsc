@@ -18,8 +18,9 @@ import (
 )
 
 // PrintSummary generates a summary of all collected DNS query results in the
-// specified format.
-func (dqrs DNSQueryResponses) PrintSummary(outputFormat string) {
+// specified format. If specified, the date/time that the results are
+// generated is omitted from the results output.
+func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bool) {
 
 	w := tabwriter.NewWriter(os.Stdout, 4, 4, 4, ' ', 0)
 
@@ -134,6 +135,14 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string) {
 			)
 		}
 
+	}
+
+	if !omitTimestamp {
+		fmt.Fprintf(
+			w,
+			"\nQuery Performed: %v",
+			time.Now().Format(time.RFC3339),
+		)
 	}
 
 	fmt.Fprintln(w)

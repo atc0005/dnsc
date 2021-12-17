@@ -77,7 +77,7 @@ func main() {
 				// Check whether the user has opted to treat errors as fatal. If
 				// so, display current summary results and exit
 				if cfg.DNSErrorsFatal() {
-					results.PrintSummary(cfg.ResultsOutput())
+					results.PrintSummary(cfg.ResultsOutput(), cfg.OmitTimestamp())
 					os.Exit(1)
 				}
 			}
@@ -197,6 +197,6 @@ func main() {
 
 	// Generate summary of all collected query responses in the specified
 	// format
-	results.PrintSummary(cfg.ResultsOutput())
+	results.PrintSummary(cfg.ResultsOutput(), cfg.OmitTimestamp())
 
 }
