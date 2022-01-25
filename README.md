@@ -20,7 +20,9 @@ Submit query against a list of DNS servers and display summary of results
   - [Planned](#planned)
 - [Changelog](#changelog)
 - [Requirements](#requirements)
-- [How to install it](#how-to-install-it)
+  - [Building source code](#building-source-code)
+  - [Running](#running)
+- [Installation](#installation)
   - [From source](#from-source)
   - [Using release binaries](#using-release-binaries)
 - [Configuration](#configuration)
@@ -44,9 +46,8 @@ Submit query against a list of DNS servers and display summary of results
 
 ## Project home
 
-See [our GitHub repo](https://github.com/atc0005/dnsc) for the latest
-code, to file an issue or submit improvements for review and potential
-inclusion into the project.
+See [our GitHub repo][repo-url] for the latest code, to file an issue or
+submit improvements for review and potential inclusion into the project.
 
 ## Overview
 
@@ -83,8 +84,7 @@ repeat use.
 
 ### Planned
 
-See [our GitHub repo](https://github.com/atc0005/dnsc) for planned future
-work.
+See [our GitHub repo][repo-url] for planned future work.
 
 ## Changelog
 
@@ -96,24 +96,35 @@ official release is also provided for further review.
 
 ## Requirements
 
-- Go 1.15+ (for building)
+The following is a loose guideline. Other combinations of Go and operating
+systems for building and running tools from this repo may work, but have not
+been tested.
+
+### Building source code
+
+- Go
+  - see this project's `go.mod` file for *preferred* version
+  - this project tests against [officially supported Go
+    releases][go-supported-releases]
+    - the most recent stable release (aka, "stable")
+    - the prior, but still supported release (aka, "oldstable")
 - GCC
   - if building with custom options (as the provided `Makefile` does)
 - `make`
   - if using the provided `Makefile`
 
-Tested using:
+### Running
 
-- Go 1.15+
 - Windows 10
 - Ubuntu Linux 18.04+
+- Red Hat Enterprise Linux 7+
 
-## How to install it
+## Installation
 
 ### From source
 
-1. [Download](https://golang.org/dl/) Go
-1. [Install](https://golang.org/doc/install) Go
+1. [Download][go-docs-download] Go
+1. [Install][go-docs-install] Go
 1. Clone the repo
    1. `cd /tmp`
    1. `git clone https://github.com/atc0005/dnsc`
