@@ -26,6 +26,34 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.3] - 2022-03-02
+
+### Overview
+
+- Dependency updates
+- CI / linting improvements
+- built using Go 1.17.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.6` to `1.17.7`
+  - `miekg/dns`
+    - `v1.1.45` to `v1.1.46`
+  - `actions/checkout`
+    - `v2.4.0` to `v3`
+  - `actions/setup-node`
+    - `v2.5.1` to `v3`
+
+- (GH-221) Expand linting GitHub Actions Workflow to include `oldstable`,
+  `unstable` container images
+- (GH-222) Switch Docker image source from Docker Hub to GitHub Container
+  Registry (GHCR)
+
 ## [v0.6.2] - 2022-01-25
 
 ### Overview
@@ -620,7 +648,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.3...HEAD
+[v0.6.3]: https://github.com/atc0005/dnsc/releases/tag/v0.6.3
 [v0.6.2]: https://github.com/atc0005/dnsc/releases/tag/v0.6.2
 [v0.6.1]: https://github.com/atc0005/dnsc/releases/tag/v0.6.1
 [v0.6.0]: https://github.com/atc0005/dnsc/releases/tag/v0.6.0
