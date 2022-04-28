@@ -16,7 +16,7 @@ import (
 	"path/filepath"
 
 	"github.com/apex/log"
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 )
 
 // loadConfigFile is a helper function to handle opening a specified config
