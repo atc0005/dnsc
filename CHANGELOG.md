@@ -26,6 +26,26 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.4] - 2022-04-28
+
+### Overview
+
+- Dependency updates
+- built using Go 1.17.9
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.7` to `1.17.9`
+  - `miekg/dns`
+    - `v1.1.46` to `v1.1.48`
+  - `pelletier/go-toml`
+    - `v1.9.4` to `v2.0.0`
+
 ## [v0.6.3] - 2022-03-02
 
 ### Overview
@@ -648,7 +668,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.3...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.4...HEAD
+[v0.6.4]: https://github.com/atc0005/dnsc/releases/tag/v0.6.4
 [v0.6.3]: https://github.com/atc0005/dnsc/releases/tag/v0.6.3
 [v0.6.2]: https://github.com/atc0005/dnsc/releases/tag/v0.6.2
 [v0.6.1]: https://github.com/atc0005/dnsc/releases/tag/v0.6.1
