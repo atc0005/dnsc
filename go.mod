@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/apex/log v1.9.0
 	github.com/miekg/dns v1.1.48
-	github.com/pelletier/go-toml/v2 v2.0.0
+	github.com/pelletier/go-toml/v2 v2.0.1
 )
 
 require (
