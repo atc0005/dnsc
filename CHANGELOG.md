@@ -26,6 +26,34 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.5] - 2022-05-20
+
+### Overview
+
+- Bugfixes
+- Dependency updates
+- built using Go 1.17.10
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.9` to `1.17.10`
+  - `miekg/dns`
+    - `v1.1.48` to `v1.1.49`
+  - `pelletier/go-toml`
+    - `v2.0.0` to `v2.0.1`
+
+### Fixed
+
+- (GH-241) Unable to override CLI flag default for Timeout from config file
+- (GH-243) `configTemplate.Timeout` field not represented by `Config Stringer`
+  implementation
+- (GH-245) Expand `Config.Timeout()` debug logging
+
 ## [v0.6.4] - 2022-04-28
 
 ### Overview
@@ -668,7 +696,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.4...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.5...HEAD
+[v0.6.5]: https://github.com/atc0005/dnsc/releases/tag/v0.6.5
 [v0.6.4]: https://github.com/atc0005/dnsc/releases/tag/v0.6.4
 [v0.6.3]: https://github.com/atc0005/dnsc/releases/tag/v0.6.3
 [v0.6.2]: https://github.com/atc0005/dnsc/releases/tag/v0.6.2
