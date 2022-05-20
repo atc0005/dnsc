@@ -133,18 +133,23 @@ func (c Config) SrvProtocols() []string {
 // Timeout returns the user-provided choice of what timeout value to use for
 // DNS queries. If not set, returns the default value for our application.
 func (c Config) Timeout() time.Duration {
-
-	// FIXME: Initial implementation for GH-17; will need to be revisited
-	// alongside the work on GH-10.
 	switch {
 	case c.cliConfig.Timeout != defaultTimeout:
-		return time.Duration(c.cliConfig.Timeout) * time.Second
+		duration := time.Duration(c.cliConfig.Timeout) * time.Second
+		log.Debugf("Timeout value specified via CLI flag: %d", c.cliConfig.Timeout)
+		log.Debugf("Calculated timeout value: %v", duration)
+		return duration
 	case c.fileConfig.Timeout != defaultTimeout:
-		return time.Duration(c.fileConfig.Timeout) * time.Second
+		duration := time.Duration(c.fileConfig.Timeout) * time.Second
+		log.Debugf("Timeout value specified via config file: %d", c.fileConfig.Timeout)
+		log.Debugf("Calculated timeout value: %v", duration)
+		return duration
 	default:
-		log.Debugf("Requested timeout value not specified, using default: %v",
+		duration := time.Duration(defaultTimeout) * time.Second
+		log.Debugf("Timeout value not specified, using default: %d",
 			defaultTimeout)
-		return time.Duration(defaultTimeout) * time.Second
+		log.Debugf("Calculated timeout value: %v", duration)
+		return duration
 	}
 }
 
