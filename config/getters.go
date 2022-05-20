@@ -137,9 +137,9 @@ func (c Config) Timeout() time.Duration {
 	// FIXME: Initial implementation for GH-17; will need to be revisited
 	// alongside the work on GH-10.
 	switch {
-	case c.cliConfig.Timeout != 0:
+	case c.cliConfig.Timeout != defaultTimeout:
 		return time.Duration(c.cliConfig.Timeout) * time.Second
-	case c.fileConfig.Timeout != 0:
+	case c.fileConfig.Timeout != defaultTimeout:
 		return time.Duration(c.fileConfig.Timeout) * time.Second
 	default:
 		log.Debugf("Requested timeout value not specified, using default: %v",
