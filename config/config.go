@@ -265,8 +265,13 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v, Timeout: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v, Timeout: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, "+
+			"ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, "+
+			"QueryTypes: %v, SrvProtocols: %v, Timeout: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, "+
+			"LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, "+
+			"OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v, "+
+			"Timeout: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
