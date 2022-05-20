@@ -265,8 +265,13 @@ type configTemplate struct {
 
 func (c Config) String() string {
 	return fmt.Sprintf(
-		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v}, "+
-			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v}, "+
+		"cliConfig: { Servers: %v, Query: %q, LogLevel: %s, LogFormat: %s, "+
+			"ResultsOutput: %s, DNSErrorsFatal: %v, OmitTimestamp: %v, "+
+			"QueryTypes: %v, SrvProtocols: %v, Timeout: %v}, "+
+			"fileConfig: { Servers: %v, Query: %q, LogLevel: %s, "+
+			"LogFormat: %s, ResultsOutput: %s, DNSErrorsFatal: %v, "+
+			"OmitTimestamp: %v, QueryTypes: %v, SrvProtocols: %v, "+
+			"Timeout: %v}, "+
 			"ConfigFile: %q, ShowVersion: %t,",
 		c.cliConfig.Servers,
 		c.cliConfig.Query,
@@ -277,6 +282,7 @@ func (c Config) String() string {
 		c.cliConfig.OmitTimestamp,
 		c.cliConfig.QueryTypes,
 		c.cliConfig.SrvProtocols,
+		c.cliConfig.Timeout,
 		c.fileConfig.Servers,
 		c.fileConfig.Query,
 		c.fileConfig.LogLevel,
@@ -286,6 +292,7 @@ func (c Config) String() string {
 		c.fileConfig.OmitTimestamp,
 		c.fileConfig.QueryTypes,
 		c.fileConfig.SrvProtocols,
+		c.fileConfig.Timeout,
 		c.configFile,
 		c.showVersion,
 	)
