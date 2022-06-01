@@ -36,6 +36,7 @@ Submit query against a list of DNS servers and display summary of results
   - [Flags only, no config file](#flags-only-no-config-file)
   - [Use config file for DNS servers list and query types](#use-config-file-for-dns-servers-list-and-query-types)
   - [Specify DNS servers list via flags](#specify-dns-servers-list-via-flags)
+  - [Query nameserver record (NS)](#query-nameserver-record-ns)
   - [Query pointer record (PTR) using IP Address](#query-pointer-record-ptr-using-ip-address)
   - [Query server record (SRV)](#query-server-record-srv)
   - [Query server record (SRV) using SRV protocol keyword (aka, "shortcut")](#query-server-record-srv-using-srv-protocol-keyword-aka-shortcut)
@@ -180,6 +181,7 @@ These are the record types currently supported:
 - `A`
 - `AAAA`
 - `MX`
+- `NS`
 - `PTR`
 - `SRV`
 
@@ -292,6 +294,7 @@ dns_query_types = [
     "A",
     "AAAA",
     "MX",
+    "NS",
     "CNAME",
 ]
 
@@ -460,6 +463,25 @@ Server            RTT     Query            Query Type    Answer                 
 
 No errors here since www.yahoo.com had records for all of the requested query
 types.
+
+### Query nameserver record (NS)
+
+Here we query the Google Public DNS server 8.8.8.8 for the nameserver (NS)
+records for the google.com domain.
+
+```console
+$ dnsc --ds 8.8.8.8 -q google.com -t ns
+
+
+Server     RTT     Query         Type    Answer             Answer Type    TTL
+---        ---     ---           ---     ---                ---            ---
+8.8.8.8    77ms    google.com    NS      ns3.google.com.    NS             21600
+8.8.8.8    77ms    google.com    NS      ns2.google.com.    NS             21600
+8.8.8.8    77ms    google.com    NS      ns4.google.com.    NS             21600
+8.8.8.8    77ms    google.com    NS      ns1.google.com.    NS             21600
+
+Query Performed: 2022-06-01T06:30:32-05:00
+```
 
 ### Query pointer record (PTR) using IP Address
 

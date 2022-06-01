@@ -39,6 +39,13 @@ dns_query_types = [
     "A",
     "AAAA",
     "MX",
+
+    # This type is not commonly requested, so commented out by default.
+    # Submitting a query of this type returns all available nameservers for
+    # the requested domain.
+    #
+    # "NS",
+
     "CNAME",
 
     # This type expects the query string to be in IP Address format, which is
