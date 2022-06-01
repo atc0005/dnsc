@@ -46,6 +46,7 @@ func (c Config) Validate() error {
 		case RequestTypeA:
 		case RequestTypeAAAA:
 		case RequestTypeCNAME:
+		case RequestTypeNS:
 		case RequestTypeMX:
 		case RequestTypePTR:
 		case RequestTypeSRV:

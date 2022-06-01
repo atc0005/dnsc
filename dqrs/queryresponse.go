@@ -142,6 +142,9 @@ func (dqr DNSQueryResponse) Records() []DNSRecord {
 		case *dns.MX:
 			recordVal = v.Mx
 			recordType = RequestTypeMX
+		case *dns.NS:
+			recordVal = v.Ns
+			recordType = RequestTypeNS
 		case *dns.PTR:
 			recordVal = v.Ptr
 			recordType = RequestTypePTR

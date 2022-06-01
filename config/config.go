@@ -100,6 +100,7 @@ const (
 	RequestTypeAAAA  string = "AAAA"
 	RequestTypeCNAME string = "CNAME"
 	RequestTypeMX    string = "MX"
+	RequestTypeNS    string = "NS"
 	RequestTypePTR   string = "PTR"
 	RequestTypeSRV   string = "SRV"
 )
