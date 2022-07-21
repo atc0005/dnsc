@@ -679,3 +679,15 @@ authors of both!
 
 - Definitions
   - <https://www.cloudflare.com/learning/cdn/glossary/round-trip-time-rtt/>
+
+<!-- Footnotes here  -->
+
+[repo-url]: <https://github.com/atc0005/dnsc>  "This project's GitHub repo"
+
+[go-docs-download]: <https://golang.org/dl>  "Download Go"
+
+[go-docs-install]: <https://golang.org/doc/install>  "Install Go"
+
+[go-supported-releases]: <https://go.dev/doc/devel/release#policy> "Go Release Policy"
+
+<!-- []: PLACEHOLDER "DESCRIPTION_HERE" -->
