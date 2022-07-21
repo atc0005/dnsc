@@ -26,6 +26,37 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.6] - 2022-07-21
+
+### Overview
+
+- Add support for additional record type
+- Bugfixes
+- Dependency updates
+- built using Go 1.17.12
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-250) Add support for NS records
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.10` to `1.17.12`
+  - `miekg/dns`
+    - `v1.1.49` to `v1.1.50`
+  - `pelletier/go-toml`
+    - `v2.0.1` to `v2.0.2`
+
+### Fixed
+
+- (GH-254) Update lintinstall Makefile recipe
+- (GH-256) Fix Markdownlint references
+
 ## [v0.6.5] - 2022-05-20
 
 ### Overview
@@ -696,7 +727,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.5...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.6...HEAD
+[v0.6.6]: https://github.com/atc0005/dnsc/releases/tag/v0.6.6
 [v0.6.5]: https://github.com/atc0005/dnsc/releases/tag/v0.6.5
 [v0.6.4]: https://github.com/atc0005/dnsc/releases/tag/v0.6.4
 [v0.6.3]: https://github.com/atc0005/dnsc/releases/tag/v0.6.3
