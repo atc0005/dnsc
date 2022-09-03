@@ -16,22 +16,22 @@ issues:
 
 linters:
   enable:
+    - depguard
     - dogsled
+    - dupl
+    - exportloopref
+    - goconst
+    - gocritic
+    - gofmt
     - goimports
     - gosec
-    - stylecheck
-    - goconst
-    - depguard
-    - prealloc
-    - misspell
-    - dupl
-    - unconvert
-    - gofmt
-    - revive
-    - gocritic
-    - exportloopref
     - govet
+    - misspell
+    - prealloc
+    - revive
     - staticcheck
+    - stylecheck
+    - unconvert
 
   disable:
     - maligned
