@@ -83,13 +83,14 @@ help:
 
 .PHONY: lintinstall
 ## lintinstall: install common linting tools
+# https://github.com/golang/go/issues/30515#issuecomment-582044819
 lintinstall:
 	@echo "Installing linting tools"
 
 	@export PATH="${PATH}:$(go env GOPATH)/bin"
 
 	@echo "Installing latest stable staticcheck version via go install command ..."
-	@go install honnef.co/go/tools/cmd/staticcheck@latest
+	go install honnef.co/go/tools/cmd/staticcheck@latest
 	staticcheck --version
 
 	@echo Installing latest stable golangci-lint version per official installation script ...
@@ -107,9 +108,11 @@ linting:
 	@go vet -mod=vendor $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Running golangci-lint ..."
+	@golangci-lint --version
 	@golangci-lint run
 
 	@echo "Running staticcheck ..."
+	@staticcheck --version
 	@staticcheck $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
 	@echo "Finished running linting checks"
