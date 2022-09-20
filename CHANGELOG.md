@@ -26,6 +26,33 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.7] - 2022-09-20
+
+### Overview
+
+- Bugfixes
+- Dependency updates
+- built using Go 1.19.1
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.17.12` to `1.19.1`
+  - `pelletier/go-toml`
+    - `v2.0.2` to `v2.0.5`
+- (GH-262) Update project to Go 1.19
+- (GH-265) Update Makefile and GitHub Actions Workflows
+- (GH-267) Add CodeQL GitHub Actions Workflow
+
+### Fixed
+
+- (GH-263) Add missing cmd doc file
+- (GH-264) Swap io/ioutil package for io package
+
 ## [v0.6.6] - 2022-07-21
 
 ### Overview
@@ -727,7 +754,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.6...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.7...HEAD
+[v0.6.7]: https://github.com/atc0005/dnsc/releases/tag/v0.6.7
 [v0.6.6]: https://github.com/atc0005/dnsc/releases/tag/v0.6.6
 [v0.6.5]: https://github.com/atc0005/dnsc/releases/tag/v0.6.5
 [v0.6.4]: https://github.com/atc0005/dnsc/releases/tag/v0.6.4
