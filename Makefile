@@ -28,7 +28,7 @@ SHELL = /bin/bash
 WHAT					= dnsc
 
 # What package holds the "version" variable used in branding/version output?
-VERSION_VAR_PKG			= $(shell go list .)/config
+VERSION_VAR_PKG			= $(shell go list -m)/config
 
 OUTPUTDIR 				= release_assets
 
