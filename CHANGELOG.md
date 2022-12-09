@@ -26,6 +26,54 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.8] - 2022-12-09
+
+### Overview
+
+- Bugfixes
+- Dependency updates
+- built using Go 1.19.4
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.1` to `1.19.4`
+  - `pelletier/go-toml`
+    - `v2.0.5` to `v2.0.6`
+  - `github.com/mattn/go-colorable`
+    - `v0.1.7` to `v0.1.13`
+  - `github.com/mattn/go-isatty`
+    - `v0.0.12` to `v0.0.16`
+  - `golang.org/x/sys`
+    - `v0.0.0-20210630005230-0f9fa26af87c` to `v0.3.0`
+  - `golang.org/x/net`
+    - `v0.0.0-20210726213435-c6fcb2dbf985` to `v0.4.0`
+  - `golang.org/x/mod`
+    - `v0.4.2` to `v0.7.0`
+  - `golang.org/x/tools`
+    - `v0.1.6-0.20210726203631-07bc1bf47fb2` to `v0.4.0`
+  - `golang.org/x/xerrors`
+    - `v0.0.0-20200804184101-5ec99f83aff1` to
+      `v0.0.0-20220907171357-04be3eba64a2`
+  - `github.com/fatih/color`
+    - `v1.7.0` to `v1.13.0`
+  - `github.com/go-logfmt/logfmt`
+    - `v0.4.0` to `v0.5.1`
+  - `github.com/kr/logfmt`
+    - `v0.0.0-20140226030751-b84e30acd515` to
+      `v0.0.0-20210122060352-19f9bcb100e6`
+  - `github.com/pkg/errors`
+    - `v0.8.1` to `v0.9.1`
+- (GH-271) Refactor GitHub Actions workflows to import logic
+
+### Fixed
+
+- (GH-278) Fix Makefile Go module base path detection
+
 ## [v0.6.7] - 2022-09-20
 
 ### Overview
@@ -754,7 +802,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.7...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.8...HEAD
+[v0.6.8]: https://github.com/atc0005/dnsc/releases/tag/v0.6.8
 [v0.6.7]: https://github.com/atc0005/dnsc/releases/tag/v0.6.7
 [v0.6.6]: https://github.com/atc0005/dnsc/releases/tag/v0.6.6
 [v0.6.5]: https://github.com/atc0005/dnsc/releases/tag/v0.6.5
