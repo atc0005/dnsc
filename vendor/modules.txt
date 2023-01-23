@@ -6,7 +6,7 @@ github.com/apex/log/handlers/discard
 github.com/apex/log/handlers/json
 github.com/apex/log/handlers/logfmt
 github.com/apex/log/handlers/text
-# github.com/fatih/color v1.13.0
+# github.com/fatih/color v1.14.0
 ## explicit; go 1.13
 github.com/fatih/color
 # github.com/go-logfmt/logfmt v0.5.1
