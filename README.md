@@ -8,7 +8,6 @@ Submit query against a list of DNS servers and display summary of results
 [![go.mod Go version](https://img.shields.io/github/go-mod/go-version/atc0005/dnsc)](https://github.com/atc0005/dnsc)
 [![Lint and Build](https://github.com/atc0005/dnsc/actions/workflows/lint-and-build.yml/badge.svg)](https://github.com/atc0005/dnsc/actions/workflows/lint-and-build.yml)
 [![Project Analysis](https://github.com/atc0005/dnsc/actions/workflows/project-analysis.yml/badge.svg)](https://github.com/atc0005/dnsc/actions/workflows/project-analysis.yml)
-[![Push Validation](https://github.com/atc0005/dnsc/actions/workflows/push-validation.yml/badge.svg)](https://github.com/atc0005/dnsc/actions/workflows/push-validation.yml)
 
 <!-- omit in toc -->
 ## Table of Contents
