@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/atc0005/dnsc/config"
-	"github.com/atc0005/dnsc/dqrs"
+	"github.com/atc0005/dnsc/internal/config"
+	"github.com/atc0005/dnsc/internal/dqrs"
 	"github.com/miekg/dns"
 
 	"github.com/apex/log"
