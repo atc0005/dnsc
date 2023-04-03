@@ -26,6 +26,55 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.6.9] - 2023-04-03
+
+### Overview
+
+- Bug fixes
+- Build improvements
+- GitHub Actions workflows updates
+- Dependency updates
+- built using Go 1.19.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-286) Add Go Module Validation, Dependency Updates jobs
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.4` to `1.19.7`
+  - `miekg/dns`
+    - `v1.1.50` to `v1.1.53`
+  - `pelletier/go-toml`
+    - `v2.0.6` to `v2.0.7`
+  - `golang.org/x/sys`
+    - `v0.3.0` to `v0.6.0`
+  - `golang.org/x/net`
+    - `v0.4.0` to `v0.8.0`
+  - `golang.org/x/mod`
+    - `v0.7.0` to `v0.9.0`
+  - `golang.org/x/tools`
+    - `v0.4.0` to `v0.7.0`
+  - `github.com/mattn/go-isatty`
+    - `v0.0.16` to `v0.0.18`
+  - `github.com/fatih/color`
+    - `v1.13.0` to `v1.15.0`
+  - `github.com/go-logfmt/logfmt`
+    - `v0.5.1` to `v0.6.0`
+- (GH-318) Move config, dqrs packages to internal path
+- (GH-296) Drop `Push Validation` workflow
+- (GH-297) Rework workflow scheduling
+- (GH-299) Remove `Push Validation` workflow status badge
+
+### Fixed
+
+- (GH-315) Update vuln analysis GHAW to use on.push hook
+
 ## [v0.6.8] - 2022-12-09
 
 ### Overview
@@ -802,7 +851,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.8...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.9...HEAD
+[v0.6.9]: https://github.com/atc0005/dnsc/releases/tag/v0.6.9
 [v0.6.8]: https://github.com/atc0005/dnsc/releases/tag/v0.6.8
 [v0.6.7]: https://github.com/atc0005/dnsc/releases/tag/v0.6.7
 [v0.6.6]: https://github.com/atc0005/dnsc/releases/tag/v0.6.6
