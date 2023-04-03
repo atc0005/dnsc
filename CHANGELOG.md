@@ -26,6 +26,35 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.0] - 2023-04-03
+
+### Overview
+
+- Add support for generating DEB, RPM packages
+- Build improvements
+- Generated binary changes
+  - filename patterns
+  - compression (~ 66% smaller)
+  - executable metadata
+- built using Go 1.19.7
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Added
+
+- (GH-303) Generate RPM/DEB packages using nFPM
+- (GH-304) Add version details to Windows executables
+
+### Changed
+
+- (GH-302) Switch to semantic versioning (semver) compatible versioning
+  pattern
+- (GH-305) Makefile: Compress binaries & use static filenames
+- (GH-306) Makefile: Refresh recipes to add "standard" set, new
+  package-related options
+- (GH-307) Build dev/stable releases using go-ci Docker image
+
 ## [v0.6.9] - 2023-04-03
 
 ### Overview
@@ -851,7 +880,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.6.9...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/atc0005/dnsc/releases/tag/v0.7.0
 [v0.6.9]: https://github.com/atc0005/dnsc/releases/tag/v0.6.9
 [v0.6.8]: https://github.com/atc0005/dnsc/releases/tag/v0.6.8
 [v0.6.7]: https://github.com/atc0005/dnsc/releases/tag/v0.6.7
