@@ -153,9 +153,16 @@ been tested.
 
 1. Download the [latest
    release](https://github.com/atc0005/dnsc/releases/latest) binaries
+1. Decompress binaries
+   - e.g., `xz -d dnsc-linux-amd64.xz`
 1. Deploy
    - Place `dnsc` in a location of your choice
      - e.g., `/usr/local/bin/`
+
+**NOTE**:
+
+DEB and RPM packages are provided as an alternative to manually deploying
+binaries.
 
 ## Configuration
 
