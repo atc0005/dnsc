@@ -17,3 +17,6 @@
 
 # Ignore non-Windows executable
 /dnsc
+
+# Ignore go generate produced Windows executable resource files
+*.syso
