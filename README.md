@@ -467,8 +467,8 @@ Server            RTT     Query            Query Type    Answer                 
 8.8.8.8           7ms     www.yahoo.com    A             74.6.231.21                     A              44
 ```
 
-No errors here since www.yahoo.com had records for all of the requested query
-types.
+No errors here since `www.yahoo.com` had records for all of the requested
+query types.
 
 ### Query nameserver record (NS)
 
