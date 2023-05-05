@@ -149,6 +149,10 @@ been tested.
    - if using `Makefile`: look in `/tmp/dnsc/release_assets/dnsc/`
    - if using `go build`: look in `/tmp/dnsc/`
 
+**NOTE**: Depending on which `Makefile` recipe you use the generated binary
+may be compressed and have an `xz` extension. If so, you should decompress the
+binary first before deploying it (e.g., `xz -d dnsc-linux-amd64.xz`).
+
 ### Using release binaries
 
 1. Download the [latest
