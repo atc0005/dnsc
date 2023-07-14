@@ -26,6 +26,48 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.1] - 2023-07-14
+
+### Overview
+
+- RPM package improvements
+- Bug fixes
+- Dependency updates
+- built using Go 1.19.11
+  - Statically linked
+  - Windows (x86, x64)
+  - Linux (x86, x64)
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.7` to `1.19.11`
+  - `miekg/dns`
+    - `v1.1.53` to `v1.1.55`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.10.3` to `go-ci-oldstable-build-v0.11.4`
+  - `pelletier/go-toml`
+    - `v2.0.7` to `v2.0.9`
+  - `golang.org/x/sys`
+    - `v0.6.0` to `v0.10.0`
+  - `golang.org/x/net`
+    - `v0.8.0` to `v0.12.0`
+  - `golang.org/x/mod`
+    - `v0.9.0` to `v0.12.0`
+  - `golang.org/x/tools`
+    - `v0.7.0` to `v0.11.0`
+  - `github.com/mattn/go-isatty`
+    - `v0.0.18` to `v0.0.19`
+- (GH-344) Update vuln analysis GHAW to remove on.push hook
+- (GH-347) Restore local CodeQL workflow
+
+### Fixed
+
+- (GH-331) Fix markdownlint MD034 linting error
+- (GH-332) Add missing decompression step to README
+- (GH-341) Disable depguard linter
+
 ## [v0.7.0] - 2023-04-03
 
 ### Overview
@@ -880,7 +922,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.1...HEAD
+[v0.7.1]: https://github.com/atc0005/dnsc/releases/tag/v0.7.1
 [v0.7.0]: https://github.com/atc0005/dnsc/releases/tag/v0.7.0
 [v0.6.9]: https://github.com/atc0005/dnsc/releases/tag/v0.6.9
 [v0.6.8]: https://github.com/atc0005/dnsc/releases/tag/v0.6.8
