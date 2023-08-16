@@ -1,6 +1,6 @@
 module github.com/atc0005/dnsc
 
-go 1.19
+go 1.20
 
 require (
 	github.com/apex/log v1.9.0
