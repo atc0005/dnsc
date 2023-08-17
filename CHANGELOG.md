@@ -26,6 +26,27 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.2] - 2023-08-17
+
+### Added
+
+- (GH-362) Add initial automated release notes config
+- (GH-364) Add initial automated release build workflow
+
+### Changed
+
+- Dependencies
+  - `Go`
+    - `1.19.11` to `1.20.7`
+  - `atc0005/go-ci`
+    - `go-ci-oldstable-build-v0.11.4` to `go-ci-oldstable-build-v0.13.4`
+  - `golang.org/x/net`
+    - `v0.12.0` to `v0.13.0`
+  - `golang.org/x/tools`
+    - `v0.11.0` to `v0.12.0`
+- (GH-366) Update Dependabot config to monitor both branches
+- (GH-392) Update project to Go 1.20 series
+
 ## [v0.7.1] - 2023-07-14
 
 ### Overview
@@ -922,7 +943,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.2...HEAD
+[v0.7.2]: https://github.com/atc0005/dnsc/releases/tag/v0.7.2
 [v0.7.1]: https://github.com/atc0005/dnsc/releases/tag/v0.7.1
 [v0.7.0]: https://github.com/atc0005/dnsc/releases/tag/v0.7.0
 [v0.6.9]: https://github.com/atc0005/dnsc/releases/tag/v0.6.9
