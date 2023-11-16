@@ -26,6 +26,45 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.3] - 2023-11-16
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-455) canary: bump golang from 1.20.10 to 1.20.11 in /dependabot/docker/go
+- (GH-413) canary: bump golang from 1.20.7 to 1.20.8 in /dependabot/docker/go
+- (GH-436) canary: bump golang from 1.20.8 to 1.20.10 in /dependabot/docker/go
+- (GH-442) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.10 to go-ci-oldstable-build-v0.13.12 in /dependabot/docker/builds
+- (GH-461) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.12 to go-ci-oldstable-build-v0.14.1 in /dependabot/docker/builds
+- (GH-397) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.4 to go-ci-oldstable-build-v0.13.5 in /dependabot/docker/builds
+- (GH-400) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.5 to go-ci-oldstable-build-v0.13.6 in /dependabot/docker/builds
+- (GH-402) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.6 to go-ci-oldstable-build-v0.13.7 in /dependabot/docker/builds
+- (GH-414) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.7 to go-ci-oldstable-build-v0.13.8 in /dependabot/docker/builds
+- (GH-422) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.8 to go-ci-oldstable-build-v0.13.9 in /dependabot/docker/builds
+- (GH-425) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.13.9 to go-ci-oldstable-build-v0.13.10 in /dependabot/docker/builds
+- (GH-407) ghaw: bump actions/checkout from 3 to 4
+- (GH-454) go.mod: bump github.com/fatih/color from 1.15.0 to 1.16.0
+- (GH-445) go.mod: bump github.com/mattn/go-isatty from 0.0.19 to 0.0.20
+- (GH-417) go.mod: bump github.com/miekg/dns from 1.1.55 to 1.1.56
+- (GH-463) go.mod: bump github.com/miekg/dns from 1.1.56 to 1.1.57
+- (GH-403) go.mod: bump github.com/pelletier/go-toml/v2 from 2.0.9 to 2.1.0
+- (GH-428) go.mod: bump golang.org/x/mod from 0.12.0 to 0.13.0
+- (GH-450) go.mod: bump golang.org/x/mod from 0.13.0 to 0.14.0
+- (GH-410) go.mod: bump golang.org/x/net from 0.14.0 to 0.15.0
+- (GH-438) go.mod: bump golang.org/x/net from 0.15.0 to 0.17.0
+- (GH-458) go.mod: bump golang.org/x/net from 0.17.0 to 0.18.0
+- (GH-405) go.mod: bump golang.org/x/sys from 0.11.0 to 0.12.0
+- (GH-429) go.mod: bump golang.org/x/sys from 0.12.0 to 0.13.0
+- (GH-449) go.mod: bump golang.org/x/sys from 0.13.0 to 0.14.0
+- (GH-409) go.mod: bump golang.org/x/tools from 0.12.0 to 0.13.0
+- (GH-434) go.mod: bump golang.org/x/tools from 0.13.0 to 0.14.0
+- (GH-457) go.mod: bump golang.org/x/tools from 0.14.0 to 0.15.0
+
+### Fixed
+
+- (GH-466) Fix goconst linting errors
+
 ## [v0.7.2] - 2023-08-17
 
 ### Added
@@ -943,7 +982,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.3...HEAD
+[v0.7.3]: https://github.com/atc0005/dnsc/releases/tag/v0.7.3
 [v0.7.2]: https://github.com/atc0005/dnsc/releases/tag/v0.7.2
 [v0.7.1]: https://github.com/atc0005/dnsc/releases/tag/v0.7.1
 [v0.7.0]: https://github.com/atc0005/dnsc/releases/tag/v0.7.0
