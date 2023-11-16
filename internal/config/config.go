@@ -49,6 +49,10 @@ const (
 	resultsOutputFlagHelp  = "Specifies whether the results summary output is composed of a single comma-separated line of records for a query, or whether the records are returned one per line."
 )
 
+// shorthandFlagSuffix is appended to short flag help text to emphasize that
+// the flag is a shorthand version of a longer flag.
+const shorthandFlagSuffix = " (shorthand)"
+
 // Default flag settings if not overridden by user input
 const (
 	defaultLogLevel              string = "info"
