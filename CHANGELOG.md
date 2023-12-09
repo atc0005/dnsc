@@ -26,6 +26,18 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.4] - 2023-12-09
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-479) canary: bump golang from 1.20.11 to 1.20.12 in /dependabot/docker/go
+- (GH-481) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.1 to go-ci-oldstable-build-v0.14.2 in /dependabot/docker/builds
+- (GH-476) go.mod: bump golang.org/x/net from 0.18.0 to 0.19.0
+- (GH-477) go.mod: bump golang.org/x/sys from 0.14.0 to 0.15.0
+- (GH-475) go.mod: bump golang.org/x/tools from 0.15.0 to 0.16.0
+
 ## [v0.7.3] - 2023-11-16
 
 ### Changed
@@ -982,7 +994,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.3...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.4...HEAD
+[v0.7.4]: https://github.com/atc0005/dnsc/releases/tag/v0.7.4
 [v0.7.3]: https://github.com/atc0005/dnsc/releases/tag/v0.7.3
 [v0.7.2]: https://github.com/atc0005/dnsc/releases/tag/v0.7.2
 [v0.7.1]: https://github.com/atc0005/dnsc/releases/tag/v0.7.1
