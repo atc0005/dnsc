@@ -26,6 +26,21 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.5] - 2024-01-19
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-494) canary: bump golang from 1.20.12 to 1.20.13 in /dependabot/docker/go
+- (GH-498) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.2 to go-ci-oldstable-build-v0.14.3 in /dependabot/docker/builds
+- (GH-488) ghaw: bump github/codeql-action from 2 to 3
+- (GH-505) go.mod: bump github.com/miekg/dns from 1.1.57 to 1.1.58
+- (GH-485) go.mod: bump github.com/pelletier/go-toml/v2 from 2.1.0 to 2.1.1
+- (GH-490) go.mod: bump golang.org/x/sys from 0.15.0 to 0.16.0
+- (GH-486) go.mod: bump golang.org/x/tools from 0.16.0 to 0.16.1
+- (GH-496) go.mod: bump golang.org/x/tools from 0.16.1 to 0.17.0
+
 ## [v0.7.4] - 2023-12-09
 
 ### Changed
@@ -994,7 +1009,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.4...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.5...HEAD
+[v0.7.5]: https://github.com/atc0005/dnsc/releases/tag/v0.7.5
 [v0.7.4]: https://github.com/atc0005/dnsc/releases/tag/v0.7.4
 [v0.7.3]: https://github.com/atc0005/dnsc/releases/tag/v0.7.3
 [v0.7.2]: https://github.com/atc0005/dnsc/releases/tag/v0.7.2
