@@ -115,7 +115,7 @@ func main() {
 					queriesWG.Add(1)
 					go func() {
 						defer queriesWG.Done()
-						resultsChan <- failedQueryRequest
+						results <- failedQueryRequest
 					}()
 
 				}
@@ -151,7 +151,7 @@ func main() {
 							queriesWG.Add(1)
 							go func() {
 								defer queriesWG.Done()
-								resultsChan <- failedQueryRequest
+								results <- failedQueryRequest
 							}()
 
 						}
@@ -171,7 +171,7 @@ func main() {
 					queriesWG.Add(1)
 					go func(q string) {
 						defer queriesWG.Done()
-						resultsChan <- dqrs.PerformQuery(q, server, rrType, queryTimeout)
+						results <- dqrs.PerformQuery(q, server, rrType, queryTimeout)
 						log.Debug("Query completed, results sent back on channel")
 					}(queries[i])
 
