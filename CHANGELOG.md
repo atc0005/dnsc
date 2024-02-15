@@ -26,6 +26,27 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.6] - 2024-02-15
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-524) canary: bump golang from 1.20.13 to 1.20.14 in /dependabot/docker/go
+- (GH-503) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.3 to go-ci-oldstable-build-v0.14.4 in /dependabot/docker/builds
+- (GH-509) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.4 to go-ci-oldstable-build-v0.14.5 in /dependabot/docker/builds
+- (GH-511) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.5 to go-ci-oldstable-build-v0.14.6 in /dependabot/docker/builds
+- (GH-525) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.6 to go-ci-oldstable-build-v0.14.9 in /dependabot/docker/builds
+- (GH-529) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.14.9 to go-ci-oldstable-build-v0.15.0 in /dependabot/docker/builds
+- (GH-517) go.mod: bump golang.org/x/mod from 0.14.0 to 0.15.0
+- (GH-522) go.mod: bump golang.org/x/net from 0.20.0 to 0.21.0
+- (GH-523) go.mod: bump golang.org/x/sys from 0.16.0 to 0.17.0
+- (GH-531) go.mod: bump golang.org/x/tools from 0.17.0 to 0.18.0
+
+### Fixed
+
+- (GH-533) Fix `unused-parameter` revive linting errors
+
 ## [v0.7.5] - 2024-01-19
 
 ### Changed
@@ -1009,7 +1030,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.5...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.6...HEAD
+[v0.7.6]: https://github.com/atc0005/dnsc/releases/tag/v0.7.6
 [v0.7.5]: https://github.com/atc0005/dnsc/releases/tag/v0.7.5
 [v0.7.4]: https://github.com/atc0005/dnsc/releases/tag/v0.7.4
 [v0.7.3]: https://github.com/atc0005/dnsc/releases/tag/v0.7.3
