@@ -67,6 +67,14 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 	fmt.Fprintln(w, separatorRowTmpl)
 
 	for _, item := range dqrs {
+		// Building with `go build -gcflags=all=-d=loopvar=2` identified this
+		// loop as compiling differently with Go 1.22 (per-iteration) loop
+		// semantics. In particular, it is believed that the use of the Answer
+		// ([]dns.RR) struct field which caused this loop to be flagged.
+		//
+		// As a workaround, we create a new variable for each iteration to
+		// work around potential issues with Go versions prior to Go 1.22.
+		item := item
 
 		requestType, err := RRTypeToString(item.RequestedRecordType)
 		if err != nil {
