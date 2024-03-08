@@ -26,6 +26,30 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.7] - 2024-03-08
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-560) Add todo/release label to "Go Runtime" PRs
+- (GH-543) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.2 to go-ci-oldstable-build-v0.15.3 in /dependabot/docker/builds
+- (GH-559) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.3 to go-ci-oldstable-build-v0.15.4 in /dependabot/docker/builds
+- (GH-540) canary: bump golang from 1.21.6 to 1.21.7 in /dependabot/docker/go
+- (GH-537) docker: bump atc0005/go-ci from go-ci-oldstable-build-v0.15.0 to go-ci-oldstable-build-v0.15.2 in /dependabot/docker/builds
+- (GH-550) Go Dependency: Bump golang.org/x/mod from 0.15.0 to 0.16.0
+- (GH-549) Go Dependency: Bump golang.org/x/net from 0.21.0 to 0.22.0
+- (GH-548) Go Dependency: Bump golang.org/x/sys from 0.17.0 to 0.18.0
+- (GH-551) Go Dependency: Bump golang.org/x/tools from 0.18.0 to 0.19.0
+- (GH-556) Go Runtime: Bump golang from 1.21.7 to 1.21.8 in /dependabot/docker/go
+- (GH-542) Update Dependabot PR prefixes (redux)
+- (GH-541) Update Dependabot PR prefixes
+- (GH-539) Update project to Go 1.21 series
+
+### Fixed
+
+- (GH-546) Fix loopvar behavior change linting error
+
 ## [v0.7.6] - 2024-02-15
 
 ### Changed
@@ -1030,7 +1054,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.6...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.7...HEAD
+[v0.7.7]: https://github.com/atc0005/dnsc/releases/tag/v0.7.7
 [v0.7.6]: https://github.com/atc0005/dnsc/releases/tag/v0.7.6
 [v0.7.5]: https://github.com/atc0005/dnsc/releases/tag/v0.7.5
 [v0.7.4]: https://github.com/atc0005/dnsc/releases/tag/v0.7.4
