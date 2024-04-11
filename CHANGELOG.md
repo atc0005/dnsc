@@ -26,6 +26,24 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.8] - 2024-04-11
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-567) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.15.4 to go-ci-oldstable-build-v0.16.0 in /dependabot/docker/builds
+- (GH-569) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.16.0 to go-ci-oldstable-build-v0.16.1 in /dependabot/docker/builds
+- (GH-570) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.16.1 to go-ci-oldstable-build-v0.19.0 in /dependabot/docker/builds
+- (GH-574) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.19.0 to go-ci-oldstable-build-v0.20.0 in /dependabot/docker/builds
+- (GH-583) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.0 to go-ci-oldstable-build-v0.20.1 in /dependabot/docker/builds
+- (GH-565) Go Dependency: Bump github.com/pelletier/go-toml/v2 from 2.1.1 to 2.2.0
+- (GH-581) Go Dependency: Bump golang.org/x/mod from 0.16.0 to 0.17.0
+- (GH-580) Go Dependency: Bump golang.org/x/net from 0.22.0 to 0.24.0
+- (GH-579) Go Dependency: Bump golang.org/x/sys from 0.18.0 to 0.19.0
+- (GH-582) Go Dependency: Bump golang.org/x/tools from 0.19.0 to 0.20.0
+- (GH-578) Go Runtime: Bump golang from 1.21.8 to 1.21.9 in /dependabot/docker/go
+
 ## [v0.7.7] - 2024-03-08
 
 ### Changed
@@ -1054,7 +1072,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.7...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.8...HEAD
+[v0.7.8]: https://github.com/atc0005/dnsc/releases/tag/v0.7.8
 [v0.7.7]: https://github.com/atc0005/dnsc/releases/tag/v0.7.7
 [v0.7.6]: https://github.com/atc0005/dnsc/releases/tag/v0.7.6
 [v0.7.5]: https://github.com/atc0005/dnsc/releases/tag/v0.7.5
