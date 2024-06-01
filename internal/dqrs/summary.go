@@ -26,7 +26,7 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 
 	// Add some lead-in spacing to better separate any earlier log messages from
 	// summary output
-	fmt.Fprintf(w, "\n\n")
+	_, _ = fmt.Fprintf(w, "\n\n")
 
 	// REMINDER: Column cells must be tab-terminated, not tab-separated:
 	// non-tab terminated trailing text at the end of a line forms a cell but
@@ -61,10 +61,10 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 	}
 
 	// Header row in output
-	fmt.Fprintln(w, headerRowTmpl)
+	_, _ = fmt.Fprintln(w, headerRowTmpl)
 
 	// Separator row
-	fmt.Fprintln(w, separatorRowTmpl)
+	_, _ = fmt.Fprintln(w, separatorRowTmpl)
 
 	for _, item := range dqrs {
 		// Building with `go build -gcflags=all=-d=loopvar=2` identified this
@@ -84,7 +84,7 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 		// if any errors were recorded when querying DNS server show those
 		// instead of attempting to show real results
 		if item.QueryError != nil {
-			fmt.Fprintf(w,
+			_, _ = fmt.Fprintf(w,
 				recordRowErrorTmpl,
 				item.Server,
 				item.ResponseTime.Round(time.Millisecond),
@@ -102,7 +102,7 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 		case ResultsOutputMultiLine:
 
 			for _, record := range item.Records() {
-				fmt.Fprintf(w,
+				_, _ = fmt.Fprintf(w,
 					recordRowSuccessTmpl,
 					item.Server,
 					item.ResponseTime.Round(time.Millisecond),
@@ -132,7 +132,7 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 				ttls = append(ttls, fmt.Sprint(record.TTL))
 			}
 
-			fmt.Fprintf(w,
+			_, _ = fmt.Fprintf(w,
 				recordRowSuccessTmpl,
 				item.Server,
 				item.ResponseTime.Round(time.Millisecond),
@@ -146,14 +146,14 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 	}
 
 	if !omitTimestamp {
-		fmt.Fprintf(
+		_, _ = fmt.Fprintf(
 			w,
 			"\nQuery Performed: %v",
 			time.Now().Format(time.RFC3339),
 		)
 	}
 
-	fmt.Fprintln(w)
+	_, _ = fmt.Fprintln(w)
 
 	if err := w.Flush(); err != nil {
 		log.Errorf("Error flushing tabwriter: %v", err.Error())
