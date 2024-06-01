@@ -304,7 +304,7 @@ func (c Config) String() string {
 
 // Branding is responsible for emitting application name, version and origin
 func Branding() {
-	fmt.Fprintf(flag.CommandLine.Output(), "\n%s %s\n%s\n\n", myAppName, version, myAppURL)
+	_, _ = fmt.Fprintf(flag.CommandLine.Output(), "\n%s %s\n%s\n\n", myAppName, version, myAppURL)
 }
 
 // flagsUsage displays branding information and general usage details
@@ -316,7 +316,7 @@ func flagsUsage() func() {
 
 		Branding()
 
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of \"%s\":\n",
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage of \"%s\":\n",
 			myBinaryName,
 		)
 		flag.PrintDefaults()
