@@ -26,6 +26,25 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.10] - 2024-06-07
+
+### Changed
+
+- (GH-619) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.4 to go-ci-oldstable-build-v0.20.5 in /dependabot/docker/builds
+- (GH-621) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.5 to go-ci-oldstable-build-v0.20.6 in /dependabot/docker/builds
+- (GH-637) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.6 to go-ci-oldstable-build-v0.20.7 in /dependabot/docker/builds
+- (GH-617) Go Dependency: Bump github.com/fatih/color from 1.16.0 to 1.17.0
+- (GH-631) Go Dependency: Bump golang.org/x/mod from 0.17.0 to 0.18.0
+- (GH-632) Go Dependency: Bump golang.org/x/net from 0.25.0 to 0.26.0
+- (GH-633) Go Dependency: Bump golang.org/x/sys from 0.20.0 to 0.21.0
+- (GH-634) Go Dependency: Bump golang.org/x/tools from 0.21.0 to 0.22.0
+- (GH-635) Go Runtime: Bump golang from 1.21.10 to 1.21.11 in /dependabot/docker/go
+
+### Fixed
+
+- (GH-623) Remove inactive maligned linter
+- (GH-624) Fix errcheck linting errors
+
 ## [v0.7.9] - 2024-05-13
 
 ### Changed
@@ -1087,7 +1106,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.9...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.10...HEAD
+[v0.7.10]: https://github.com/atc0005/dnsc/releases/tag/v0.7.10
 [v0.7.9]: https://github.com/atc0005/dnsc/releases/tag/v0.7.9
 [v0.7.8]: https://github.com/atc0005/dnsc/releases/tag/v0.7.8
 [v0.7.7]: https://github.com/atc0005/dnsc/releases/tag/v0.7.7
