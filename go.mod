@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/apex/log v1.9.0
-	github.com/miekg/dns v1.1.59
+	github.com/miekg/dns v1.1.61
 	github.com/pelletier/go-toml/v2 v2.2.2
 )
 
