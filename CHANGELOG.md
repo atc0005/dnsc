@@ -26,6 +26,21 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.11] - 2024-07-10
+
+### Changed
+
+- (GH-641) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.7 to go-ci-oldstable-build-v0.20.8 in /dependabot/docker/builds
+- (GH-647) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.8 to go-ci-oldstable-build-v0.21.2 in /dependabot/docker/builds
+- (GH-649) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.2 to go-ci-oldstable-build-v0.21.3 in /dependabot/docker/builds
+- (GH-653) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.3 to go-ci-oldstable-build-v0.21.4 in /dependabot/docker/builds
+- (GH-644) Go Dependency: Bump github.com/miekg/dns from 1.1.59 to 1.1.61
+- (GH-655) Go Dependency: Bump golang.org/x/mod from 0.18.0 to 0.19.0
+- (GH-661) Go Dependency: Bump golang.org/x/net from 0.26.0 to 0.27.0
+- (GH-656) Go Dependency: Bump golang.org/x/sys from 0.21.0 to 0.22.0
+- (GH-662) Go Dependency: Bump golang.org/x/tools from 0.22.0 to 0.23.0
+- (GH-652) Go Runtime: Bump golang from 1.21.11 to 1.21.12 in /dependabot/docker/go
+
 ## [v0.7.10] - 2024-06-07
 
 ### Changed
@@ -1106,7 +1121,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.10...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.11...HEAD
+[v0.7.11]: https://github.com/atc0005/dnsc/releases/tag/v0.7.11
 [v0.7.10]: https://github.com/atc0005/dnsc/releases/tag/v0.7.10
 [v0.7.9]: https://github.com/atc0005/dnsc/releases/tag/v0.7.9
 [v0.7.8]: https://github.com/atc0005/dnsc/releases/tag/v0.7.8
