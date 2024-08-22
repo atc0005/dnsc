@@ -26,9 +26,36 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.12] - 2024-08-22
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-667) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.4 to go-ci-oldstable-build-v0.21.5 in /dependabot/docker/builds
+- (GH-671) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.5 to go-ci-oldstable-build-v0.21.6 in /dependabot/docker/builds
+- (GH-673) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.6 to go-ci-oldstable-build-v0.21.7 in /dependabot/docker/builds
+- (GH-688) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.7 to go-ci-oldstable-build-v0.21.8 in /dependabot/docker/builds
+- (GH-697) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.8 to go-ci-oldstable-build-v0.21.9 in /dependabot/docker/builds
+- (GH-693) Go Dependency: Bump github.com/miekg/dns from 1.1.61 to 1.1.62
+- (GH-678) Go Dependency: Bump golang.org/x/mod from 0.19.0 to 0.20.0
+- (GH-682) Go Dependency: Bump golang.org/x/net from 0.27.0 to 0.28.0
+- (GH-676) Go Dependency: Bump golang.org/x/sync from 0.7.0 to 0.8.0
+- (GH-677) Go Dependency: Bump golang.org/x/sys from 0.22.0 to 0.23.0
+- (GH-690) Go Dependency: Bump golang.org/x/sys from 0.23.0 to 0.24.0
+- (GH-683) Go Dependency: Bump golang.org/x/tools from 0.23.0 to 0.24.0
+- (GH-699) Go Runtime: Bump golang from 1.21.12 to 1.22.6 in /dependabot/docker/go
+- (GH-698) Update project to Go 1.22 series
+
+#### Other
+
+- (GH-674) Push `REPO_VERSION` var into containers for builds
+
 ## [v0.7.11] - 2024-07-10
 
 ### Changed
+
+#### Dependency Updates
 
 - (GH-641) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.7 to go-ci-oldstable-build-v0.20.8 in /dependabot/docker/builds
 - (GH-647) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.8 to go-ci-oldstable-build-v0.21.2 in /dependabot/docker/builds
@@ -44,6 +71,8 @@ The following types of changes will be recorded in this file:
 ## [v0.7.10] - 2024-06-07
 
 ### Changed
+
+#### Dependency Updates
 
 - (GH-619) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.4 to go-ci-oldstable-build-v0.20.5 in /dependabot/docker/builds
 - (GH-621) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.5 to go-ci-oldstable-build-v0.20.6 in /dependabot/docker/builds
@@ -63,6 +92,8 @@ The following types of changes will be recorded in this file:
 ## [v0.7.9] - 2024-05-13
 
 ### Changed
+
+#### Dependency Updates
 
 - (GH-602) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.1 to go-ci-oldstable-build-v0.20.2 in /dependabot/docker/builds
 - (GH-610) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.20.2 to go-ci-oldstable-build-v0.20.3 in /dependabot/docker/builds
@@ -1121,7 +1152,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.11...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.12...HEAD
+[v0.7.12]: https://github.com/atc0005/dnsc/releases/tag/v0.7.12
 [v0.7.11]: https://github.com/atc0005/dnsc/releases/tag/v0.7.11
 [v0.7.10]: https://github.com/atc0005/dnsc/releases/tag/v0.7.10
 [v0.7.9]: https://github.com/atc0005/dnsc/releases/tag/v0.7.9
