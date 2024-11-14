@@ -26,6 +26,31 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.13] - 2024-11-14
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-722) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.12 to go-ci-oldstable-build-v0.21.13 in /dependabot/docker/builds
+- (GH-749) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.13 to go-ci-oldstable-build-v0.21.15 in /dependabot/docker/builds
+- (GH-752) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.15 to go-ci-oldstable-build-v0.21.16 in /dependabot/docker/builds
+- (GH-715) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.9 to go-ci-oldstable-build-v0.21.12 in /dependabot/docker/builds
+- (GH-734) Go Dependency: Bump github.com/fatih/color from 1.17.0 to 1.18.0
+- (GH-721) Go Dependency: Bump github.com/pelletier/go-toml/v2 from 2.2.2 to 2.2.3
+- (GH-709) Go Dependency: Bump golang.org/x/mod from 0.20.0 to 0.21.0
+- (GH-739) Go Dependency: Bump golang.org/x/mod from 0.21.0 to 0.22.0
+- (GH-712) Go Dependency: Bump golang.org/x/net from 0.28.0 to 0.29.0
+- (GH-748) Go Dependency: Bump golang.org/x/net from 0.29.0 to 0.31.0
+- (GH-737) Go Dependency: Bump golang.org/x/sync from 0.8.0 to 0.9.0
+- (GH-710) Go Dependency: Bump golang.org/x/sys from 0.24.0 to 0.25.0
+- (GH-738) Go Dependency: Bump golang.org/x/sys from 0.25.0 to 0.27.0
+- (GH-717) Go Dependency: Bump golang.org/x/tools from 0.24.0 to 0.25.0
+- (GH-747) Go Dependency: Bump golang.org/x/tools from 0.25.0 to 0.27.0
+- (GH-713) Go Runtime: Bump golang from 1.22.6 to 1.22.7 in /dependabot/docker/go
+- (GH-736) Go Runtime: Bump golang from 1.22.7 to 1.22.9 in /dependabot/docker/go
+- (GH-719) Update project Go version to 1.22.0
+
 ## [v0.7.12] - 2024-08-22
 
 ### Changed
@@ -1152,7 +1177,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.12...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.13...HEAD
+[v0.7.13]: https://github.com/atc0005/dnsc/releases/tag/v0.7.13
 [v0.7.12]: https://github.com/atc0005/dnsc/releases/tag/v0.7.12
 [v0.7.11]: https://github.com/atc0005/dnsc/releases/tag/v0.7.11
 [v0.7.10]: https://github.com/atc0005/dnsc/releases/tag/v0.7.10
