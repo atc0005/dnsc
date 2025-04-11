@@ -74,7 +74,10 @@ func (dqrs DNSQueryResponses) PrintSummary(outputFormat string, omitTimestamp bo
 		//
 		// As a workaround, we create a new variable for each iteration to
 		// work around potential issues with Go versions prior to Go 1.22.
-		item := item
+		//
+		// NOTE: Not needed as of Go 1.22.
+		//
+		// item := item
 
 		requestType, err := RRTypeToString(item.RequestedRecordType)
 		if err != nil {
