@@ -21,7 +21,7 @@ github.com/mattn/go-isatty
 # github.com/miekg/dns v1.1.62
 ## explicit; go 1.19
 github.com/miekg/dns
-# github.com/pelletier/go-toml/v2 v2.2.3
+# github.com/pelletier/go-toml/v2 v2.2.4
 ## explicit; go 1.21.0
 github.com/pelletier/go-toml/v2
 github.com/pelletier/go-toml/v2/internal/characters
