@@ -26,6 +26,32 @@ The following types of changes will be recorded in this file:
 
 - placeholder
 
+## [v0.7.14] - 2025-04-14
+
+### Changed
+
+#### Dependency Updates
+
+- (GH-756) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.16 to go-ci-oldstable-build-v0.21.17 in /dependabot/docker/builds
+- (GH-846) Build Image: Bump atc0005/go-ci from go-ci-oldstable-build-v0.21.17 to go-ci-oldstable-build-v0.22.9 in /dependabot/docker/builds
+- (GH-847) Disable Dependabot automatic PR rebasing
+- (GH-781) Go Dependency: Bump github.com/mattn/go-colorable from 0.1.13 to 0.1.14
+- (GH-851) Go Dependency: Bump github.com/miekg/dns from 1.1.62 to 1.1.65
+- (GH-855) Go Dependency: Bump github.com/pelletier/go-toml/v2 from 2.2.3 to 2.2.4
+- (GH-824) Go Dependency: Bump golang.org/x/mod from 0.22.0 to 0.24.0
+- (GH-857) Go Dependency: Bump golang.org/x/net from 0.31.0 to 0.39.0
+- (GH-849) Go Dependency: Bump golang.org/x/sync from 0.9.0 to 0.13.0
+- (GH-850) Go Dependency: Bump golang.org/x/sys from 0.27.0 to 0.32.0
+- (GH-856) Go Dependency: Bump golang.org/x/tools from 0.27.0 to 0.32.0
+- (GH-844) Go Runtime: Bump golang from 1.22.10 to 1.23.8 in /dependabot/docker/go
+- (GH-758) Go Runtime: Bump golang from 1.22.9 to 1.22.10 in /dependabot/docker/go
+- (GH-833) go.mod: update minimum Go version to 1.23.0
+- (GH-812) Update project to Go 1.23 series
+
+### Fixed
+
+- (GH-861) Fix `copyloopvar` linting errors
+
 ## [v0.7.13] - 2024-11-14
 
 ### Changed
@@ -1177,7 +1203,8 @@ Worth noting (in no particular order):
 - Makefile for general use cases (including local linting)
   - Note: See README for available options if building on Windows
 
-[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.13...HEAD
+[Unreleased]: https://github.com/atc0005/dnsc/compare/v0.7.14...HEAD
+[v0.7.14]: https://github.com/atc0005/dnsc/releases/tag/v0.7.14
 [v0.7.13]: https://github.com/atc0005/dnsc/releases/tag/v0.7.13
 [v0.7.12]: https://github.com/atc0005/dnsc/releases/tag/v0.7.12
 [v0.7.11]: https://github.com/atc0005/dnsc/releases/tag/v0.7.11
