@@ -1,6 +1,6 @@
 module github.com/atc0005/dnsc
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/apex/log v1.9.0
@@ -15,8 +15,8 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/sync v0.14.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
 )
