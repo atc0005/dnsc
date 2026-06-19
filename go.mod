@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/apex/log v1.9.0
 	github.com/miekg/dns v1.1.66
-	github.com/pelletier/go-toml/v2 v2.2.4
+	github.com/pelletier/go-toml/v2 v2.4.0
 )
 
 require (
